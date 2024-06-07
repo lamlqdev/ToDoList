@@ -51,6 +51,7 @@ public class DBHandler extends SQLiteOpenHelper {
                 "FOREIGN KEY (task_id) REFERENCES tasks(task_id)" +
                 ");";
         db.execSQL(CREATE_TABLE_NOTES);
+        insertCategory(db);
     }
 
     @Override
@@ -60,5 +61,11 @@ public class DBHandler extends SQLiteOpenHelper {
         db.execSQL("DROP TABLE IF EXISTS subtasks");
         db.execSQL("DROP TABLE IF EXISTS notes");
         onCreate(db);
+    }
+
+    private void insertCategory(SQLiteDatabase db) {
+        String INSERT_DATE = "INSERT INTO categories (category_id, name)"
+                + "VALUES (1, 'Work'), (2, 'Home'), (3, 'Personal')";
+        db.execSQL(INSERT_DATE);
     }
 }
