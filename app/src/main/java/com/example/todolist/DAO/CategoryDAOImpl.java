@@ -25,7 +25,6 @@ public class CategoryDAOImpl implements ICategoryDAO {
         try {
             SQLiteDatabase db = dbHandler.getWritableDatabase();
             ContentValues values = new ContentValues();
-            values.put(TodolistContract.CategoryEntry.CATEGORY_ID, category.getCategoryID());
             values.put(TodolistContract.CategoryEntry.NAME, category.getName());
 
             long result = db.insert(TodolistContract.CategoryEntry.TABLE_NAME, null, values);

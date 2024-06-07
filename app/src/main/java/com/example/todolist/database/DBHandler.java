@@ -15,7 +15,7 @@ public class DBHandler extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase db) {
         String CREATE_TABLE_TASKS = "CREATE TABLE tasks (" +
-                "task_id INTEGER PRIMARY KEY NOT NULL, " +
+                "task_id INTEGER PRIMARY KEY AUTOINCREMENT, " +
                 "title TEXT, " +
                 "category_id INTEGER, " +
                 "due_date DATETIME, " +
@@ -27,13 +27,13 @@ public class DBHandler extends SQLiteOpenHelper {
         db.execSQL(CREATE_TABLE_TASKS);
 
         String CREATE_TABLE_CATEGORIES = "CREATE TABLE categories (" +
-                "category_id INTEGER PRIMARY KEY NOT NULL, " +
+                "category_id INTEGER PRIMARY KEY AUTOINCREMENT, " +
                 "name TEXT" +
                 ");";
         db.execSQL(CREATE_TABLE_CATEGORIES);
 
         String CREATE_TABLE_SUBTASKS = "CREATE TABLE subtasks (" +
-                "subtask_id INTEGER PRIMARY KEY NOT NULL, " +
+                "subtask_id INTEGER PRIMARY KEY AUTOINCREMENT, " +
                 "task_id INTEGER, " +
                 "description TEXT, " +
                 "status INTEGER, " +
@@ -43,7 +43,7 @@ public class DBHandler extends SQLiteOpenHelper {
         db.execSQL(CREATE_TABLE_SUBTASKS);
 
         String CREATE_TABLE_NOTES = "CREATE TABLE notes (" +
-                "note_id INTEGER PRIMARY KEY NOT NULL, " +
+                "note_id INTEGER PRIMARY KEY AUTOINCREMENT, " +
                 "task_id INTEGER, " +
                 "content TEXT, " +
                 "created_at DATETIME, " +

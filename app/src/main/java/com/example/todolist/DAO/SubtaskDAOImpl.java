@@ -28,7 +28,6 @@ public class SubtaskDAOImpl implements ISubtaskDAO{
         try {
             SQLiteDatabase db = dbHandler.getWritableDatabase();
             ContentValues values = new ContentValues();
-            values.put(TodolistContract.SubtasksEntry.SUBTASK_ID, subtask.getSubtaskID());
             values.put(TodolistContract.SubtasksEntry.TASK_ID, subtask.getTaskID());
             values.put(TodolistContract.SubtasksEntry.DESCRIPTION, subtask.getDescription());
             values.put(TodolistContract.SubtasksEntry.STATUS, subtask.getStatus());

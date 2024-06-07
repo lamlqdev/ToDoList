@@ -27,7 +27,6 @@ public class NoteDAOImpl implements INoteDAO{
         try {
             SQLiteDatabase db = dbHandler.getWritableDatabase();
             ContentValues values = new ContentValues();
-            values.put(TodolistContract.NotesEntry.NOTE_ID, note.getNoteID());
             values.put(TodolistContract.NotesEntry.TASK_ID, note.getTaskID());
             values.put(TodolistContract.NotesEntry.CONTENT, note.getContent());
             LocalDateTime now = LocalDateTime.now();
