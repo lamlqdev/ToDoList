@@ -3,6 +3,18 @@
     <string name="tasks">Tasks</string>
     <string name="calendar">Calendar</string>
     <string name="mine">Mine</string>
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="calendar_tasks">Calendar Tasks</string>
+    <string name="all">All</string>
+    <string name="manage_categories">Manage Categories</string>
+    <string name="search">Search</string>
+    <string name="sort_by">Sort by</string>
+    <string name="fab_content_desc">Add new task</string>
+    <string name="today">Today</string>
+    <string name="task_name">Task Name</string>
+    <string name="task_fragment_option">Task Fragment Option</string>
+    <string name="Arrow">Arrow</string>
+    <string name="mark_pri">Mark flag</string>
+    <string name="previous">Previous</string>
+    <string name="future">Future</string>
+    <string name="category">Category</string>
 </resources>

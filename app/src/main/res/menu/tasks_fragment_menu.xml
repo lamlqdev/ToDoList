@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/manage_categories"
+        android:title="@string/manage_categories"
+        android:background="@color/white"/>
+    <item
+        android:id="@+id/search"
+        android:title="@string/search"
+        android:background="@color/white"/>
+    <item
+        android:id="@+id/sort_by"
+        android:title="@string/sort_by"
+        android:background="@color/white"/>
+</menu>
