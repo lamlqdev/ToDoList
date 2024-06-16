@@ -39,7 +39,7 @@
             android:layout_gravity="center"
             android:layout_marginEnd="12dp"
             android:contentDescription="@string/task_fragment_option"
-            android:src="@drawable/more_vert_24dp_fill0_wght400_grad0_opsz24" />
+            android:src="@drawable/ic_more_options" />
     </LinearLayout>
 
     <!-- Previous Task Section -->
@@ -74,7 +74,7 @@
                 android:layout_height="wrap_content"
                 android:background="@null"
                 android:contentDescription="@string/Arrow"
-                android:src="@drawable/arrow_drop_up_24dp_fill0_wght400_grad0_opsz24" />
+                android:src="@drawable/ic_arrow_drop_up" />
         </LinearLayout>
 
         <!-- List Section -->
@@ -120,7 +120,7 @@
                 android:layout_height="wrap_content"
                 android:background="@null"
                 android:contentDescription="@string/Arrow"
-                android:src="@drawable/arrow_drop_up_24dp_fill0_wght400_grad0_opsz24" />
+                android:src="@drawable/ic_arrow_drop_up" />
         </LinearLayout>
 
         <!-- List Section -->
@@ -166,7 +166,7 @@
                 android:layout_height="wrap_content"
                 android:background="@null"
                 android:contentDescription="@string/Arrow"
-                android:src="@drawable/arrow_drop_up_24dp_fill0_wght400_grad0_opsz24" />
+                android:src="@drawable/ic_arrow_drop_up" />
         </LinearLayout>
 
         <!-- List Section -->
@@ -181,7 +181,7 @@
     </LinearLayout>
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/floating_action_button"
+        android:id="@+id/floating_add_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentEnd="true"
@@ -190,5 +190,5 @@
         android:backgroundTint="@color/blue2"
         android:contentDescription="@string/fab_content_desc"
         app:tint="@color/white"
-        app:srcCompat="@drawable/add_24dp_fill0_wght400_grad0_opsz24"/>
+        app:srcCompat="@drawable/ic_add"/>
 </RelativeLayout>

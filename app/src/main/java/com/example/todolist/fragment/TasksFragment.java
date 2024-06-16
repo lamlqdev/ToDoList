@@ -1,6 +1,7 @@
 package com.example.todolist.fragment;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -17,6 +18,7 @@ import android.widget.PopupMenu;
 
 import com.example.todolist.DAO.CategoryDAOImpl;
 import com.example.todolist.R;
+import com.example.todolist.activity.UpdateTaskActivity;
 import com.example.todolist.adapter.CategoryAdapter;
 import com.example.todolist.databinding.FragmentTaskBinding;
 import com.example.todolist.model.Category;
@@ -59,6 +61,16 @@ public class TasksFragment extends Fragment {
                 PopupMenu popup = new PopupMenu(wrapper, v, Gravity.END);
                 popup.getMenuInflater().inflate(R.menu.tasks_fragment_menu, popup.getMenu());
                 popup.show();
+            }
+        });
+
+        binding.floatingAddButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+//                Intent intent = new Intent(getContext(), UpdateTaskActivity.class);
+//                startActivity(intent);
+                BottomSheetAddTaskFragment bottomSheet = BottomSheetAddTaskFragment.newInstance();
+                bottomSheet.show(getParentFragmentManager(), bottomSheet.getTag());
             }
         });
     }

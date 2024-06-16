@@ -5,8 +5,12 @@
     <color name="blue">#4485E9</color>
     <color name="blue2">#7DABF6</color>
     <color name="grey">#C5CCD2</color>
-    <color name="grey2">#E1EEFE</color>
+    <color name="grey2">#EEEEEE</color>
     <color name="grey_text">#666F78</color>
     <color name="rippleColor">#F1ECEC</color>
     <color name="item_bg">#D2F5F9FD</color>
+    <color name="activity_bg">#F9FFFF</color>
+    <color name="date_time_bg">#EDF6FE</color>
+    <color name="task_title_bg">#F3F7F8</color>
+
 </resources>
