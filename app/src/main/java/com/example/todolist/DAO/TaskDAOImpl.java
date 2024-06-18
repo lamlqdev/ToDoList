@@ -32,6 +32,7 @@ public class TaskDAOImpl implements ITaskDAO{
         try {
             SQLiteDatabase db = dbHandler.getWritableDatabase();
             ContentValues values = new ContentValues();
+            values.put(TodolistContract.TasksEntry.TASK_ID, task.getTaskID());
             values.put(TodolistContract.TasksEntry.TITLE, task.getTitle());
             values.put(TodolistContract.TasksEntry.CATEGORY_ID, task.getCategoryID());
             values.put(TodolistContract.TasksEntry.DUE_DATE, task.getDueDate().format(dateFormatter));

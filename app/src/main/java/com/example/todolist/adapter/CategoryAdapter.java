@@ -66,7 +66,7 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.Catego
         selectedItem = position;
         notifyDataSetChanged();
     }
-    public class CategoryViewHolder extends RecyclerView.ViewHolder {
+    public static class CategoryViewHolder extends RecyclerView.ViewHolder {
         private MaterialButton button;
         public CategoryViewHolder(@NonNull View itemView) {
             super(itemView);

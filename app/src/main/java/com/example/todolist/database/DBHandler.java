@@ -15,7 +15,7 @@ public class DBHandler extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase db) {
         String CREATE_TABLE_TASKS = "CREATE TABLE tasks (" +
-                "task_id INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                "task_id INTEGER PRIMARY KEY, " +
                 "title TEXT, " +
                 "category_id INTEGER, " +
                 "due_date DATETIME, " +
