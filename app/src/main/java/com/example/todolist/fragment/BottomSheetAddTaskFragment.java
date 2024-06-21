@@ -36,7 +36,6 @@ public class BottomSheetAddTaskFragment extends BottomSheetDialogFragment {
     private SubtaskDAOImpl subtaskDAOImpl;
     private List<Subtask> subTaskList;
     public BottomSheetAddTaskFragment() {
-        // Required empty public constructor
     }
 
     public static BottomSheetAddTaskFragment newInstance() {
@@ -56,6 +55,19 @@ public class BottomSheetAddTaskFragment extends BottomSheetDialogFragment {
         return binding.getRoot();
     }
 
+    private void setWidgets() {
+        categoryDAOImpl = new CategoryDAOImpl(getContext());
+        categoryList = categoryDAOImpl.getAllCategories();
+
+        subtaskDAOImpl = new SubtaskDAOImpl(getContext());
+        subTaskList = new ArrayList<>();
+        subtaskAdapter = new SubtaskAdapter(getContext(), subTaskList);
+
+        binding.recyclerViewSubTask.setLayoutManager(new LinearLayoutManager(getContext()));
+        binding.recyclerViewSubTask.setAdapter(subtaskAdapter);
+
+        binding.titleTaskField.requestFocus();
+    }
     private void setEvents() {
         binding.buttonAddCatagory.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -73,20 +85,6 @@ public class BottomSheetAddTaskFragment extends BottomSheetDialogFragment {
                 subtaskAdapter.notifyItemInserted(subTaskList.size() - 1);
             }
         });
-    }
-
-    private void setWidgets() {
-        categoryDAOImpl = new CategoryDAOImpl(getContext());
-        categoryList = categoryDAOImpl.getAllCategories();
-
-        subtaskDAOImpl = new SubtaskDAOImpl(getContext());
-        subTaskList = new ArrayList<>();
-        subtaskAdapter = new SubtaskAdapter(getContext(), subTaskList);
-
-        binding.recyclerViewSubTask.setLayoutManager(new LinearLayoutManager(getContext()));
-        binding.recyclerViewSubTask.setAdapter(subtaskAdapter);
-
-        binding.titleTaskField.requestFocus();
     }
 
     private void showCategoryPopupMenu(View view) {

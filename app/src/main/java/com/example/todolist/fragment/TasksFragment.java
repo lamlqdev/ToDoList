@@ -67,8 +67,6 @@ public class TasksFragment extends Fragment {
         binding.floatingAddButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-//                Intent intent = new Intent(getContext(), UpdateTaskActivity.class);
-//                startActivity(intent);
                 BottomSheetAddTaskFragment bottomSheet = BottomSheetAddTaskFragment.newInstance();
                 bottomSheet.show(getParentFragmentManager(), bottomSheet.getTag());
             }
