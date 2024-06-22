@@ -11,6 +11,7 @@ import android.view.ViewGroup;
 import android.widget.PopupMenu;
 
 import androidx.annotation.NonNull;
+import androidx.fragment.app.DialogFragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -83,6 +84,14 @@ public class BottomSheetAddTaskFragment extends BottomSheetDialogFragment {
                 Subtask subtask = new Subtask();
                 subTaskList.add(subtask);
                 subtaskAdapter.notifyItemInserted(subTaskList.size() - 1);
+            }
+        });
+
+        binding.calendarButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                DialogFragment datePicker = DateDialogFragment.newInstance();
+                datePicker.show(getParentFragmentManager(), "datePicker");
             }
         });
     }
