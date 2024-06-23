@@ -25,6 +25,8 @@ import com.example.todolist.model.Category;
 import com.example.todolist.model.Subtask;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
+import com.google.android.material.timepicker.MaterialTimePicker;
+import com.google.android.material.timepicker.TimeFormat;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -94,6 +96,28 @@ public class BottomSheetAddTaskFragment extends BottomSheetDialogFragment {
                 datePicker.show(getParentFragmentManager(), "datePicker");
             }
         });
+
+        binding.timeButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showMaterialTimePicker();
+            }
+        });
+    }
+
+    private void showMaterialTimePicker() {
+        MaterialTimePicker.Builder builder = new MaterialTimePicker.Builder()
+                .setTitleText("Set Time")
+                .setTimeFormat(TimeFormat.CLOCK_24H)
+                .setHour(7)
+                .setMinute(0)
+                .setInputMode(MaterialTimePicker.INPUT_MODE_CLOCK)
+                .setTheme(R.style.CustomMaterialTimePicker);
+
+        MaterialTimePicker picker = builder.build();
+        picker.show(getParentFragmentManager(), "MATERIAL_TIME_PICKER");
+
+
     }
 
     private void showCategoryPopupMenu(View view) {
