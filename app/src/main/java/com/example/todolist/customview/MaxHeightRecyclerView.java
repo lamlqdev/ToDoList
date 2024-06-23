@@ -1,4 +1,4 @@
-package com.example.todolist.view;
+package com.example.todolist.customview;
 
 import android.content.Context;
 import android.util.AttributeSet;

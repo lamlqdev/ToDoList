@@ -1,5 +1,6 @@
 package com.example.todolist.fragment;
 
+import android.app.Dialog;
 import android.content.Context;
 import android.os.Bundle;
 
@@ -8,6 +9,7 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.FrameLayout;
 import android.widget.PopupMenu;
 
 import androidx.annotation.NonNull;
@@ -24,6 +26,7 @@ import com.example.todolist.databinding.FragmentBottomSheetAddTaskBinding;
 import com.example.todolist.model.Category;
 import com.example.todolist.model.Subtask;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
+import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 import com.google.android.material.timepicker.MaterialTimePicker;
 import com.google.android.material.timepicker.TimeFormat;
@@ -48,8 +51,25 @@ public class BottomSheetAddTaskFragment extends BottomSheetDialogFragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-    }
 
+    }
+    @NonNull
+    @Override
+    public Dialog onCreateDialog(Bundle savedInstanceState) {
+        BottomSheetDialog dialog = (BottomSheetDialog) super.onCreateDialog(savedInstanceState);
+
+        dialog.setOnShowListener(dialogInterface -> {
+            BottomSheetDialog d = (BottomSheetDialog) dialogInterface;
+            FrameLayout bottomSheet = d.findViewById(com.google.android.material.R.id.design_bottom_sheet);
+            if (bottomSheet != null) {
+                BottomSheetBehavior<View> behavior = BottomSheetBehavior.from(bottomSheet);
+                behavior.setState(BottomSheetBehavior.STATE_EXPANDED);
+                behavior.setDraggable(false);
+            }
+        });
+
+        return dialog;
+    }
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         binding = FragmentBottomSheetAddTaskBinding.inflate(inflater, container, false);
@@ -86,6 +106,7 @@ public class BottomSheetAddTaskFragment extends BottomSheetDialogFragment {
                 Subtask subtask = new Subtask();
                 subTaskList.add(subtask);
                 subtaskAdapter.notifyItemInserted(subTaskList.size() - 1);
+                binding.recyclerViewSubTask.scrollToPosition(subTaskList.size() - 1);
             }
         });
 
