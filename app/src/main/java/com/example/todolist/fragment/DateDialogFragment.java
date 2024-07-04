@@ -41,6 +41,11 @@ public class DateDialogFragment extends DialogFragment {
     private CalendarView calendarView;
     private LocalDate selectedDate = null;
     LocalDate mCurrentMonth = YearMonth.now().atDay(1);
+    private OnDateSelectedListener dateSelectedListener;
+
+    public interface OnDateSelectedListener {
+        void onDateSelected(LocalDate date);
+    }
 
     public static DateDialogFragment newInstance() {
         return new DateDialogFragment();
@@ -99,13 +104,12 @@ public class DateDialogFragment extends DialogFragment {
                 }
 
                 container.day = calendarDay;
-                CalendarDay day = calendarDay;
                 TextView textView = container.calendarDayText;
-                textView.setText(String.valueOf(day.getDate().getDayOfMonth()));
+                textView.setText(String.valueOf(calendarDay.getDate().getDayOfMonth()));
 
-                if (day.getPosition() == DayPosition.MonthDate) {
+                if (calendarDay.getPosition() == DayPosition.MonthDate) {
                     textView.setVisibility(View.VISIBLE);
-                    if (day.getDate().equals(selectedDate)) {
+                    if (calendarDay.getDate().equals(selectedDate)) {
                         // Nếu là ngày được chọn, thay đổi màu chữ và nền.
                         textView.setTextColor(Color.WHITE);
                         textView.setBackgroundResource(R.drawable.background_selection_day);
@@ -115,7 +119,7 @@ public class DateDialogFragment extends DialogFragment {
                         textView.setBackground(null);
                     }
                 } else {
-                    textView.setVisibility(View.VISIBLE);
+                    textView.setVisibility(View.INVISIBLE);
                 }
             }
         });
@@ -160,71 +164,36 @@ public class DateDialogFragment extends DialogFragment {
                 selectedDate = null;
                 calendarView.notifyDateChanged(previousSelection); // Cập nhật lại ngày đã chọn trước đó
             }
-        });
-
-        binding.buttonToday.setOnClickListener(v -> {
-            LocalDate today = LocalDate.now();
-            calendarView.scrollToMonth(YearMonth.from(today));
-            updateButtonState(binding.buttonToday);
-            if (!today.equals(selectedDate)) {
-                LocalDate previousSelection = selectedDate;
-                selectedDate = today;
-                calendarView.notifyDateChanged(today);
-                if (previousSelection != null) {
-                    calendarView.notifyDateChanged(previousSelection);
-                }
-            } else {
-                calendarView.notifyDateChanged(today);
+            if (dateSelectedListener != null) {
+                dateSelectedListener.onDateSelected(selectedDate);
             }
         });
 
-        binding.buttonTomorrow.setOnClickListener(v -> {
-            LocalDate tomorrow = LocalDate.now().plusDays(1);
-            calendarView.scrollToMonth(YearMonth.from(tomorrow));
-            updateButtonState(binding.buttonTomorrow);
-            if (!tomorrow.equals(selectedDate)) {
-                LocalDate previousSelection = selectedDate;
-                selectedDate = tomorrow;
-                calendarView.notifyDateChanged(tomorrow);
-                if (previousSelection != null) {
-                    calendarView.notifyDateChanged(previousSelection);
-                }
-            } else {
-                calendarView.notifyDateChanged(tomorrow);
-            }
-        });
+        binding.buttonToday.setOnClickListener(v -> handleDateSelection(LocalDate.now(), binding.buttonToday));
 
-        binding.button3DaysLater.setOnClickListener(v ->{
-            LocalDate threeDaysLater = LocalDate.now().plusDays(3);
-            calendarView.scrollToMonth(YearMonth.from(threeDaysLater));
-            updateButtonState(binding.button3DaysLater);
-            if (!threeDaysLater.equals(selectedDate)) {
-                LocalDate previousSelection = selectedDate;
-                selectedDate = threeDaysLater;
-                calendarView.notifyDateChanged(threeDaysLater);
-                if (previousSelection != null) {
-                    calendarView.notifyDateChanged(previousSelection);
-                }
-            } else {
-                calendarView.notifyDateChanged(threeDaysLater);
-            }
-        });
+        binding.buttonTomorrow.setOnClickListener(v -> handleDateSelection(LocalDate.now().plusDays(1), binding.buttonTomorrow));
 
-        binding.buttonThisSunday.setOnClickListener(v -> {
-            LocalDate thisSunday = LocalDate.now().with(TemporalAdjusters.nextOrSame(DayOfWeek.SUNDAY));
-            calendarView.scrollToMonth(YearMonth.from(thisSunday));
-            updateButtonState(binding.buttonThisSunday);
-            if (!thisSunday.equals(selectedDate)) {
-                LocalDate previousSelection = selectedDate;
-                selectedDate = thisSunday;
-                calendarView.notifyDateChanged(thisSunday);
-                if (previousSelection != null) {
-                    calendarView.notifyDateChanged(previousSelection);
-                }
-            } else {
-                calendarView.notifyDateChanged(thisSunday);
+        binding.button3DaysLater.setOnClickListener(v -> handleDateSelection(LocalDate.now().plusDays(3), binding.button3DaysLater));
+
+        binding.buttonThisSunday.setOnClickListener(v -> handleDateSelection(LocalDate.now().with(TemporalAdjusters.nextOrSame(DayOfWeek.SUNDAY)), binding.buttonThisSunday));
+    }
+
+    private void handleDateSelection(LocalDate date, Button button) {
+        calendarView.scrollToMonth(YearMonth.from(date));
+        updateButtonState(button);
+        if (!date.equals(selectedDate)) {
+            LocalDate previousSelection = selectedDate;
+            selectedDate = date;
+            calendarView.notifyDateChanged(date);
+            if (previousSelection != null) {
+                calendarView.notifyDateChanged(previousSelection);
             }
-        });
+        } else {
+            calendarView.notifyDateChanged(date);
+        }
+        if (dateSelectedListener != null) {
+            dateSelectedListener.onDateSelected(selectedDate);
+        }
     }
 
     private void updateButtonState(Button selectedButton) {
@@ -257,6 +226,10 @@ public class DateDialogFragment extends DialogFragment {
         binding = null;
     }
 
+    public void setOnDateSelectedListener(OnDateSelectedListener listener) {
+        this.dateSelectedListener = listener;
+    }
+
     public class DayViewContainer extends ViewContainer {
         private CalendarDay day;
         public final TextView calendarDayText;
@@ -264,24 +237,24 @@ public class DateDialogFragment extends DialogFragment {
         public DayViewContainer(View view) {
             super(view);
             calendarDayText = view.findViewById(R.id.calendarDayText);
-            view.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    // Xử lý sự kiện khi người dùng click vào một ngày trong lịch.
-                    if (day.getPosition() == DayPosition.MonthDate) {
-                        // Kiểm tra nếu ngày được click là ngày trong tháng.
-                        LocalDate currentSelection = selectedDate;
-                        if (currentSelection == day.getDate()) {
-                            selectedDate = null; // Bỏ chọn ngày nếu ngày đã được chọn trước đó.
-                            calendarView.notifyDateChanged(currentSelection); // Cập nhật lại giao diện cho ngày bị bỏ chọn.
-                        } else {
-                            selectedDate = day.getDate(); // Chọn ngày mới.
-                            calendarView.notifyDateChanged(day.getDate()); // Cập nhật lại giao diện cho ngày được chọn.
-                            if (currentSelection != null) {
-                                calendarView.notifyDateChanged(currentSelection); // Bỏ chọn ngày trước đó nếu có.
-                            }
+            view.setOnClickListener(v -> {
+                if (day.getPosition() == DayPosition.MonthDate) {
+                    LocalDate currentSelection = selectedDate;
+                    if (currentSelection == day.getDate()) {
+                        selectedDate = null; // Bỏ chọn ngày nếu ngày đã được chọn trước đó.
+                        calendarView.notifyDateChanged(currentSelection); // Cập nhật lại giao diện cho ngày bị bỏ chọn.
+                    } else {
+                        selectedDate = day.getDate(); // Chọn ngày mới.
+                        calendarView.notifyDateChanged(day.getDate()); // Cập nhật lại giao diện cho ngày được chọn.
+                        if (currentSelection != null) {
+                            calendarView.notifyDateChanged(currentSelection); // Bỏ chọn ngày trước đó nếu có.
                         }
-                        updateButtonStates(selectedDate);
+                    }
+                    updateButtonStates(selectedDate);
+
+                    // Gọi callback để truyền ngày được chọn về listener
+                    if (dateSelectedListener != null) {
+                        dateSelectedListener.onDateSelected(selectedDate);
                     }
                 }
             });
@@ -289,14 +262,12 @@ public class DateDialogFragment extends DialogFragment {
     }
 
     private void updateButtonStates(LocalDate selectedDate) {
-        // Xoa màu các button
         for (Button button : new Button[]{binding.buttonNoDate, binding.buttonToday, binding.buttonTomorrow, binding.buttonThisSunday, binding.button3DaysLater}) {
             button.setBackgroundResource(R.drawable.background_white_radius_5dp);
             button.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.task_title_bg)));
             button.setTextColor(Color.BLACK);
         }
 
-        // Kiểm tra ngày được chọn và cập nhật màu sắc nút tương ứng
         if (selectedDate != null) {
             LocalDate today = LocalDate.now();
             LocalDate tomorrow = today.plusDays(1);

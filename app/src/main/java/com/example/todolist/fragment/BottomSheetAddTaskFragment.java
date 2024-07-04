@@ -4,6 +4,8 @@ import android.app.Dialog;
 import android.content.Context;
 import android.os.Bundle;
 
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.ContextThemeWrapper;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -13,6 +15,7 @@ import android.widget.FrameLayout;
 import android.widget.PopupMenu;
 
 import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.DialogFragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -31,16 +34,23 @@ import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 import com.google.android.material.timepicker.MaterialTimePicker;
 import com.google.android.material.timepicker.TimeFormat;
 
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
-public class BottomSheetAddTaskFragment extends BottomSheetDialogFragment {
+public class BottomSheetAddTaskFragment extends BottomSheetDialogFragment implements DateDialogFragment.OnDateSelectedListener{
     private FragmentBottomSheetAddTaskBinding binding;
     private CategoryDAOImpl categoryDAOImpl;
     private List<Category> categoryList;
     private SubtaskAdapter subtaskAdapter;
     private SubtaskDAOImpl subtaskDAOImpl;
     private List<Subtask> subTaskList;
+
+    private LocalDate selectedDate;
+    private LocalTime selectedTime;
+
     public BottomSheetAddTaskFragment() {
     }
 
@@ -113,7 +123,8 @@ public class BottomSheetAddTaskFragment extends BottomSheetDialogFragment {
         binding.calendarButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                DialogFragment datePicker = DateDialogFragment.newInstance();
+                DateDialogFragment  datePicker = DateDialogFragment.newInstance();
+                datePicker.setOnDateSelectedListener(BottomSheetAddTaskFragment.this);
                 datePicker.show(getParentFragmentManager(), "datePicker");
             }
         });
@@ -122,6 +133,27 @@ public class BottomSheetAddTaskFragment extends BottomSheetDialogFragment {
             @Override
             public void onClick(View v) {
                 showMaterialTimePicker();
+            }
+        });
+
+        binding.titleTaskField.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                if (s.length() > 0) {
+                    binding.buttonCreateTask.setTextColor(ContextCompat.getColor(requireContext(), R.color.blue));
+                } else {
+                    binding.buttonCreateTask.setTextColor(ContextCompat.getColor(requireContext(), R.color.grey_text));
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
             }
         });
     }
@@ -138,7 +170,15 @@ public class BottomSheetAddTaskFragment extends BottomSheetDialogFragment {
         MaterialTimePicker picker = builder.build();
         picker.show(getParentFragmentManager(), "MATERIAL_TIME_PICKER");
 
-
+        picker.addOnPositiveButtonClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                int hour = picker.getHour();
+                int minute = picker.getMinute();
+                selectedTime = LocalTime.of(hour, minute);
+                binding.titleTaskField.setText(selectedTime.toString());
+            }
+        });
     }
 
     private void showCategoryPopupMenu(View view) {
@@ -151,9 +191,20 @@ public class BottomSheetAddTaskFragment extends BottomSheetDialogFragment {
             @Override
             public boolean onMenuItemClick(MenuItem item) {
                 binding.buttonAddCatagory.setText(item.getTitle());
+                binding.buttonAddCatagory.setTextColor(ContextCompat.getColor(requireContext(), R.color.blue));
                 return true;
             }
         });
         popupMenu.show();
+    }
+
+    @Override
+    public void onDateSelected(LocalDate date) {
+        if (date != null){
+            selectedDate = date;
+        }
+        else {
+            selectedDate = null;
+        }
     }
 }
