@@ -60,6 +60,12 @@ public class DateDialogFragment extends DialogFragment {
         super.onViewCreated(view, savedInstanceState);
         setWidgets();
         setEvents();
+
+        // Chọn ngày hôm nay mặc định và cập nhật trạng thái nút
+        LocalDate today = LocalDate.now();
+        selectedDate = today;
+        calendarView.notifyDateChanged(today);
+        updateButtonState(binding.buttonToday);
     }
 
     @Override
@@ -275,9 +281,37 @@ public class DateDialogFragment extends DialogFragment {
                                 calendarView.notifyDateChanged(currentSelection); // Bỏ chọn ngày trước đó nếu có.
                             }
                         }
+                        updateButtonStates(selectedDate);
                     }
                 }
             });
+        }
+    }
+
+    private void updateButtonStates(LocalDate selectedDate) {
+        // Xoa màu các button
+        for (Button button : new Button[]{binding.buttonNoDate, binding.buttonToday, binding.buttonTomorrow, binding.buttonThisSunday, binding.button3DaysLater}) {
+            button.setBackgroundResource(R.drawable.background_white_radius_5dp);
+            button.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.task_title_bg)));
+            button.setTextColor(Color.BLACK);
+        }
+
+        // Kiểm tra ngày được chọn và cập nhật màu sắc nút tương ứng
+        if (selectedDate != null) {
+            LocalDate today = LocalDate.now();
+            LocalDate tomorrow = today.plusDays(1);
+            LocalDate threeDaysLater = today.plusDays(3);
+            LocalDate thisSunday = today.with(TemporalAdjusters.nextOrSame(DayOfWeek.SUNDAY));
+
+            if (selectedDate.equals(today)) {
+                updateButtonState(binding.buttonToday);
+            } else if (selectedDate.equals(tomorrow)) {
+                updateButtonState(binding.buttonTomorrow);
+            } else if (selectedDate.equals(threeDaysLater)) {
+                updateButtonState(binding.button3DaysLater);
+            } else if (selectedDate.equals(thisSunday)) {
+                updateButtonState(binding.buttonThisSunday);
+            }
         }
     }
 }
