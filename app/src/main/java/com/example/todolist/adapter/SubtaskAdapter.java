@@ -43,6 +43,7 @@ public class SubtaskAdapter extends RecyclerView.Adapter<SubtaskAdapter.SubtaskV
         Subtask subtask = subtasks.get(position);
         holder.binding.checkboxIsDone.setChecked(subtask.getStatus() == 2);
         holder.binding.editTextSubTask.setText(subtask.getDescription());
+        holder.binding.editTextSubTask.requestFocus();
 
         // Update subtask status on checkbox change and save to database
         holder.binding.checkboxIsDone.setOnCheckedChangeListener((buttonView, isChecked) -> {

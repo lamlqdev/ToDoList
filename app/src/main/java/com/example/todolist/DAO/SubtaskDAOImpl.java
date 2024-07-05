@@ -30,7 +30,7 @@ public class SubtaskDAOImpl implements ISubtaskDAO{
             ContentValues values = new ContentValues();
             values.put(TodolistContract.SubtasksEntry.TASK_ID, subtask.getTaskID());
             values.put(TodolistContract.SubtasksEntry.DESCRIPTION, subtask.getDescription());
-            values.put(TodolistContract.SubtasksEntry.STATUS, subtask.getStatus());
+            values.put(TodolistContract.SubtasksEntry.STATUS, 1);
             LocalDateTime now = LocalDateTime.now();
             values.put(TodolistContract.SubtasksEntry.CREATED_AT, now.format(formatter));
 

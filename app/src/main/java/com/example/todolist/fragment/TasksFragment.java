@@ -1,13 +1,11 @@
 package com.example.todolist.fragment;
 
 import android.content.Context;
-import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
 import android.view.ContextThemeWrapper;
 import android.view.Gravity;
@@ -17,42 +15,60 @@ import android.view.ViewGroup;
 import android.widget.PopupMenu;
 
 import com.example.todolist.DAO.CategoryDAOImpl;
+import com.example.todolist.DAO.TaskDAOImpl;
 import com.example.todolist.R;
-import com.example.todolist.activity.UpdateTaskActivity;
 import com.example.todolist.adapter.CategoryAdapter;
+import com.example.todolist.adapter.TaskAdapter;
 import com.example.todolist.databinding.FragmentTaskBinding;
 import com.example.todolist.model.Category;
+import com.example.todolist.model.Task;
 
 import java.util.List;
 
-public class TasksFragment extends Fragment {
+public class TasksFragment extends Fragment implements BottomSheetAddTaskFragment.OnTaskAddedListener {
     private FragmentTaskBinding binding;
     private CategoryDAOImpl categoryDAOImpl;
-    private RecyclerView categoryContainer;
+    private TaskDAOImpl taskDAOImpl;
     private List<Category> categoryList;
+    private List<Task> taskList;
     private CategoryAdapter categoryAdapter;
+    private TaskAdapter taskAdapter;
+
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         binding = FragmentTaskBinding.inflate(inflater, container, false);
         categoryDAOImpl = new CategoryDAOImpl(getContext());
+        taskDAOImpl = new TaskDAOImpl(getContext());
+
         setWidget();
-        setRecyclerViewCategory();
         setEvents();
         return binding.getRoot();
     }
+
     private void setWidget() {
-
+        setRecyclerViewCategory();
+        setRecyclerTask();
+        binding.previousTaskContainer.setVisibility(View.GONE);
+        binding.futureTaskContainer.setVisibility(View.GONE);
     }
+
+    private void setRecyclerTask() {
+        taskList = taskDAOImpl.getAllTasks();
+        taskAdapter = new TaskAdapter(getContext(), taskList);
+
+        binding.listTodayTasks.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
+        binding.listTodayTasks.setAdapter(taskAdapter);
+    }
+
     private void setRecyclerViewCategory() {
-        categoryContainer = binding.categoryContainer;
         categoryList = categoryDAOImpl.getAllCategories();
-
         categoryAdapter = new CategoryAdapter(getContext(), categoryList);
-        categoryContainer.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false));
 
-        categoryContainer.setAdapter(categoryAdapter);
+        binding.categoryContainer.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false));
+        binding.categoryContainer.setAdapter(categoryAdapter);
         categoryAdapter.setSelectedItem(0);
     }
+
     private void setEvents() {
         binding.moreOptions.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -68,8 +84,17 @@ public class TasksFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 BottomSheetAddTaskFragment bottomSheet = BottomSheetAddTaskFragment.newInstance();
+                bottomSheet.setOnTaskAddedListener(TasksFragment.this);
                 bottomSheet.show(getParentFragmentManager(), bottomSheet.getTag());
             }
         });
+    }
+
+    @Override
+    public void onTaskAdded() {
+        taskList.clear();
+        taskList.addAll(0, taskDAOImpl.getAllTasks());
+        taskAdapter.notifyDataSetChanged();
+        binding.listTodayTasks.smoothScrollToPosition(0);
     }
 }

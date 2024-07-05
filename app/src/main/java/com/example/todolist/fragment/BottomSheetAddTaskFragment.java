@@ -59,6 +59,11 @@ public class BottomSheetAddTaskFragment extends BottomSheetDialogFragment implem
     private LocalDate selectedDate;
     private LocalTime selectedTime;
     private int selectedCategoryID = 0;
+    private OnTaskAddedListener onTaskAddedListener;
+
+    public interface OnTaskAddedListener {
+        void onTaskAdded();
+    }
 
     public BottomSheetAddTaskFragment() {
     }
@@ -101,7 +106,6 @@ public class BottomSheetAddTaskFragment extends BottomSheetDialogFragment implem
     public void onCancel(@NonNull DialogInterface dialog) {
         subtaskDAOImpl.deleteSubtaskByTaskID(taskID);
         subTaskList.clear();
-        subtaskAdapter.notifyDataSetChanged();
         dismiss();
         super.onCancel(dialog);
     }
@@ -186,6 +190,10 @@ public class BottomSheetAddTaskFragment extends BottomSheetDialogFragment implem
         });
     }
 
+    public void setOnTaskAddedListener(OnTaskAddedListener listener){
+        this.onTaskAddedListener = listener;
+    }
+
     private void addNewTask() {
         String taskTitle = binding.titleTaskField.getText().toString().trim();
         if (taskTitle.isEmpty()) {
@@ -209,6 +217,9 @@ public class BottomSheetAddTaskFragment extends BottomSheetDialogFragment implem
 
             if (taskDAOImpl.addTask(task)) {
                 Toast.makeText(getContext(), "Task added successfully", Toast.LENGTH_SHORT).show();
+                if (onTaskAddedListener != null) {
+                    onTaskAddedListener.onTaskAdded();
+                }
                 dismiss();
             } else {
                 Toast.makeText(getContext(), "Failed to add task", Toast.LENGTH_SHORT).show();
