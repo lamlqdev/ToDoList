@@ -56,7 +56,7 @@ public class BottomSheetAddTaskFragment extends BottomSheetDialogFragment implem
     private SubtaskAdapter subtaskAdapter;
     private List<Subtask> subTaskList;
     private int taskID;
-    private LocalDate selectedDate;
+    private LocalDate selectedDate = LocalDate.now();
     private LocalTime selectedTime;
     private int selectedCategoryID = 0;
     private OnTaskAddedListener onTaskAddedListener;
@@ -202,29 +202,33 @@ public class BottomSheetAddTaskFragment extends BottomSheetDialogFragment implem
             Task task = new Task();
             task.setTaskID(taskID);
             task.setTitle(taskTitle);
+            task.setDueDate(selectedDate);
 
             if (selectedCategoryID != 0) {
                 task.setCategoryID(selectedCategoryID);
-            }
-
-            if (selectedDate != null) {
-                task.setDueDate(selectedDate);
             }
 
             if (selectedTime != null) {
                 task.setDueTime(selectedTime);
             }
 
-            if (taskDAOImpl.addTask(task)) {
-                Toast.makeText(getContext(), "Task added successfully", Toast.LENGTH_SHORT).show();
-                if (onTaskAddedListener != null) {
-                    onTaskAddedListener.onTaskAdded();
-                }
-                dismiss();
-            } else {
-                Toast.makeText(getContext(), "Failed to add task", Toast.LENGTH_SHORT).show();
+            taskDAOImpl.addTask(task);
+            if (onTaskAddedListener != null) {
+                onTaskAddedListener.onTaskAdded();
             }
+
+            refreshInput();
         }
+    }
+
+    private void refreshInput() {
+        //clear input and generate new taskID
+        taskID = TaskIDGenerator.generateUniqueID();
+        binding.titleTaskField.setText("");
+        selectedDate = LocalDate.now();
+        selectedTime = null;
+        binding.buttonAddCatagory.setText("No Category");
+        binding.buttonAddCatagory.setTextColor(ContextCompat.getColor(requireContext(), R.color.grey_text));
     }
 
     private void showMaterialTimePicker() {

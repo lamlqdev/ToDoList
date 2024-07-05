@@ -42,143 +42,200 @@
             android:src="@drawable/ic_more_options" />
     </LinearLayout>
 
-    <!-- Previous Task Section -->
-    <LinearLayout
-        android:id="@+id/previousTaskContainer"
+    <!-- Tasks Sections wrapped in NestedScrollView -->
+    <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/categoryManagerContainer"
-        android:orientation="vertical">
+        android:layout_height="match_parent"
+        android:layout_below="@id/categoryManagerContainer">
 
-        <!-- Header Section -->
         <LinearLayout
-            android:id="@+id/PreviousTaskHeader"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:gravity="center_vertical"
-            android:layout_marginTop="15dp">
+            android:orientation="vertical">
 
-            <TextView
-                android:layout_width="wrap_content"
+            <!-- Previous Task Section -->
+            <LinearLayout
+                android:id="@+id/previousTaskContainer"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/previous"
-                android:textSize="18sp"
-                android:paddingStart="15dp"
-                android:paddingEnd="5dp"
-                android:textStyle="bold" />
+                android:orientation="vertical">
 
-            <ImageButton
-                android:id="@+id/previousArrowButton"
-                android:layout_width="wrap_content"
+                <!-- Header Section -->
+                <LinearLayout
+                    android:id="@+id/PreviousTaskHeader"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:layout_marginTop="15dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/previous"
+                        android:textSize="18sp"
+                        android:paddingStart="15dp"
+                        android:paddingEnd="5dp"
+                        android:textStyle="bold" />
+
+                    <ImageButton
+                        android:id="@+id/previousArrowButton"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:background="@null"
+                        android:contentDescription="@string/Arrow"
+                        android:src="@drawable/ic_arrow_drop_up" />
+                </LinearLayout>
+
+                <!-- List Section -->
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/listPreviousTasks"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="15dp"
+                    android:layout_marginEnd="15dp"
+                    android:layout_marginTop="5dp"
+                    android:clipToPadding="false" />
+            </LinearLayout>
+
+            <!-- Today Task Section -->
+            <LinearLayout
+                android:id="@+id/todayTaskContainer"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@null"
-                android:contentDescription="@string/Arrow"
-                android:src="@drawable/ic_arrow_drop_up" />
+                android:orientation="vertical">
+
+                <!-- Header Section -->
+                <LinearLayout
+                    android:id="@+id/todayTaskHeader"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:layout_marginTop="15dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/today"
+                        android:textSize="18sp"
+                        android:paddingStart="15dp"
+                        android:paddingEnd="5dp"
+                        android:textStyle="bold" />
+
+                    <ImageButton
+                        android:id="@+id/arrowTodayButton"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:background="@null"
+                        android:contentDescription="@string/Arrow"
+                        android:src="@drawable/ic_arrow_drop_up" />
+                </LinearLayout>
+
+                <!-- List Section -->
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/listTodayTasks"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="15dp"
+                    android:layout_marginEnd="15dp"
+                    android:layout_marginTop="5dp"
+                    android:clipToPadding="false" />
+            </LinearLayout>
+
+            <!-- Future Task Section -->
+            <LinearLayout
+                android:id="@+id/futureTaskContainer"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <!-- Header Section -->
+                <LinearLayout
+                    android:id="@+id/futureTaskHeader"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:layout_marginTop="15dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/future"
+                        android:textSize="18sp"
+                        android:paddingStart="15dp"
+                        android:paddingEnd="5dp"
+                        android:textStyle="bold" />
+
+                    <ImageButton
+                        android:id="@+id/futureArrowButton"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:background="@null"
+                        android:contentDescription="@string/Arrow"
+                        android:src="@drawable/ic_arrow_drop_up" />
+                </LinearLayout>
+
+                <!-- List Section -->
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/listFutureTasks"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="15dp"
+                    android:layout_marginEnd="15dp"
+                    android:layout_marginTop="5dp"
+                    android:clipToPadding="false" />
+            </LinearLayout>
+
+            <!-- Completed Task Section -->
+            <LinearLayout
+                android:id="@+id/completedTaskContainer"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <!-- Header Section -->
+                <LinearLayout
+                    android:id="@+id/completedTaskHeader"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:layout_marginTop="15dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/completed_tasks"
+                        android:textSize="18sp"
+                        android:paddingStart="15dp"
+                        android:paddingEnd="5dp"
+                        android:textStyle="bold" />
+
+                    <ImageButton
+                        android:id="@+id/completedArrowButton"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:background="@null"
+                        android:contentDescription="@string/Arrow"
+                        android:src="@drawable/ic_arrow_drop_up" />
+                </LinearLayout>
+
+                <!-- List Section -->
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/listCompletedTasks"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="15dp"
+                    android:layout_marginEnd="15dp"
+                    android:layout_marginTop="5dp"
+                    android:clipToPadding="false" />
+            </LinearLayout>
+
         </LinearLayout>
 
-        <!-- List Section -->
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/listPreviousTasks"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_marginStart="15dp"
-            android:layout_marginEnd="15dp"
-            android:layout_marginTop="5dp"
-            android:clipToPadding="false" />
-    </LinearLayout>
-
-    <!-- Today Task Section -->
-    <LinearLayout
-        android:id="@+id/todayTaskContainer"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/previousTaskContainer"
-        android:orientation="vertical">
-
-        <!-- Header Section -->
-        <LinearLayout
-            android:id="@+id/todayTaskHeader"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:gravity="center_vertical"
-            android:layout_marginTop="15dp">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/today"
-                android:textSize="18sp"
-                android:paddingStart="15dp"
-                android:paddingEnd="5dp"
-                android:textStyle="bold" />
-
-            <ImageButton
-                android:id="@+id/arrowTodayButton"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:background="@null"
-                android:contentDescription="@string/Arrow"
-                android:src="@drawable/ic_arrow_drop_up" />
-        </LinearLayout>
-
-        <!-- List Section -->
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/listTodayTasks"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_marginStart="15dp"
-            android:layout_marginEnd="15dp"
-            android:layout_marginTop="5dp"
-            android:clipToPadding="false" />
-    </LinearLayout>
-
-    <!-- Future Task Section -->
-    <LinearLayout
-        android:id="@+id/futureTaskContainer"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/todayTaskContainer"
-        android:orientation="vertical">
-
-        <!-- Header Section -->
-        <LinearLayout
-            android:id="@+id/futureTaskHeader"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:gravity="center_vertical"
-            android:layout_marginTop="15dp">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/future"
-                android:textSize="18sp"
-                android:paddingStart="15dp"
-                android:paddingEnd="5dp"
-                android:textStyle="bold" />
-
-            <ImageButton
-                android:id="@+id/futureArrowButton"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:background="@null"
-                android:contentDescription="@string/Arrow"
-                android:src="@drawable/ic_arrow_drop_up" />
-        </LinearLayout>
-
-        <!-- List Section -->
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/listFutureTasks"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_marginStart="15dp"
-            android:layout_marginEnd="15dp"
-            android:layout_marginTop="5dp"
-            android:clipToPadding="false" />
-    </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/floating_add_button"
