@@ -80,6 +80,21 @@ public class SubtaskDAOImpl implements ISubtaskDAO{
     }
 
     @Override
+    public boolean deleteSubtaskByTaskID(int taskID) {
+        try {
+            SQLiteDatabase db = dbHandler.getWritableDatabase();
+            int result = db.delete(TodolistContract.SubtasksEntry.TABLE_NAME,
+                    TodolistContract.SubtasksEntry.TASK_ID + " = ?",
+                    new String[]{String.valueOf(taskID)});
+            db.close();
+            return result > 0;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    @Override
     public Subtask getSubtask(int id) {
         Subtask subtask = null;
         Cursor cursor = null;

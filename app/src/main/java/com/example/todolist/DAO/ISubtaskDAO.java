@@ -8,6 +8,7 @@ public interface ISubtaskDAO {
     boolean addSubtask(Subtask subtask);
     boolean updateSubtask(Subtask subtask);
     boolean deleteSubtask(Subtask subtask);
+    boolean deleteSubtaskByTaskID(int taskID);
     Subtask getSubtask(int id);
     List<Subtask> getAllSubtasks();
 }
