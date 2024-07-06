@@ -11,6 +11,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.todolist.DAO.TaskDAOImpl;
 import com.example.todolist.R;
 import com.example.todolist.databinding.ItemListTaskBinding;
 import com.example.todolist.model.Task;
@@ -21,10 +22,12 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
     private List<Task> taskList;
     private Context context;
     private LayoutInflater inflater;
+    private TaskDAOImpl taskDAOImpl;
 
     public TaskAdapter(Context context, List<Task> taskList) {
         this.taskList = taskList;
         this.context = context;
+        this.taskDAOImpl = new TaskDAOImpl(context);
         this.inflater = LayoutInflater.from(context);
     }
     @NonNull
@@ -40,9 +43,9 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
         holder.binding.taskText.setText(task.getTitle());
         holder.binding.taskCheckBox.setChecked(task.getStatus() == 2);
 
-        holder.binding.taskCheckBox.setOnClickListener(v -> {
-            task.setStatus(task.getStatus() == 2 ? 1 : 2);
-            notifyItemChanged(position);
+        holder.binding.taskCheckBox.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            task.setStatus(isChecked ? 2 : 1);
+            taskDAOImpl.updateTask(task);
         });
     }
 

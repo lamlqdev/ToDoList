@@ -27,7 +27,7 @@ public class SubtaskAdapter extends RecyclerView.Adapter<SubtaskAdapter.SubtaskV
     public SubtaskAdapter(Context context, List<Subtask> subtasks) {
         this.subtasks = subtasks;
         this.context = context;
-        subtaskDAOImpl = new SubtaskDAOImpl(context);
+        this.subtaskDAOImpl = new SubtaskDAOImpl(context);
         layoutInflater = LayoutInflater.from(context);
     }
 

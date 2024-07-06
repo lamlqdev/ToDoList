@@ -61,8 +61,12 @@ public class TaskDAOImpl implements ITaskDAO{
             ContentValues values = new ContentValues();
             values.put(TodolistContract.TasksEntry.TITLE, task.getTitle());
             values.put(TodolistContract.TasksEntry.CATEGORY_ID, task.getCategoryID());
-            values.put(TodolistContract.TasksEntry.DUE_DATE, task.getDueDate().format(dateFormatter));
-            values.put(TodolistContract.TasksEntry.DUE_TIME, task.getDueTime().format(timeFormatter));
+            if (task.getDueDate() != null) {
+                values.put(TodolistContract.TasksEntry.DUE_DATE, task.getDueDate().format(dateFormatter));
+            }
+            if (task.getDueTime() != null) {
+                values.put(TodolistContract.TasksEntry.DUE_TIME, task.getDueTime().format(timeFormatter));
+            }
             values.put(TodolistContract.TasksEntry.STATUS, task.getStatus());
             LocalDateTime now = LocalDateTime.now();
             values.put(TodolistContract.TasksEntry.UPDATED_AT, now.format(dateTimeFormatter));

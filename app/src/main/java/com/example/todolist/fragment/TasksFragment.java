@@ -1,6 +1,7 @@
 package com.example.todolist.fragment;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -13,6 +14,7 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.PopupMenu;
 
@@ -74,7 +76,6 @@ public class TasksFragment extends Fragment implements BottomSheetAddTaskFragmen
         setupTaskRecyclerView(binding.listTodayTasks, todayTasks, todayTaskAdapter, binding.todayTaskContainer);
         setupTaskRecyclerView(binding.listFutureTasks, futureTasks, futureTaskAdapter, binding.futureTaskContainer);
         setupTaskRecyclerView(binding.listCompletedTasks, completedTasks, completedTaskAdapter, binding.completedTaskContainer);
-
     }
 
     private void setupTaskRecyclerView(RecyclerView recyclerView, List<Task> tasks, TaskAdapter adapter, View container) {
@@ -108,15 +109,37 @@ public class TasksFragment extends Fragment implements BottomSheetAddTaskFragmen
             }
         });
 
-        binding.floatingAddButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                BottomSheetAddTaskFragment bottomSheet = BottomSheetAddTaskFragment.newInstance();
-                bottomSheet.setOnTaskAddedListener(TasksFragment.this);
-                bottomSheet.show(getParentFragmentManager(), bottomSheet.getTag());
-            }
+        binding.floatingAddButton.setOnClickListener(v -> {
+            BottomSheetAddTaskFragment bottomSheet = BottomSheetAddTaskFragment.newInstance();
+            bottomSheet.setOnTaskAddedListener(TasksFragment.this);
+            bottomSheet.show(getParentFragmentManager(), bottomSheet.getTag());
+        });
+
+        setupArrowButton(binding.previousArrowButton, binding.listPreviousTasks, "previous_tasks_expanded");
+        setupArrowButton(binding.todayArrowButton, binding.listTodayTasks, "today_tasks_expanded");
+        setupArrowButton(binding.futureArrowButton, binding.listFutureTasks, "future_tasks_expanded");
+        setupArrowButton(binding.completedArrowButton, binding.listCompletedTasks, "completed_tasks_expanded");
+    }
+
+    private void setupArrowButton(ImageButton arrowButton, RecyclerView recyclerView, String preferenceKey) {
+        final boolean[] isExpanded = {getPreferences().getBoolean(preferenceKey, true)}; // Default to true if not found
+
+        recyclerView.setVisibility(isExpanded[0] ? View.VISIBLE : View.GONE);
+        arrowButton.setImageResource(isExpanded[0] ? R.drawable.ic_arrow_drop_up : R.drawable.ic_arrow_drop_down);
+
+        arrowButton.setOnClickListener(v -> {
+            isExpanded[0] = !isExpanded[0];
+            getPreferences().edit().putBoolean(preferenceKey, isExpanded[0]).apply();
+
+            recyclerView.setVisibility(isExpanded[0] ? View.VISIBLE : View.GONE);
+            arrowButton.setImageResource(isExpanded[0] ? R.drawable.ic_arrow_drop_up : R.drawable.ic_arrow_drop_down);
         });
     }
+
+    private SharedPreferences getPreferences() {
+        return requireContext().getSharedPreferences("task_fragment_prefs", Context.MODE_PRIVATE);
+    }
+
 
     @Override
     public void onTaskAdded() {
@@ -127,32 +150,18 @@ public class TasksFragment extends Fragment implements BottomSheetAddTaskFragmen
         completedTasks.clear();
         TaskCategorizer.categorizeTasks(taskList, previousTasks, todayTasks, futureTasks, completedTasks);
 
-        if (!previousTasks.isEmpty()) {
-            previousTaskAdapter.notifyDataSetChanged();
-            binding.previousTaskContainer.setVisibility(View.VISIBLE);
-        } else {
-            binding.previousTaskContainer.setVisibility(View.GONE);
-        }
+        updateTaskSection(previousTasks, previousTaskAdapter, binding.previousTaskContainer);
+        updateTaskSection(todayTasks, todayTaskAdapter, binding.todayTaskContainer);
+        updateTaskSection(futureTasks, futureTaskAdapter, binding.futureTaskContainer);
+        updateTaskSection(completedTasks, completedTaskAdapter, binding.completedTaskContainer);
+    }
 
-        if (!todayTasks.isEmpty()) {
-            binding.todayTaskContainer.setVisibility(View.VISIBLE);
-            todayTaskAdapter.notifyDataSetChanged();
+    private void updateTaskSection(List<Task> tasks, TaskAdapter adapter, View container) {
+        if (!tasks.isEmpty()) {
+            adapter.notifyDataSetChanged();
+            container.setVisibility(View.VISIBLE);
         } else {
-            binding.todayTaskContainer.setVisibility(View.GONE);
-        }
-
-        if (!futureTasks.isEmpty()) {
-            futureTaskAdapter.notifyDataSetChanged();
-            binding.futureTaskContainer.setVisibility(View.VISIBLE);
-        } else {
-            binding.futureTaskContainer.setVisibility(View.GONE);
-        }
-
-        if (!completedTasks.isEmpty()) {
-            completedTaskAdapter.notifyDataSetChanged();
-            binding.completedTaskContainer.setVisibility(View.VISIBLE);
-        } else {
-            binding.completedTaskContainer.setVisibility(View.GONE);
+            container.setVisibility(View.GONE);
         }
     }
 
