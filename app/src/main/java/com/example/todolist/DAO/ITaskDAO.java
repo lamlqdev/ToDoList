@@ -10,4 +10,5 @@ public interface ITaskDAO {
     boolean deleteTask(Task task);
     Task getTask(int id);
     List<Task> getAllTasks();
+    List<Task> getTasksByCategoryName(String categoryName);
 }

@@ -196,5 +196,51 @@ public class TaskDAOImpl implements ITaskDAO{
         return tasks;
     }
 
+    @Override
+    public List<Task> getTasksByCategoryName(String categoryName) {
+        List<Task> tasks = new ArrayList<>();
+        SQLiteDatabase db = dbHandler.getReadableDatabase();
+        Cursor cursor = null;
+
+        try {
+            String query = "SELECT * FROM " + TodolistContract.TasksEntry.TABLE_NAME +
+                    " INNER JOIN " + TodolistContract.CategoryEntry.TABLE_NAME +
+                    " ON " + TodolistContract.TasksEntry.CATEGORY_ID +
+                    " = " + TodolistContract.CategoryEntry.CATEGORY_ID +
+                    " WHERE " + TodolistContract.CategoryEntry.NAME + " = ?";
+
+            cursor = db.rawQuery(query, new String[]{categoryName});
+
+            if (cursor != null) {
+                while (cursor.moveToNext()) {
+                    int taskId = cursor.getInt(cursor.getColumnIndexOrThrow(TodolistContract.TasksEntry.TASK_ID));
+                    String title = cursor.getString(cursor.getColumnIndexOrThrow(TodolistContract.TasksEntry.TITLE));
+                    int categoryId = cursor.getInt(cursor.getColumnIndexOrThrow(TodolistContract.TasksEntry.CATEGORY_ID));
+                    String dueDateString = cursor.getString(cursor.getColumnIndexOrThrow(TodolistContract.TasksEntry.DUE_DATE));
+                    String dueTimeString = cursor.getString(cursor.getColumnIndexOrThrow(TodolistContract.TasksEntry.DUE_TIME));
+                    int status = cursor.getInt(cursor.getColumnIndexOrThrow(TodolistContract.TasksEntry.STATUS));
+                    String createdAtString = cursor.getString(cursor.getColumnIndexOrThrow(TodolistContract.TasksEntry.CREATED_AT));
+                    String updatedAtString = cursor.getString(cursor.getColumnIndexOrThrow(TodolistContract.TasksEntry.UPDATED_AT));
+
+                    LocalDate dueDate = dueDateString != null ? LocalDate.parse(dueDateString) : null;
+                    LocalTime dueTime = dueTimeString != null ? LocalTime.parse(dueTimeString) : null;
+                    LocalDateTime createdAt = LocalDateTime.parse(createdAtString, dateTimeFormatter);
+                    LocalDateTime updatedAt = updatedAtString != null ? LocalDateTime.parse(updatedAtString, dateTimeFormatter) : null;
+
+                    Task task = new Task(taskId, title, categoryId, dueDate, dueTime, status, createdAt, updatedAt);
+                    tasks.add(task);
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            if (cursor != null) {
+                cursor.close();
+            }
+            db.close();
+        }
+        return tasks;
+    }
+
 
 }
