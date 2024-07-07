@@ -2,7 +2,6 @@ package com.example.todolist.adapter;
 
 import android.content.Context;
 import android.view.LayoutInflater;
-import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
@@ -10,16 +9,16 @@ import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.todolist.R;
+import com.example.todolist.databinding.ItemListButtonCategoryBinding;
 import com.example.todolist.model.Category;
-import com.google.android.material.button.MaterialButton;
+
 import java.util.List;
 
 public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.CategoryViewHolder> {
     private List<Category> categories;
     private Context context;
     private LayoutInflater layoutInflater;
-    private int selectedItem = -1; // Vị trí của button được chọn, mặc định là -1
-
+    private int selectedPosition = RecyclerView.NO_POSITION;;
 
     public CategoryAdapter(Context context, List<Category> categories) {
         this.categories = categories;
@@ -34,27 +33,29 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.Catego
     @NonNull
     @Override
     public CategoryViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = layoutInflater.inflate(R.layout.item_list_button_category, parent, false);
-        return new CategoryViewHolder(view);
+        ItemListButtonCategoryBinding binding = ItemListButtonCategoryBinding.inflate(layoutInflater, parent, false);
+        return new CategoryViewHolder(binding);
     }
 
     @Override
     public void onBindViewHolder(@NonNull CategoryViewHolder holder, int position) {
         Category category = categories.get(position);
-        holder.button.setText(category.getName());
-        holder.button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                selectedItem = position; // Cập nhật vị trí của button được chọn
-                notifyDataSetChanged(); // Thông báo cho RecyclerView về sự thay đổi để cập nhật giao diện
-            }
+        holder.binding.categoryButton.setText(category.getName());
+
+        holder.binding.categoryButton.setOnClickListener(v -> {
+            int previousPosition = selectedPosition;
+            selectedPosition = holder.getBindingAdapterPosition();
+
+            notifyItemChanged(selectedPosition);
+            notifyItemChanged(previousPosition);
         });
-        if(position == selectedItem) {
-            holder.button.setBackgroundTintList(ContextCompat.getColorStateList(context, R.color.blue2));
-            holder.button.setTextColor(ContextCompat.getColor(context, R.color.white));
+
+        if (position == selectedPosition) {
+            holder.binding.categoryButton.setBackgroundTintList(ContextCompat.getColorStateList(context, R.color.blue2));
+            holder.binding.categoryButton.setTextColor(ContextCompat.getColor(context, R.color.white));
         } else {
-            holder.button.setBackgroundTintList(ContextCompat.getColorStateList(context, R.color.grey2));
-            holder.button.setTextColor(ContextCompat.getColor(context, R.color.grey_text));
+            holder.binding.categoryButton.setBackgroundTintList(ContextCompat.getColorStateList(context, R.color.grey2));
+            holder.binding.categoryButton.setTextColor(ContextCompat.getColor(context, R.color.grey_text));
         }
     }
 
@@ -62,16 +63,18 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.Catego
     public int getItemCount() {
         return categories.size();
     }
+
     public void setSelectedItem(int position) {
-        selectedItem = position;
-        notifyDataSetChanged();
+        selectedPosition = position;
+        notifyItemChanged(selectedPosition);
     }
+
     public static class CategoryViewHolder extends RecyclerView.ViewHolder {
-        private MaterialButton button;
-        public CategoryViewHolder(@NonNull View itemView) {
-            super(itemView);
-            button = itemView.findViewById(R.id.category_button);
+        private final ItemListButtonCategoryBinding binding;
+
+        public CategoryViewHolder(@NonNull ItemListButtonCategoryBinding binding) {
+            super(binding.getRoot());
+            this.binding = binding;
         }
     }
 }
-

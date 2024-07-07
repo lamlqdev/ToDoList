@@ -1,6 +1,7 @@
 package com.example.todolist.fragment;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 
@@ -24,6 +25,7 @@ import android.widget.PopupMenu;
 import com.example.todolist.DAO.CategoryDAOImpl;
 import com.example.todolist.DAO.TaskDAOImpl;
 import com.example.todolist.R;
+import com.example.todolist.activity.UpdateTaskActivity;
 import com.example.todolist.adapter.CategoryAdapter;
 import com.example.todolist.adapter.TaskAdapter;
 import com.example.todolist.databinding.FragmentTaskBinding;
@@ -35,7 +37,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
-public class TasksFragment extends Fragment implements BottomSheetAddTaskFragment.OnTaskAddedListener, TaskAdapter.OnTaskStatusChangedListener {
+public class TasksFragment extends Fragment implements BottomSheetAddTaskFragment.OnTaskAddedListener, TaskAdapter.OnTaskInteractionListener{
     private FragmentTaskBinding binding;
     private CategoryDAOImpl categoryDAOImpl;
     private TaskDAOImpl taskDAOImpl;
@@ -64,22 +66,17 @@ public class TasksFragment extends Fragment implements BottomSheetAddTaskFragmen
 
     private void setWidget() {
         setRecyclerViewCategory();
-        setRecyclerTask();
+        setRecyclerViewTask();
     }
 
-    private void setRecyclerTask() {
+    private void setRecyclerViewTask() {
         taskList = taskDAOImpl.getAllTasks();
         TaskCategorizer.categorizeTasks(taskList, previousTasks, todayTasks, futureTasks, completedTasks);
 
-        previousTaskAdapter = new TaskAdapter(getContext(), previousTasks);
-        todayTaskAdapter = new TaskAdapter(getContext(), todayTasks);
-        futureTaskAdapter = new TaskAdapter(getContext(), futureTasks);
-        completedTaskAdapter = new TaskAdapter(getContext(), completedTasks);
-
-        previousTaskAdapter.setOnTaskStatusChangedListener(this);
-        todayTaskAdapter.setOnTaskStatusChangedListener(this);
-        futureTaskAdapter.setOnTaskStatusChangedListener(this);
-        completedTaskAdapter.setOnTaskStatusChangedListener(this);
+        previousTaskAdapter = new TaskAdapter(getContext(), previousTasks, this);
+        todayTaskAdapter = new TaskAdapter(getContext(), todayTasks, this);
+        futureTaskAdapter = new TaskAdapter(getContext(), futureTasks, this);
+        completedTaskAdapter = new TaskAdapter(getContext(), completedTasks, this);
 
         setupTaskRecyclerView(binding.listPreviousTasks, previousTasks, previousTaskAdapter, binding.previousTaskContainer);
         setupTaskRecyclerView(binding.listTodayTasks, todayTasks, todayTaskAdapter, binding.todayTaskContainer);
@@ -146,7 +143,7 @@ public class TasksFragment extends Fragment implements BottomSheetAddTaskFragmen
     }
 
     private SharedPreferences getPreferences() {
-        return requireContext().getSharedPreferences("task_fragment_prefs", Context.MODE_PRIVATE);
+        return requireContext().getSharedPreferences("task_fragment_prefs", Context.MODE_PRIVATE); //keep user mode
     }
 
     @Override
@@ -166,9 +163,9 @@ public class TasksFragment extends Fragment implements BottomSheetAddTaskFragmen
         int position = taskList.size();
         taskList.add(task);
         if (position == 0) {
-            taskAdapter.notifyDataSetChanged(); // Danh sách rỗng, cập nhật toàn bộ adapter
+            taskAdapter.notifyDataSetChanged();
         } else {
-            taskAdapter.notifyItemInserted(position); // Có phần tử, chỉ cập nhật vị trí cuối cùng
+            taskAdapter.notifyItemInserted(position);
         }
         if (container.getVisibility() == View.GONE) {
             container.setVisibility(View.VISIBLE);
@@ -181,6 +178,12 @@ public class TasksFragment extends Fragment implements BottomSheetAddTaskFragmen
         todayTasks.clear();
         futureTasks.clear();
         completedTasks.clear();
-        setRecyclerTask();
+        setRecyclerViewTask();
+    }
+
+    @Override
+    public void onItemClick(int position) {
+        Intent intent = new Intent(requireContext(), UpdateTaskActivity.class);
+        startActivity(intent);
     }
 }

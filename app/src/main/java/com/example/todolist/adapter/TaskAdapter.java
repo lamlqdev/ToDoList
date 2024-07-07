@@ -28,19 +28,17 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
     private Context context;
     private LayoutInflater inflater;
     private TaskDAOImpl taskDAOImpl;
-    private OnTaskStatusChangedListener onTaskStatusChangedListener;
+    private final OnTaskInteractionListener onTaskInteractionListener;
 
-    public interface OnTaskStatusChangedListener {
+    public interface OnTaskInteractionListener {
         void onTaskStatusChanged();
+        void onItemClick(int position);
     }
 
-    public void setOnTaskStatusChangedListener(OnTaskStatusChangedListener listener) {
-        this.onTaskStatusChangedListener = listener;
-    }
-
-    public TaskAdapter(Context context, List<Task> taskList) {
+    public TaskAdapter(Context context, List<Task> taskList, OnTaskInteractionListener onTaskInteractionListener) {
         this.taskList = taskList;
         this.context = context;
+        this.onTaskInteractionListener = onTaskInteractionListener;
         this.taskDAOImpl = new TaskDAOImpl(context);
         this.inflater = LayoutInflater.from(context);
     }
@@ -48,7 +46,7 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
     @Override
     public TaskViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         ItemListTaskBinding binding = ItemListTaskBinding.inflate(inflater, parent, false);
-        return new TaskViewHolder(binding);
+        return new TaskViewHolder(binding, onTaskInteractionListener);
     }
 
     @Override
@@ -65,13 +63,13 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
         }
 
         holder.binding.taskCheckBox.setChecked(updatedTask.getStatus() == 2);
-
+        holder.binding.taskCheckBox.setOnCheckedChangeListener(null);
         holder.binding.taskCheckBox.setOnCheckedChangeListener((buttonView, isChecked) -> {
             updatedTask.setStatus(isChecked ? 2 : 1);
             taskDAOImpl.updateTask(updatedTask);
 
-            if (onTaskStatusChangedListener != null) {
-                onTaskStatusChangedListener.onTaskStatusChanged();
+            if (onTaskInteractionListener != null) {
+                onTaskInteractionListener.onTaskStatusChanged();
             }
         });
     }
@@ -82,10 +80,19 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
     }
 
     public static class TaskViewHolder extends RecyclerView.ViewHolder{
-        private ItemListTaskBinding binding;
-        public TaskViewHolder(@NonNull ItemListTaskBinding binding) {
+        private final ItemListTaskBinding binding;
+        public TaskViewHolder(@NonNull ItemListTaskBinding binding, OnTaskInteractionListener onTaskInteractionListener) {
             super(binding.getRoot());
             this.binding = binding;
+
+            binding.getRoot().setOnClickListener(v -> {
+                if (onTaskInteractionListener != null) {
+                    int pos = getBindingAdapterPosition();
+                    if (pos != RecyclerView.NO_POSITION) {
+                        onTaskInteractionListener.onItemClick(pos);
+                    }
+                }
+            });
         }
     }
 }
