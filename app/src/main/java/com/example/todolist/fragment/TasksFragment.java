@@ -37,7 +37,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
-public class TasksFragment extends Fragment implements BottomSheetAddTaskFragment.OnTaskAddedListener, TaskAdapter.OnTaskInteractionListener{
+public class TasksFragment extends Fragment implements BottomSheetAddTaskFragment.OnTaskAddedListener, TaskAdapter.OnTaskInteractionListener, CategoryAdapter.OnClickListener{
     private FragmentTaskBinding binding;
     private CategoryDAOImpl categoryDAOImpl;
     private TaskDAOImpl taskDAOImpl;
@@ -58,7 +58,7 @@ public class TasksFragment extends Fragment implements BottomSheetAddTaskFragmen
         binding = FragmentTaskBinding.inflate(inflater, container, false);
         categoryDAOImpl = new CategoryDAOImpl(getContext());
         taskDAOImpl = new TaskDAOImpl(getContext());
-
+        taskList = taskDAOImpl.getAllTasks();
         setWidget();
         setEvents();
         return binding.getRoot();
@@ -66,11 +66,10 @@ public class TasksFragment extends Fragment implements BottomSheetAddTaskFragmen
 
     private void setWidget() {
         setRecyclerViewCategory();
-        setRecyclerViewTask();
+        setRecyclerViewTask(taskList);
     }
 
-    private void setRecyclerViewTask() {
-        taskList = taskDAOImpl.getAllTasks();
+    private void setRecyclerViewTask(List<Task> taskList) {
         TaskCategorizer.categorizeTasks(taskList, previousTasks, todayTasks, futureTasks, completedTasks);
 
         previousTaskAdapter = new TaskAdapter(getContext(), previousTasks, this);
@@ -97,7 +96,7 @@ public class TasksFragment extends Fragment implements BottomSheetAddTaskFragmen
 
     private void setRecyclerViewCategory() {
         categoryList = categoryDAOImpl.getAllCategories();
-        categoryAdapter = new CategoryAdapter(getContext(), categoryList);
+        categoryAdapter = new CategoryAdapter(getContext(), categoryList, this);
 
         binding.categoryContainer.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false));
         binding.categoryContainer.setAdapter(categoryAdapter);
@@ -178,12 +177,27 @@ public class TasksFragment extends Fragment implements BottomSheetAddTaskFragmen
         todayTasks.clear();
         futureTasks.clear();
         completedTasks.clear();
-        setRecyclerViewTask();
+        taskList = taskDAOImpl.getAllTasks();
+        setRecyclerViewTask(taskList);
     }
 
     @Override
-    public void onItemClick(int position) {
+    public void onItemTaskClick(int position) {
         Intent intent = new Intent(requireContext(), UpdateTaskActivity.class);
         startActivity(intent);
+    }
+
+    @Override
+    public void onItemCategoryClick(String categoryName) {
+        previousTasks.clear();
+        todayTasks.clear();
+        futureTasks.clear();
+        completedTasks.clear();
+        if(categoryName.equals("All")){
+            taskList = taskDAOImpl.getAllTasks();
+        }else{
+            taskList = taskDAOImpl.getTasksByCategoryName(categoryName);
+        }
+        setRecyclerViewTask(taskList);
     }
 }

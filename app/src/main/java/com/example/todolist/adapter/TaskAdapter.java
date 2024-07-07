@@ -32,7 +32,7 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
 
     public interface OnTaskInteractionListener {
         void onTaskStatusChanged();
-        void onItemClick(int position);
+        void onItemTaskClick(int position);
     }
 
     public TaskAdapter(Context context, List<Task> taskList, OnTaskInteractionListener onTaskInteractionListener) {
@@ -89,7 +89,7 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
                 if (onTaskInteractionListener != null) {
                     int pos = getBindingAdapterPosition();
                     if (pos != RecyclerView.NO_POSITION) {
-                        onTaskInteractionListener.onItemClick(pos);
+                        onTaskInteractionListener.onItemTaskClick(pos);
                     }
                 }
             });

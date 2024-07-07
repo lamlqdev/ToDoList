@@ -18,11 +18,17 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.Catego
     private List<Category> categories;
     private Context context;
     private LayoutInflater layoutInflater;
-    private int selectedPosition = RecyclerView.NO_POSITION;;
+    private OnClickListener onClickListener;
+    private int selectedPosition = RecyclerView.NO_POSITION;
 
-    public CategoryAdapter(Context context, List<Category> categories) {
+    public interface OnClickListener {
+        void onItemCategoryClick(String categoryName);
+    }
+
+    public CategoryAdapter(Context context, List<Category> categories, OnClickListener onClickListener) {
         this.categories = categories;
         this.context = context;
+        this.onClickListener = onClickListener;
         layoutInflater = LayoutInflater.from(context);
 
         Category allCategory = new Category();
@@ -34,7 +40,7 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.Catego
     @Override
     public CategoryViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         ItemListButtonCategoryBinding binding = ItemListButtonCategoryBinding.inflate(layoutInflater, parent, false);
-        return new CategoryViewHolder(binding);
+        return new CategoryViewHolder(binding, onClickListener);
     }
 
     @Override
@@ -48,6 +54,9 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.Catego
 
             notifyItemChanged(selectedPosition);
             notifyItemChanged(previousPosition);
+            if (onClickListener != null) {
+                onClickListener.onItemCategoryClick(category.getName());
+            }
         });
 
         if (position == selectedPosition) {
@@ -72,7 +81,7 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.Catego
     public static class CategoryViewHolder extends RecyclerView.ViewHolder {
         private final ItemListButtonCategoryBinding binding;
 
-        public CategoryViewHolder(@NonNull ItemListButtonCategoryBinding binding) {
+        public CategoryViewHolder(@NonNull ItemListButtonCategoryBinding binding, OnClickListener onClickListener) {
             super(binding.getRoot());
             this.binding = binding;
         }
