@@ -203,11 +203,10 @@ public class TaskDAOImpl implements ITaskDAO{
         Cursor cursor = null;
 
         try {
-            String query = "SELECT * FROM " + TodolistContract.TasksEntry.TABLE_NAME +
-                    " INNER JOIN " + TodolistContract.CategoryEntry.TABLE_NAME +
-                    " ON " + TodolistContract.TasksEntry.CATEGORY_ID +
-                    " = " + TodolistContract.CategoryEntry.CATEGORY_ID +
-                    " WHERE " + TodolistContract.CategoryEntry.NAME + " = ?";
+            String query = "SELECT tasks.* " +
+                    "FROM tasks " +
+                    "INNER JOIN categories ON tasks.category_id = categories.category_id " +
+                    "WHERE categories.name = ?";
 
             cursor = db.rawQuery(query, new String[]{categoryName});
 

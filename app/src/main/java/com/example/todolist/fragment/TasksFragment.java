@@ -189,15 +189,6 @@ public class TasksFragment extends Fragment implements BottomSheetAddTaskFragmen
 
     @Override
     public void onItemCategoryClick(String categoryName) {
-        previousTasks.clear();
-        todayTasks.clear();
-        futureTasks.clear();
-        completedTasks.clear();
-        if(categoryName.equals("All")){
-            taskList = taskDAOImpl.getAllTasks();
-        }else{
-            taskList = taskDAOImpl.getTasksByCategoryName(categoryName);
-        }
-        setRecyclerViewTask(taskList);
+
     }
 }
