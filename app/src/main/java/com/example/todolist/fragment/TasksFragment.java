@@ -9,6 +9,9 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.os.Handler;
+import android.os.Looper;
+import android.util.Log;
 import android.view.ContextThemeWrapper;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -28,10 +31,11 @@ import com.example.todolist.model.Category;
 import com.example.todolist.model.Task;
 import com.example.todolist.utils.TaskCategorizer;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
-public class TasksFragment extends Fragment implements BottomSheetAddTaskFragment.OnTaskAddedListener {
+public class TasksFragment extends Fragment implements BottomSheetAddTaskFragment.OnTaskAddedListener, TaskAdapter.OnTaskStatusChangedListener {
     private FragmentTaskBinding binding;
     private CategoryDAOImpl categoryDAOImpl;
     private TaskDAOImpl taskDAOImpl;
@@ -71,6 +75,11 @@ public class TasksFragment extends Fragment implements BottomSheetAddTaskFragmen
         todayTaskAdapter = new TaskAdapter(getContext(), todayTasks);
         futureTaskAdapter = new TaskAdapter(getContext(), futureTasks);
         completedTaskAdapter = new TaskAdapter(getContext(), completedTasks);
+
+        previousTaskAdapter.setOnTaskStatusChangedListener(this);
+        todayTaskAdapter.setOnTaskStatusChangedListener(this);
+        futureTaskAdapter.setOnTaskStatusChangedListener(this);
+        completedTaskAdapter.setOnTaskStatusChangedListener(this);
 
         setupTaskRecyclerView(binding.listPreviousTasks, previousTasks, previousTaskAdapter, binding.previousTaskContainer);
         setupTaskRecyclerView(binding.listTodayTasks, todayTasks, todayTaskAdapter, binding.todayTaskContainer);
@@ -140,29 +149,38 @@ public class TasksFragment extends Fragment implements BottomSheetAddTaskFragmen
         return requireContext().getSharedPreferences("task_fragment_prefs", Context.MODE_PRIVATE);
     }
 
+    @Override
+    public void onTaskAdded(Task task) {
+        LocalDate today = LocalDate.now();
+        if (task.getDueDate() != null) {
+            if (task.getDueDate().isBefore(today)) {
+                addToTaskList(previousTasks, previousTaskAdapter, task, binding.previousTaskContainer);
+            } else if (task.getDueDate().isEqual(today)) {
+                addToTaskList(todayTasks, todayTaskAdapter, task, binding.todayTaskContainer);
+            } else {
+                addToTaskList(futureTasks, futureTaskAdapter, task, binding.futureTaskContainer);
+            }
+        }
+    }
+    private void addToTaskList(List<Task> taskList, TaskAdapter taskAdapter, Task task, View container) {
+        int position = taskList.size();
+        taskList.add(task);
+        if (position == 0) {
+            taskAdapter.notifyDataSetChanged(); // Danh sách rỗng, cập nhật toàn bộ adapter
+        } else {
+            taskAdapter.notifyItemInserted(position); // Có phần tử, chỉ cập nhật vị trí cuối cùng
+        }
+        if (container.getVisibility() == View.GONE) {
+            container.setVisibility(View.VISIBLE);
+        }
+    }
 
     @Override
-    public void onTaskAdded() {
-        taskList = taskDAOImpl.getAllTasks();
+    public void onTaskStatusChanged() {
         previousTasks.clear();
         todayTasks.clear();
         futureTasks.clear();
         completedTasks.clear();
-        TaskCategorizer.categorizeTasks(taskList, previousTasks, todayTasks, futureTasks, completedTasks);
-
-        updateTaskSection(previousTasks, previousTaskAdapter, binding.previousTaskContainer);
-        updateTaskSection(todayTasks, todayTaskAdapter, binding.todayTaskContainer);
-        updateTaskSection(futureTasks, futureTaskAdapter, binding.futureTaskContainer);
-        updateTaskSection(completedTasks, completedTaskAdapter, binding.completedTaskContainer);
+        setRecyclerTask();
     }
-
-    private void updateTaskSection(List<Task> tasks, TaskAdapter adapter, View container) {
-        if (!tasks.isEmpty()) {
-            adapter.notifyDataSetChanged();
-            container.setVisibility(View.VISIBLE);
-        } else {
-            container.setVisibility(View.GONE);
-        }
-    }
-
 }

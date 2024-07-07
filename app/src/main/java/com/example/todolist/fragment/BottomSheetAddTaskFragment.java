@@ -62,7 +62,7 @@ public class BottomSheetAddTaskFragment extends BottomSheetDialogFragment implem
     private OnTaskAddedListener onTaskAddedListener;
 
     public interface OnTaskAddedListener {
-        void onTaskAdded();
+        void onTaskAdded(Task newTask);
     }
 
     public BottomSheetAddTaskFragment() {
@@ -199,22 +199,22 @@ public class BottomSheetAddTaskFragment extends BottomSheetDialogFragment implem
         if (taskTitle.isEmpty()) {
             Toast.makeText(getContext(), "Please enter a task title", Toast.LENGTH_SHORT).show();
         } else {
-            Task task = new Task();
-            task.setTaskID(taskID);
-            task.setTitle(taskTitle);
-            task.setDueDate(selectedDate);
+            Task newTask = new Task();
+            newTask.setTaskID(taskID);
+            newTask.setTitle(taskTitle);
+            newTask.setDueDate(selectedDate);
 
             if (selectedCategoryID != 0) {
-                task.setCategoryID(selectedCategoryID);
+                newTask.setCategoryID(selectedCategoryID);
             }
 
             if (selectedTime != null) {
-                task.setDueTime(selectedTime);
+                newTask.setDueTime(selectedTime);
             }
 
-            taskDAOImpl.addTask(task);
+            taskDAOImpl.addTask(newTask);
             if (onTaskAddedListener != null) {
-                onTaskAddedListener.onTaskAdded();
+                onTaskAddedListener.onTaskAdded(newTask);
             }
 
             refreshInput();

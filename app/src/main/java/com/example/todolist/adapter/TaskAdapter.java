@@ -1,6 +1,11 @@
 package com.example.todolist.adapter;
 
 import android.content.Context;
+import android.os.Handler;
+import android.os.Looper;
+import android.text.SpannableString;
+import android.text.Spanned;
+import android.text.style.StrikethroughSpan;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,6 +28,15 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
     private Context context;
     private LayoutInflater inflater;
     private TaskDAOImpl taskDAOImpl;
+    private OnTaskStatusChangedListener onTaskStatusChangedListener;
+
+    public interface OnTaskStatusChangedListener {
+        void onTaskStatusChanged();
+    }
+
+    public void setOnTaskStatusChangedListener(OnTaskStatusChangedListener listener) {
+        this.onTaskStatusChangedListener = listener;
+    }
 
     public TaskAdapter(Context context, List<Task> taskList) {
         this.taskList = taskList;
@@ -39,13 +53,26 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
 
     @Override
     public void onBindViewHolder(@NonNull TaskViewHolder holder, int position) {
-        Task task = taskList.get(position);
-        holder.binding.taskText.setText(task.getTitle());
-        holder.binding.taskCheckBox.setChecked(task.getStatus() == 2);
+        Task updatedTask = taskList.get(position);
+
+        if (updatedTask.getStatus() == 2) {
+            String text = updatedTask.getTitle();
+            SpannableString spannableString = new SpannableString(text);
+            spannableString.setSpan(new StrikethroughSpan(), 0, text.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+            holder.binding.taskText.setText(spannableString);
+        } else{
+            holder.binding.taskText.setText(updatedTask.getTitle());
+        }
+
+        holder.binding.taskCheckBox.setChecked(updatedTask.getStatus() == 2);
 
         holder.binding.taskCheckBox.setOnCheckedChangeListener((buttonView, isChecked) -> {
-            task.setStatus(isChecked ? 2 : 1);
-            taskDAOImpl.updateTask(task);
+            updatedTask.setStatus(isChecked ? 2 : 1);
+            taskDAOImpl.updateTask(updatedTask);
+
+            if (onTaskStatusChangedListener != null) {
+                onTaskStatusChangedListener.onTaskStatusChanged();
+            }
         });
     }
 

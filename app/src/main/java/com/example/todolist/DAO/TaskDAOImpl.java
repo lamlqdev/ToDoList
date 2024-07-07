@@ -119,16 +119,21 @@ public class TaskDAOImpl implements ITaskDAO{
 
             cursor = db.query(TodolistContract.TasksEntry.TABLE_NAME, projection, selection, selectionArgs, null, null, null);
             if (cursor != null && cursor.moveToFirst()) {
-                task = new Task(
-                        cursor.getInt(cursor.getColumnIndexOrThrow(TodolistContract.TasksEntry.TASK_ID)),
-                        cursor.getString(cursor.getColumnIndexOrThrow(TodolistContract.TasksEntry.TITLE)),
-                        cursor.getInt(cursor.getColumnIndexOrThrow(TodolistContract.TasksEntry.CATEGORY_ID)),
-                        LocalDate.parse(cursor.getString(cursor.getColumnIndexOrThrow(TodolistContract.TasksEntry.DUE_DATE))),
-                        LocalTime.parse(cursor.getString(cursor.getColumnIndexOrThrow(TodolistContract.TasksEntry.DUE_TIME))),
-                        cursor.getInt(cursor.getColumnIndexOrThrow(TodolistContract.TasksEntry.STATUS)),
-                        LocalDateTime.parse(cursor.getString(cursor.getColumnIndexOrThrow(TodolistContract.TasksEntry.CREATED_AT)), dateTimeFormatter),
-                        LocalDateTime.parse(cursor.getString(cursor.getColumnIndexOrThrow(TodolistContract.TasksEntry.UPDATED_AT)), dateTimeFormatter)
-                );
+                int taskId = cursor.getInt(cursor.getColumnIndexOrThrow(TodolistContract.TasksEntry.TASK_ID));
+                String title = cursor.getString(cursor.getColumnIndexOrThrow(TodolistContract.TasksEntry.TITLE));
+                int categoryId = cursor.getInt(cursor.getColumnIndexOrThrow(TodolistContract.TasksEntry.CATEGORY_ID));
+                String dueDateString = cursor.getString(cursor.getColumnIndexOrThrow(TodolistContract.TasksEntry.DUE_DATE));
+                String dueTimeString = cursor.getString(cursor.getColumnIndexOrThrow(TodolistContract.TasksEntry.DUE_TIME));
+                int status = cursor.getInt(cursor.getColumnIndexOrThrow(TodolistContract.TasksEntry.STATUS));
+                String createdAtString = cursor.getString(cursor.getColumnIndexOrThrow(TodolistContract.TasksEntry.CREATED_AT));
+                String updatedAtString = cursor.getString(cursor.getColumnIndexOrThrow(TodolistContract.TasksEntry.UPDATED_AT));
+
+                LocalDate dueDate = dueDateString != null ? LocalDate.parse(dueDateString) : null;
+                LocalTime dueTime = dueTimeString != null ? LocalTime.parse(dueTimeString) : null;
+                LocalDateTime createdAt = LocalDateTime.parse(createdAtString, dateTimeFormatter);
+                LocalDateTime updatedAt = updatedAtString != null ? LocalDateTime.parse(updatedAtString, dateTimeFormatter) : null;
+
+                task = new Task(taskId, title, categoryId, dueDate, dueTime, status, createdAt, updatedAt);
             }
         } catch (Exception e) {
             e.printStackTrace();
