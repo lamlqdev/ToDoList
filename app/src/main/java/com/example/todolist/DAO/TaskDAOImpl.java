@@ -68,6 +68,23 @@ public class TaskDAOImpl implements ITaskDAO{
                 values.put(TodolistContract.TasksEntry.DUE_TIME, task.getDueTime().format(timeFormatter));
             }
             values.put(TodolistContract.TasksEntry.STATUS, task.getStatus());
+
+            int result = db.update(TodolistContract.TasksEntry.TABLE_NAME, values,
+                    TodolistContract.TasksEntry.TASK_ID + " = ?",
+                    new String[]{String.valueOf(task.getTaskID())});
+            db.close();
+            return result > 0;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    public boolean updateTaskStatus(Task task) {
+        try {
+            SQLiteDatabase db = dbHandler.getWritableDatabase();
+            ContentValues values = new ContentValues();
+            values.put(TodolistContract.TasksEntry.STATUS, task.getStatus());
             LocalDateTime now = LocalDateTime.now();
             values.put(TodolistContract.TasksEntry.UPDATED_AT, now.format(dateTimeFormatter));
 

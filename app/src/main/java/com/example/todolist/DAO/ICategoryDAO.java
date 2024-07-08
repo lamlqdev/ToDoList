@@ -10,4 +10,5 @@ public interface ICategoryDAO {
     boolean deleteCategory(Category category);
     Category getCategory(int id);
     List<Category> getAllCategories();
+    int getIDByCategoryName (String categoryName);
 }

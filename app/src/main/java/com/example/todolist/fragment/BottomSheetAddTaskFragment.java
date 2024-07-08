@@ -59,6 +59,8 @@ public class BottomSheetAddTaskFragment extends BottomSheetDialogFragment implem
     private LocalDate selectedDate = LocalDate.now();
     private LocalTime selectedTime;
     private int selectedCategoryID = 0;
+    private static final String ARG_CATEGORY_SELECTED = "category_selected";
+    private String categorySelected;
     private OnTaskAddedListener onTaskAddedListener;
 
     public interface OnTaskAddedListener {
@@ -68,14 +70,24 @@ public class BottomSheetAddTaskFragment extends BottomSheetDialogFragment implem
     public BottomSheetAddTaskFragment() {
     }
 
-    public static BottomSheetAddTaskFragment newInstance() {
-        return new BottomSheetAddTaskFragment();
+    public static BottomSheetAddTaskFragment newInstance(String categorySelected) {
+        BottomSheetAddTaskFragment fragment = new BottomSheetAddTaskFragment();
+        Bundle args = new Bundle();
+        args.putString(ARG_CATEGORY_SELECTED, categorySelected);
+        fragment.setArguments(args);
+        return fragment;
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         taskID = TaskIDGenerator.generateUniqueID();
+        if (getArguments() != null) {
+            categorySelected = getArguments().getString(ARG_CATEGORY_SELECTED);
+            if (categorySelected.equals("All")) {
+                categorySelected = "No Category";
+            }
+        }
     }
     @NonNull
     @Override
@@ -122,6 +134,10 @@ public class BottomSheetAddTaskFragment extends BottomSheetDialogFragment implem
         binding.recyclerViewSubTask.setLayoutManager(new LinearLayoutManager(getContext()));
         binding.recyclerViewSubTask.setAdapter(subtaskAdapter);
 
+        binding.buttonAddCatagory.setText(categorySelected);
+        if (!categorySelected.equals("No Category")){
+            binding.buttonAddCatagory.setTextColor(ContextCompat.getColor(requireContext(), R.color.blue));
+        }
         binding.titleTaskField.requestFocus();
     }
     private void setEvents() {
@@ -206,6 +222,9 @@ public class BottomSheetAddTaskFragment extends BottomSheetDialogFragment implem
 
             if (selectedCategoryID != 0) {
                 newTask.setCategoryID(selectedCategoryID);
+            } else {
+                selectedCategoryID = categoryDAOImpl.getIDByCategoryName(categorySelected);
+                newTask.setCategoryID(selectedCategoryID);
             }
 
             if (selectedTime != null) {
@@ -227,7 +246,7 @@ public class BottomSheetAddTaskFragment extends BottomSheetDialogFragment implem
         binding.titleTaskField.setText("");
         selectedDate = LocalDate.now();
         selectedTime = null;
-        binding.buttonAddCatagory.setText("No Category");
+        binding.buttonAddCatagory.setText(categorySelected);
         binding.buttonAddCatagory.setTextColor(ContextCompat.getColor(requireContext(), R.color.grey_text));
     }
 

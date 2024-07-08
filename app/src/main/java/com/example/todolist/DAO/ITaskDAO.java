@@ -7,6 +7,7 @@ import java.util.List;
 public interface ITaskDAO {
     boolean addTask(Task task);
     boolean updateTask(Task task);
+    boolean updateTaskStatus(Task task);
     boolean deleteTask(Task task);
     Task getTask(int id);
     List<Task> getAllTasks();

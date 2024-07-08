@@ -11,7 +11,9 @@ public class TaskCategorizer {
 
         for (Task task : tasks) {
             if (task.getStatus() == 2) {
-                completedTasks.add(task);
+                if (task.getUpdatedAt().toLocalDate().equals(today)){
+                    completedTasks.add(task);
+                }
             } else if (task.getDueDate() != null) {
                 if (task.getDueDate().isBefore(today)) {
                     previousTasks.add(task);

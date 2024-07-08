@@ -41,6 +41,7 @@ public class TasksFragment extends Fragment implements BottomSheetAddTaskFragmen
     private FragmentTaskBinding binding;
     private CategoryDAOImpl categoryDAOImpl;
     private TaskDAOImpl taskDAOImpl;
+    private String categorySelected = "All";
     private List<Category> categoryList = new ArrayList<>();
     private List<Task> taskList = new ArrayList<>();
     private List<Task> previousTasks = new ArrayList<>();
@@ -115,7 +116,7 @@ public class TasksFragment extends Fragment implements BottomSheetAddTaskFragmen
         });
 
         binding.floatingAddButton.setOnClickListener(v -> {
-            BottomSheetAddTaskFragment bottomSheet = BottomSheetAddTaskFragment.newInstance();
+            BottomSheetAddTaskFragment bottomSheet = BottomSheetAddTaskFragment.newInstance(categorySelected);
             bottomSheet.setOnTaskAddedListener(TasksFragment.this);
             bottomSheet.show(getParentFragmentManager(), bottomSheet.getTag());
         });
@@ -173,12 +174,22 @@ public class TasksFragment extends Fragment implements BottomSheetAddTaskFragmen
 
     @Override
     public void onTaskStatusChanged() {
-        previousTasks.clear();
-        todayTasks.clear();
-        futureTasks.clear();
-        completedTasks.clear();
-        taskList = taskDAOImpl.getAllTasks();
-        setRecyclerViewTask(taskList);
+        int delayMillis = 170;
+
+        new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                clearAllTaskLists();
+
+                if (categorySelected.equals("All")) {
+                    taskList = taskDAOImpl.getAllTasks();
+                } else {
+                    taskList = taskDAOImpl.getTasksByCategoryName(categorySelected);
+                }
+
+                setRecyclerViewTask(taskList);
+            }
+        }, delayMillis);
     }
 
     @Override
@@ -189,6 +200,21 @@ public class TasksFragment extends Fragment implements BottomSheetAddTaskFragmen
 
     @Override
     public void onItemCategoryClick(String categoryName) {
+        categorySelected = categoryName;
+        clearAllTaskLists();
 
+        if (categorySelected.equals("All")) {
+            taskList = taskDAOImpl.getAllTasks();
+        } else {
+            taskList = taskDAOImpl.getTasksByCategoryName(categorySelected);
+        }
+        setRecyclerViewTask(taskList);
+    }
+
+    private void clearAllTaskLists() {
+        previousTasks.clear();
+        todayTasks.clear();
+        futureTasks.clear();
+        completedTasks.clear();
     }
 }

@@ -133,4 +133,32 @@ public class CategoryDAOImpl implements ICategoryDAO {
         }
         return categories;
     }
+
+    @Override
+    public int getIDByCategoryName(String categoryName) {
+        int categoryID = -1;
+        SQLiteDatabase db = dbHandler.getReadableDatabase();
+        Cursor cursor = null;
+        try {
+            String[] projection = {
+                    TodolistContract.CategoryEntry.CATEGORY_ID
+            };
+
+            String selection = TodolistContract.CategoryEntry.NAME + " = ?";
+            String[] selectionArgs = {categoryName};
+
+            cursor = db.query(TodolistContract.CategoryEntry.TABLE_NAME, projection, selection, selectionArgs, null, null, null);
+            if (cursor != null && cursor.moveToFirst()) {
+                categoryID = cursor.getInt(cursor.getColumnIndexOrThrow(TodolistContract.CategoryEntry.CATEGORY_ID));
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            if (cursor != null) {
+                cursor.close();
+            }
+            db.close();
+        }
+        return categoryID;
+    }
 }

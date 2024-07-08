@@ -36,5 +36,7 @@
     <string name="cancel">Cancel</string>
     <string name="done">Done</string>
     <string name="create_task">Create Task</string>
-    <string name="completed_tasks">Completed Tasks</string>
+    <string name="completed_tasks_today">Completed Today</string>
+    <string name="no_tasks_in_category">No tasks in this category.</string>
+    <string name="guide_add_task">Click + to create your task</string>
 </resources>

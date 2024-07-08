@@ -49,9 +49,43 @@
         android:layout_below="@id/categoryManagerContainer">
 
         <LinearLayout
+            android:id="@+id/tasksContainer"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical">
+
+            <!-- No Tasks Message -->
+            <LinearLayout
+                android:id="@+id/noTasksMessageContainer"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:orientation="vertical"
+                android:visibility="gone">
+
+                <ImageView
+                    android:id="@+id/noTasksImage"
+                    android:layout_width="250dp"
+                    android:layout_height="250dp"/>
+
+                <TextView
+                    android:id="@+id/noTasksText"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/no_tasks_in_category"
+                    android:textSize="18sp"
+                    android:layout_marginTop="10dp"
+                    android:textColor="@color/black" />
+
+                <TextView
+                    android:id="@+id/guideAddTaskText"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/guide_add_task"
+                    android:textSize="18sp"
+                    android:layout_marginTop="10dp"
+                    android:textColor="@color/black" />
+            </LinearLayout>
 
             <!-- Previous Task Section -->
             <LinearLayout
@@ -207,7 +241,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="@string/completed_tasks"
+                        android:text="@string/completed_tasks_today"
                         android:textSize="18sp"
                         android:paddingStart="15dp"
                         android:paddingEnd="5dp"

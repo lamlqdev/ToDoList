@@ -51,22 +51,22 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
 
     @Override
     public void onBindViewHolder(@NonNull TaskViewHolder holder, int position) {
-        Task updatedTask = taskList.get(position);
+        Task updateTask = taskList.get(position);
 
-        if (updatedTask.getStatus() == 2) {
-            String text = updatedTask.getTitle();
+        if (updateTask.getStatus() == 2) {
+            String text = updateTask.getTitle();
             SpannableString spannableString = new SpannableString(text);
             spannableString.setSpan(new StrikethroughSpan(), 0, text.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
             holder.binding.taskText.setText(spannableString);
         } else{
-            holder.binding.taskText.setText(updatedTask.getTitle());
+            holder.binding.taskText.setText(updateTask.getTitle());
         }
 
-        holder.binding.taskCheckBox.setChecked(updatedTask.getStatus() == 2);
+        holder.binding.taskCheckBox.setChecked(updateTask.getStatus() == 2);
         holder.binding.taskCheckBox.setOnCheckedChangeListener(null);
         holder.binding.taskCheckBox.setOnCheckedChangeListener((buttonView, isChecked) -> {
-            updatedTask.setStatus(isChecked ? 2 : 1);
-            taskDAOImpl.updateTask(updatedTask);
+            updateTask.setStatus(isChecked ? 2 : 1);
+            taskDAOImpl.updateTaskStatus(updateTask);
 
             if (onTaskInteractionListener != null) {
                 onTaskInteractionListener.onTaskStatusChanged();

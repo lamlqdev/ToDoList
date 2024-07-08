@@ -65,7 +65,7 @@ public class DBHandler extends SQLiteOpenHelper {
 
     private void insertCategory(SQLiteDatabase db) {
         String INSERT_DATE = "INSERT INTO categories (category_id, name)"
-                + "VALUES (1, 'Work'), (2, 'Home'), (3, 'Personal')";
+                + "VALUES (1, 'Work'), (2, 'Home'), (3, 'Wishlist'), (4, 'Personal')";
         db.execSQL(INSERT_DATE);
     }
 }
