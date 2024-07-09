@@ -20,8 +20,13 @@
         <item name="colorPrimaryContainer">@color/white</item>
         <item name="colorPrimary">@color/blue</item>
         <item name="colorOnPrimary">@color/white</item>
+        <item name="chipStyle">@style/Widget.App.Chip</item>
         <item name="textAppearanceHeadlineLarge">@style/CustomHeadlineLarge</item>
         <item name="shapeAppearanceOverlay">@style/CustomTimePickerShapeAppearance</item>
+    </style>
+
+    <style name="Widget.App.Chip" parent="Widget.Material3.MaterialTimePicker.Display">
+        <item name="android:fontFamily">@font/inter_regular</item>
     </style>
 
     <style name="CustomTimePickerShapeAppearance" parent="">

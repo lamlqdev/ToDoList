@@ -21,6 +21,7 @@
         android:layout_height="wrap_content"
         android:layout_weight="1"
         android:layout_marginStart="6dp"
+        android:fontFamily="@font/inter_medium"
         android:text="@string/task_name"
         android:textSize="14sp"/>
 

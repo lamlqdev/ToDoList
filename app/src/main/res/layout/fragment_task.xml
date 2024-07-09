@@ -108,9 +108,9 @@
                         android:layout_height="wrap_content"
                         android:text="@string/previous"
                         android:textSize="18sp"
+                        android:fontFamily="@font/inter_bold"
                         android:paddingStart="15dp"
-                        android:paddingEnd="5dp"
-                        android:textStyle="bold" />
+                        android:paddingEnd="5dp" />
 
                     <ImageButton
                         android:id="@+id/previousArrowButton"
@@ -153,9 +153,9 @@
                         android:layout_height="wrap_content"
                         android:text="@string/today"
                         android:textSize="18sp"
+                        android:fontFamily="@font/inter_bold"
                         android:paddingStart="15dp"
-                        android:paddingEnd="5dp"
-                        android:textStyle="bold" />
+                        android:paddingEnd="5dp" />
 
                     <ImageButton
                         android:id="@+id/todayArrowButton"
@@ -198,9 +198,9 @@
                         android:layout_height="wrap_content"
                         android:text="@string/future"
                         android:textSize="18sp"
+                        android:fontFamily="@font/inter_bold"
                         android:paddingStart="15dp"
-                        android:paddingEnd="5dp"
-                        android:textStyle="bold" />
+                        android:paddingEnd="5dp" />
 
                     <ImageButton
                         android:id="@+id/futureArrowButton"
@@ -243,9 +243,9 @@
                         android:layout_height="wrap_content"
                         android:text="@string/completed_tasks_today"
                         android:textSize="18sp"
+                        android:fontFamily="@font/inter_bold"
                         android:paddingStart="15dp"
-                        android:paddingEnd="5dp"
-                        android:textStyle="bold" />
+                        android:paddingEnd="5dp" />
 
                     <ImageButton
                         android:id="@+id/completedArrowButton"

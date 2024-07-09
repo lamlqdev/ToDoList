@@ -6,6 +6,7 @@ import static com.kizitonwose.calendar.core.ExtensionsKt.firstDayOfWeekFromLocal
 import android.app.Dialog;
 import android.content.res.ColorStateList;
 import android.graphics.Color;
+import android.graphics.Typeface;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -16,6 +17,7 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.content.res.ResourcesCompat;
 import androidx.fragment.app.DialogFragment;
 
 import com.example.todolist.R;
@@ -100,7 +102,7 @@ public class DateDialogFragment extends DialogFragment {
                 if (calendarDay.getPosition() == DayPosition.MonthDate) {
                     container.calendarDayText.setTextColor(getResources().getColor(R.color.black, getResources().newTheme()));
                 } else {
-                    container.calendarDayText.setTextColor(getResources().getColor(R.color.grey, getResources().newTheme()));
+                    container.calendarDayText.setTextColor(getResources().getColor(R.color.grey_text, getResources().newTheme()));
                 }
 
                 container.day = calendarDay;
@@ -119,7 +121,9 @@ public class DateDialogFragment extends DialogFragment {
                         textView.setBackground(null);
                     }
                 } else {
-                    textView.setVisibility(View.INVISIBLE);
+                    textView.setVisibility(View.VISIBLE);
+                    Typeface typeface = ResourcesCompat.getFont(requireContext(), R.font.inter_regular);
+                    textView.setTypeface(typeface);
                 }
             }
         });

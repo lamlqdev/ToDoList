@@ -26,6 +26,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textSize="18sp"
+            android:fontFamily="@font/inter_regular"
             android:layout_marginEnd="10dp"
             android:textAllCaps="true"/>
 
@@ -86,6 +87,7 @@
             android:paddingEnd="-5dp"
             android:layout_marginEnd="10dp"
             android:text="@string/no_date"
+            android:fontFamily="@font/inter_regular"
             android:textColor="@color/grey_text"
             android:background="@drawable/background_white_radius_5dp"
             app:backgroundTint="@color/task_title_bg"/>
@@ -99,6 +101,7 @@
             android:paddingEnd="-5dp"
             android:layout_marginEnd="10dp"
             android:text="@string/today"
+            android:fontFamily="@font/inter_regular"
             android:textColor="@color/grey_text"
             android:background="@drawable/background_white_radius_5dp"
             app:backgroundTint="@color/task_title_bg"/>
@@ -113,6 +116,7 @@
             android:paddingStart="12dp"
             android:paddingEnd="12dp"
             android:text="@string/tomorrow"
+            android:fontFamily="@font/inter_regular"
             android:textColor="@color/grey_text"
             app:backgroundTint="@color/task_title_bg" />
     </LinearLayout>
@@ -134,6 +138,7 @@
             android:paddingEnd="12dp"
             android:layout_marginEnd="10dp"
             android:text="@string/_3_days_later"
+            android:fontFamily="@font/inter_regular"
             android:textColor="@color/grey_text"
             android:background="@drawable/background_white_radius_5dp"
             app:backgroundTint="@color/task_title_bg"/>
@@ -147,6 +152,7 @@
             android:paddingEnd="12dp"
             android:layout_marginEnd="10dp"
             android:text="@string/this_sunday"
+            android:fontFamily="@font/inter_regular"
             android:textColor="@color/grey_text"
             android:background="@drawable/background_white_radius_5dp"
             app:backgroundTint="@color/task_title_bg"/>
@@ -168,6 +174,7 @@
             android:layout_height="wrap_content"
             android:alpha="0.7"
             android:text="@string/cancel"
+            android:fontFamily="@font/inter_regular"
             android:textAllCaps="true"/>
 
         <Button
@@ -176,6 +183,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/done"
+            android:fontFamily="@font/inter_bold"
             android:textAllCaps="true"/>
 
     </LinearLayout>

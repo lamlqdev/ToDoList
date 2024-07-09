@@ -20,6 +20,7 @@
         android:layout_weight="1"
         android:layout_gravity="center_vertical"
         android:hint="@string/input_the_sub_task"
+        android:fontFamily="@font/inter_light"
         android:textColorHint="@color/grey_text"
         android:textColor="@color/black"
         android:textSize="16sp"
