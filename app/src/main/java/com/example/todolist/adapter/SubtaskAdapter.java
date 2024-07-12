@@ -41,6 +41,7 @@ public class SubtaskAdapter extends RecyclerView.Adapter<SubtaskAdapter.SubtaskV
     @Override
     public void onBindViewHolder(@NonNull SubtaskAdapter.SubtaskViewHolder holder, int position) {
         Subtask subtask = subtasks.get(position);
+
         holder.binding.checkboxIsDone.setChecked(subtask.getStatus() == 2);
         holder.binding.editTextSubTask.setText(subtask.getDescription());
         holder.binding.editTextSubTask.requestFocus();

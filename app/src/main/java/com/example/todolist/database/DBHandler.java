@@ -33,11 +33,12 @@ public class DBHandler extends SQLiteOpenHelper {
         db.execSQL(CREATE_TABLE_CATEGORIES);
 
         String CREATE_TABLE_SUBTASKS = "CREATE TABLE subtasks (" +
-                "subtask_id INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                "subtask_id INTEGER PRIMARY KEY, " +
                 "task_id INTEGER, " +
                 "description TEXT, " +
                 "status INTEGER, " +
                 "created_at DATETIME, " +
+                "updated_at DATETIME, " +
                 "FOREIGN KEY (task_id) REFERENCES tasks(task_id)" +
                 ");";
         db.execSQL(CREATE_TABLE_SUBTASKS);

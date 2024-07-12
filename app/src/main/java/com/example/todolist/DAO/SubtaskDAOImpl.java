@@ -17,7 +17,8 @@ import java.util.List;
 public class SubtaskDAOImpl implements ISubtaskDAO{
     DBHandler dbHandler;
     Context context;
-    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+    private final DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+
 
     public SubtaskDAOImpl(Context context) {
         this.context = context;
@@ -28,11 +29,12 @@ public class SubtaskDAOImpl implements ISubtaskDAO{
         try {
             SQLiteDatabase db = dbHandler.getWritableDatabase();
             ContentValues values = new ContentValues();
+            values.put(TodolistContract.SubtasksEntry.SUBTASK_ID, subtask.getSubtaskID());
             values.put(TodolistContract.SubtasksEntry.TASK_ID, subtask.getTaskID());
             values.put(TodolistContract.SubtasksEntry.DESCRIPTION, subtask.getDescription());
             values.put(TodolistContract.SubtasksEntry.STATUS, 1);
             LocalDateTime now = LocalDateTime.now();
-            values.put(TodolistContract.SubtasksEntry.CREATED_AT, now.format(formatter));
+            values.put(TodolistContract.SubtasksEntry.CREATED_AT, now.format(dateTimeFormatter));
 
             long result = db.insert(TodolistContract.SubtasksEntry.TABLE_NAME, null, values);
             db.close();
@@ -51,7 +53,7 @@ public class SubtaskDAOImpl implements ISubtaskDAO{
             values.put(TodolistContract.SubtasksEntry.DESCRIPTION, subtask.getDescription());
             values.put(TodolistContract.SubtasksEntry.STATUS, subtask.getStatus());
             LocalDateTime now = LocalDateTime.now();
-            values.put(TodolistContract.SubtasksEntry.UPDATED_AT, now.format(formatter));
+            values.put(TodolistContract.SubtasksEntry.UPDATED_AT, now.format(dateTimeFormatter));
 
             int result = db.update(TodolistContract.SubtasksEntry.TABLE_NAME, values,
                     TodolistContract.SubtasksEntry.SUBTASK_ID + " = ?",
@@ -114,14 +116,17 @@ public class SubtaskDAOImpl implements ISubtaskDAO{
 
             cursor = db.query(TodolistContract.SubtasksEntry.TABLE_NAME, projection, selection, selectionArgs, null, null, null);
             if (cursor != null && cursor.moveToFirst()) {
-                subtask = new Subtask(
-                        cursor.getInt(cursor.getColumnIndexOrThrow(TodolistContract.SubtasksEntry.SUBTASK_ID)),
-                        cursor.getInt(cursor.getColumnIndexOrThrow(TodolistContract.SubtasksEntry.TASK_ID)),
-                        cursor.getString(cursor.getColumnIndexOrThrow(TodolistContract.SubtasksEntry.DESCRIPTION)),
-                        cursor.getInt(cursor.getColumnIndexOrThrow(TodolistContract.SubtasksEntry.STATUS)),
-                        LocalDateTime.parse(cursor.getString(cursor.getColumnIndexOrThrow(TodolistContract.SubtasksEntry.CREATED_AT))),
-                        LocalDateTime.parse(cursor.getString(cursor.getColumnIndexOrThrow(TodolistContract.SubtasksEntry.UPDATED_AT)))
-                );
+                int subtaskID = cursor.getInt(cursor.getColumnIndexOrThrow(TodolistContract.SubtasksEntry.SUBTASK_ID));
+                int taskID = cursor.getInt(cursor.getColumnIndexOrThrow(TodolistContract.SubtasksEntry.TASK_ID));
+                String description = cursor.getString(cursor.getColumnIndexOrThrow(TodolistContract.SubtasksEntry.DESCRIPTION));
+                int status = cursor.getInt(cursor.getColumnIndexOrThrow(TodolistContract.SubtasksEntry.STATUS));
+                String createdAtString = cursor.getString(cursor.getColumnIndexOrThrow(TodolistContract.SubtasksEntry.CREATED_AT));
+                String updatedAtString = cursor.getString(cursor.getColumnIndexOrThrow(TodolistContract.SubtasksEntry.UPDATED_AT));
+
+                LocalDateTime createdDateTime = createdAtString != null ? LocalDateTime.parse(createdAtString) : null;
+                LocalDateTime updatedAtDateTime = updatedAtString != null ? LocalDateTime.parse(updatedAtString) : null;
+
+                subtask = new Subtask(subtaskID, taskID, description, status, createdDateTime, updatedAtDateTime);
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -152,14 +157,17 @@ public class SubtaskDAOImpl implements ISubtaskDAO{
             cursor = db.query(TodolistContract.SubtasksEntry.TABLE_NAME, projection, null, null, null, null, null);
             if (cursor != null) {
                 while (cursor.moveToNext()) {
-                    Subtask subtask = new Subtask(
-                            cursor.getInt(cursor.getColumnIndexOrThrow(TodolistContract.SubtasksEntry.SUBTASK_ID)),
-                            cursor.getInt(cursor.getColumnIndexOrThrow(TodolistContract.SubtasksEntry.TASK_ID)),
-                            cursor.getString(cursor.getColumnIndexOrThrow(TodolistContract.SubtasksEntry.DESCRIPTION)),
-                            cursor.getInt(cursor.getColumnIndexOrThrow(TodolistContract.SubtasksEntry.STATUS)),
-                            LocalDateTime.parse(cursor.getString(cursor.getColumnIndexOrThrow(TodolistContract.SubtasksEntry.CREATED_AT))),
-                            LocalDateTime.parse(cursor.getString(cursor.getColumnIndexOrThrow(TodolistContract.SubtasksEntry.UPDATED_AT)))
-                    );
+                    int subtaskID = cursor.getInt(cursor.getColumnIndexOrThrow(TodolistContract.SubtasksEntry.SUBTASK_ID));
+                    int taskID = cursor.getInt(cursor.getColumnIndexOrThrow(TodolistContract.SubtasksEntry.TASK_ID));
+                    String description = cursor.getString(cursor.getColumnIndexOrThrow(TodolistContract.SubtasksEntry.DESCRIPTION));
+                    int status = cursor.getInt(cursor.getColumnIndexOrThrow(TodolistContract.SubtasksEntry.STATUS));
+                    String createdAtString = cursor.getString(cursor.getColumnIndexOrThrow(TodolistContract.SubtasksEntry.CREATED_AT));
+                    String updatedAtString = cursor.getString(cursor.getColumnIndexOrThrow(TodolistContract.SubtasksEntry.UPDATED_AT));
+
+                    LocalDateTime createdDateTime = createdAtString != null ? LocalDateTime.parse(createdAtString, dateTimeFormatter) : null;
+                    LocalDateTime updatedAtDateTime = updatedAtString != null ? LocalDateTime.parse(updatedAtString, dateTimeFormatter) : null;
+
+                    Subtask subtask = new Subtask(subtaskID, taskID, description, status, createdDateTime, updatedAtDateTime);
                     subtasks.add(subtask);
                 }
             }
@@ -170,6 +178,50 @@ public class SubtaskDAOImpl implements ISubtaskDAO{
                 cursor.close();
             }
             db.close();
+        }
+        return subtasks;
+    }
+
+    @Override
+    public List<Subtask> getListSubtaskByTaskID(int taskID) {
+        List<Subtask> subtasks = new ArrayList<>();
+        SQLiteDatabase db = dbHandler.getReadableDatabase();
+        Cursor cursor = null;
+        try {
+            String[] projection = {
+                    TodolistContract.SubtasksEntry.SUBTASK_ID,
+                    TodolistContract.SubtasksEntry.TASK_ID,
+                    TodolistContract.SubtasksEntry.DESCRIPTION,
+                    TodolistContract.SubtasksEntry.STATUS,
+                    TodolistContract.SubtasksEntry.CREATED_AT,
+                    TodolistContract.SubtasksEntry.UPDATED_AT
+            };
+
+            String selection = TodolistContract.SubtasksEntry.TASK_ID + " = ?";
+            String[] selectionArgs = {String.valueOf(taskID)};
+
+            cursor = db.query(TodolistContract.SubtasksEntry.TABLE_NAME, projection, selection, selectionArgs, null, null, null);
+            if (cursor != null) {
+                while (cursor.moveToNext()) {
+                    int subtaskID = cursor.getInt(cursor.getColumnIndexOrThrow(TodolistContract.SubtasksEntry.SUBTASK_ID));
+                    String description = cursor.getString(cursor.getColumnIndexOrThrow(TodolistContract.SubtasksEntry.DESCRIPTION));
+                    int status = cursor.getInt(cursor.getColumnIndexOrThrow(TodolistContract.SubtasksEntry.STATUS));
+                    String createdAtString = cursor.getString(cursor.getColumnIndexOrThrow(TodolistContract.SubtasksEntry.CREATED_AT));
+                    String updatedAtString = cursor.getString(cursor.getColumnIndexOrThrow(TodolistContract.SubtasksEntry.UPDATED_AT));
+
+                    LocalDateTime createdDateTime = createdAtString != null ? LocalDateTime.parse(createdAtString, dateTimeFormatter) : null;
+                    LocalDateTime updatedAtDateTime = updatedAtString != null ? LocalDateTime.parse(updatedAtString, dateTimeFormatter) : null;
+
+                    Subtask subtask = new Subtask(subtaskID, taskID, description, status, createdDateTime, updatedAtDateTime);
+                    subtasks.add(subtask);
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            if (cursor != null) {
+                cursor.close();
+            }
         }
         return subtasks;
     }

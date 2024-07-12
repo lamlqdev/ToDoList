@@ -193,8 +193,9 @@ public class TasksFragment extends Fragment implements BottomSheetAddTaskFragmen
     }
 
     @Override
-    public void onItemTaskClick(int position) {
+    public void onItemTaskClick(Task task) {
         Intent intent = new Intent(requireContext(), UpdateTaskActivity.class);
+        intent.putExtra("task", task);
         startActivity(intent);
     }
 

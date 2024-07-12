@@ -19,21 +19,18 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
-import androidx.fragment.app.DialogFragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.todolist.DAO.CategoryDAOImpl;
 import com.example.todolist.DAO.SubtaskDAOImpl;
 import com.example.todolist.DAO.TaskDAOImpl;
 import com.example.todolist.R;
-import com.example.todolist.adapter.MenuCategoryAdapter;
 import com.example.todolist.adapter.SubtaskAdapter;
 import com.example.todolist.databinding.FragmentBottomSheetAddTaskBinding;
 import com.example.todolist.model.Category;
 import com.example.todolist.model.Subtask;
 import com.example.todolist.model.Task;
-import com.example.todolist.utils.TaskIDGenerator;
+import com.example.todolist.utils.IDGenerator;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
@@ -41,11 +38,9 @@ import com.google.android.material.timepicker.MaterialTimePicker;
 import com.google.android.material.timepicker.TimeFormat;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 public class BottomSheetAddTaskFragment extends BottomSheetDialogFragment implements DateDialogFragment.OnDateSelectedListener{
     private FragmentBottomSheetAddTaskBinding binding;
@@ -81,7 +76,7 @@ public class BottomSheetAddTaskFragment extends BottomSheetDialogFragment implem
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        taskID = TaskIDGenerator.generateUniqueID();
+        taskID = IDGenerator.generateTaskID();
         if (getArguments() != null) {
             categorySelected = getArguments().getString(ARG_CATEGORY_SELECTED);
             if (categorySelected.equals("All")) {
@@ -109,6 +104,7 @@ public class BottomSheetAddTaskFragment extends BottomSheetDialogFragment implem
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         binding = FragmentBottomSheetAddTaskBinding.inflate(inflater, container, false);
+        initializeData();
         setWidgets();
         setEvents();
         return binding.getRoot();
@@ -122,22 +118,26 @@ public class BottomSheetAddTaskFragment extends BottomSheetDialogFragment implem
         super.onCancel(dialog);
     }
 
-    private void setWidgets() {
+    private void initializeData(){
         categoryDAOImpl = new CategoryDAOImpl(getContext());
         subtaskDAOImpl = new SubtaskDAOImpl(getContext());
         taskDAOImpl = new TaskDAOImpl(getContext());
 
         categoryList = categoryDAOImpl.getAllCategories();
         subTaskList = new ArrayList<>();
-        subtaskAdapter = new SubtaskAdapter(getContext(), subTaskList);
+    }
 
+    private void setWidgets() {
+        subtaskAdapter = new SubtaskAdapter(getContext(), subTaskList);
         binding.recyclerViewSubTask.setLayoutManager(new LinearLayoutManager(getContext()));
         binding.recyclerViewSubTask.setAdapter(subtaskAdapter);
 
         binding.buttonAddCatagory.setText(categorySelected);
         if (!categorySelected.equals("No Category")){
             binding.buttonAddCatagory.setTextColor(ContextCompat.getColor(requireContext(), R.color.blue));
+            binding.buttonAddCatagory.setEnabled(false);
         }
+
         binding.titleTaskField.requestFocus();
     }
     private void setEvents() {
@@ -154,6 +154,7 @@ public class BottomSheetAddTaskFragment extends BottomSheetDialogFragment implem
                 binding.recyclerViewSubTask.setVisibility(View.VISIBLE);
 
                 Subtask subtask = new Subtask();
+                subtask.setSubtaskID(IDGenerator.generateSubTaskID());
                 subtask.setTaskID(taskID);
 
                 subtaskAdapter.addSubtask(subtask);
@@ -219,13 +220,7 @@ public class BottomSheetAddTaskFragment extends BottomSheetDialogFragment implem
             newTask.setTaskID(taskID);
             newTask.setTitle(taskTitle);
             newTask.setDueDate(selectedDate);
-
-            if (selectedCategoryID != 0) {
-                newTask.setCategoryID(selectedCategoryID);
-            } else {
-                selectedCategoryID = categoryDAOImpl.getIDByCategoryName(categorySelected);
-                newTask.setCategoryID(selectedCategoryID);
-            }
+            newTask.setCategoryID(selectedCategoryID);
 
             if (selectedTime != null) {
                 newTask.setDueTime(selectedTime);
@@ -241,17 +236,21 @@ public class BottomSheetAddTaskFragment extends BottomSheetDialogFragment implem
     }
 
     private void refreshInput() {
-        //clear input and generate new taskID
-        taskID = TaskIDGenerator.generateUniqueID();
+        taskID = IDGenerator.generateTaskID();
         binding.titleTaskField.setText("");
         selectedDate = LocalDate.now();
         selectedTime = null;
+
         binding.buttonAddCatagory.setText(categorySelected);
         if (!categorySelected.equals("No Category")){
             binding.buttonAddCatagory.setTextColor(ContextCompat.getColor(requireContext(), R.color.blue));
         } else{
             binding.buttonAddCatagory.setTextColor(ContextCompat.getColor(requireContext(), R.color.grey_text));
         }
+
+        binding.recyclerViewSubTask.setVisibility(View.GONE);
+        subTaskList.clear();
+        subtaskAdapter.notifyDataSetChanged();
     }
 
     private void showMaterialTimePicker() {
@@ -279,6 +278,7 @@ public class BottomSheetAddTaskFragment extends BottomSheetDialogFragment implem
     private void showCategoryPopupMenu(View view) {
         Context wrapper = new ContextThemeWrapper(requireContext(), R.style.popupMenuStyle);
         PopupMenu popupMenu = new PopupMenu(wrapper, view);
+        popupMenu.getMenu().add(Menu.NONE, 0, Menu.NONE, "No Category");
         for(int i = 0; i < categoryList.size(); i++) {
             popupMenu.getMenu().add(Menu.NONE, i+1, Menu.NONE, categoryList.get(i).getName());
         }
