@@ -247,7 +247,11 @@ public class BottomSheetAddTaskFragment extends BottomSheetDialogFragment implem
         selectedDate = LocalDate.now();
         selectedTime = null;
         binding.buttonAddCatagory.setText(categorySelected);
-        binding.buttonAddCatagory.setTextColor(ContextCompat.getColor(requireContext(), R.color.grey_text));
+        if (!categorySelected.equals("No Category")){
+            binding.buttonAddCatagory.setTextColor(ContextCompat.getColor(requireContext(), R.color.blue));
+        } else{
+            binding.buttonAddCatagory.setTextColor(ContextCompat.getColor(requireContext(), R.color.grey_text));
+        }
     }
 
     private void showMaterialTimePicker() {
@@ -268,7 +272,6 @@ public class BottomSheetAddTaskFragment extends BottomSheetDialogFragment implem
                 int hour = picker.getHour();
                 int minute = picker.getMinute();
                 selectedTime = LocalTime.of(hour, minute);
-                binding.titleTaskField.setText(selectedTime.toString());
             }
         });
     }

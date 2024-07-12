@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:background="@color/activity_bg"
+    android:background="@color/white"
     android:orientation="vertical"
     tools:context=".activity.UpdateTaskActivity">
 
@@ -55,7 +55,9 @@
             android:layout_marginStart="10dp"
             android:spinnerMode="dropdown"
             android:dropDownVerticalOffset="30dp"
-            android:background="@android:color/transparent">
+            android:fontFamily="@font/inter_regular"
+            android:background="@android:color/transparent"
+            android:backgroundTint="@color/item_bg">
         </Spinner>
 
         <EditText
@@ -67,11 +69,10 @@
             android:background="@android:color/transparent"
             android:inputType="textMultiLine"
             android:focusable="true"
-            android:hint="@string/add_task_title"
+            android:fontFamily="@font/inter_medium"
             android:textColorHint="@color/grey"
             android:textColor="@color/black"
-            android:textSize="20sp"
-            android:textStyle="bold"/>
+            android:textSize="20sp" />
 
     </LinearLayout>
 
@@ -80,9 +81,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
-        android:layout_marginBottom="10dp">
-
-    </androidx.recyclerview.widget.RecyclerView>
+        android:layout_marginBottom="10dp"
+        android:minHeight="120dp"/>
 
     <!--Subtask -->
     <LinearLayout
@@ -99,6 +99,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/add_sub_task"
+            android:fontFamily="@font/inter_medium"
             android:textSize="16sp"
             android:clickable="false"
             android:background="@android:color/transparent"
@@ -107,10 +108,11 @@
 
         <com.google.android.material.divider.MaterialDivider
             android:layout_width="match_parent"
-            android:layout_height="0.7dp"
+            android:layout_height="0.5dp"
             android:backgroundTint="@color/date_time_bg"
             app:dividerInsetStart="16dp"
-            app:dividerInsetEnd="16dp"/>
+            app:dividerInsetEnd="16dp"
+            app:dividerColor="#CAC4D0"/>
     </LinearLayout>
 
     <!-- Due Date -->
@@ -134,13 +136,15 @@
                 android:layout_marginEnd="15dp"
                 android:layout_gravity="center_vertical"
                 android:contentDescription="@string/due_date"
-                android:src="@drawable/ic_calendar" />
+                android:src="@drawable/ic_calendar"
+                app:tint="@color/blue" />
 
             <TextView
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="@string/due_date"
+                android:fontFamily="@font/inter_regular"
                 android:layout_gravity="center_vertical"
                 android:textSize="16sp" />
 
@@ -152,6 +156,7 @@
                 android:background="@drawable/background_white_radius_5dp"
                 android:backgroundTint="@color/date_time_bg"
                 android:text="@string/no"
+                android:fontFamily="@font/inter_regular"
                 android:padding="5dp"
                 android:paddingStart="15dp"
                 android:paddingEnd="15dp"
@@ -162,10 +167,11 @@
 
         <com.google.android.material.divider.MaterialDivider
             android:layout_width="match_parent"
-            android:layout_height="0.7dp"
+            android:layout_height="0.5dp"
             android:backgroundTint="@color/date_time_bg"
             app:dividerInsetStart="16dp"
-            app:dividerInsetEnd="16dp"/>
+            app:dividerInsetEnd="16dp"
+            app:dividerColor="#CAC4D0"/>
 
     </LinearLayout>
 
@@ -190,13 +196,15 @@
                 android:layout_marginEnd="15dp"
                 android:layout_gravity="center_vertical"
                 android:contentDescription="@string/due_date"
-                android:src="@drawable/ic_schedule" />
+                android:src="@drawable/ic_schedule"
+                app:tint="@color/blue"/>
 
             <TextView
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="@string/due_time"
+                android:fontFamily="@font/inter_regular"
                 android:layout_gravity="center_vertical"
                 android:textSize="16sp" />
 
@@ -208,6 +216,7 @@
                 android:background="@drawable/background_white_radius_5dp"
                 android:backgroundTint="@color/date_time_bg"
                 android:text="@string/no"
+                android:fontFamily="@font/inter_regular"
                 android:padding="5dp"
                 android:paddingStart="15dp"
                 android:paddingEnd="15dp"
@@ -218,10 +227,11 @@
 
         <com.google.android.material.divider.MaterialDivider
             android:layout_width="match_parent"
-            android:layout_height="0.7dp"
+            android:layout_height="0.5dp"
             android:backgroundTint="@color/date_time_bg"
             app:dividerInsetStart="16dp"
-            app:dividerInsetEnd="16dp"/>
+            app:dividerInsetEnd="16dp"
+            app:dividerColor="#CAC4D0"/>
 
     </LinearLayout>
 
@@ -246,13 +256,15 @@
                 android:layout_marginEnd="15dp"
                 android:layout_gravity="center_vertical"
                 android:contentDescription="@string/due_date"
-                android:src="@drawable/ic_note" />
+                android:src="@drawable/ic_note"
+                app:tint="@color/blue" />
 
             <TextView
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="@string/notes"
+                android:fontFamily="@font/inter_regular"
                 android:layout_gravity="center_vertical"
                 android:textSize="16sp" />
 
@@ -262,6 +274,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="end|center"
                 android:text="@string/add_note"
+                android:fontFamily="@font/inter_regular"
                 android:padding="5dp"
                 android:textColor="@color/black"
                 android:textSize="14sp" />
@@ -270,7 +283,7 @@
 
         <com.google.android.material.divider.MaterialDivider
             android:layout_width="match_parent"
-            android:layout_height="0.7dp"
+            android:layout_height="0.5dp"
             android:backgroundTint="@color/date_time_bg"
             app:dividerInsetStart="16dp"
             app:dividerInsetEnd="16dp"/>
@@ -285,5 +298,6 @@
         android:layout_marginStart="15dp"
         android:layout_marginEnd="15dp"
         android:background="@drawable/background_white_radius_5dp"
-        android:text="@string/update_task" />
+        android:text="@string/update_task"
+        android:fontFamily="@font/inter_medium"/>
 </LinearLayout>
