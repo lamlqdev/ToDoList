@@ -57,7 +57,7 @@ public class UpdateTaskActivity extends AppCompatActivity {
     }
 
     private void setWidgets() {
-        subtaskAdapter = new SubtaskAdapter(getApplicationContext(), subtaskList);
+        subtaskAdapter = new SubtaskAdapter(this, subtaskList);
         binding.subTaskList.setLayoutManager(new LinearLayoutManager(this));
         binding.subTaskList.setAdapter(subtaskAdapter);
 
@@ -66,10 +66,10 @@ public class UpdateTaskActivity extends AppCompatActivity {
         Category category = categoryDAOImpl.getCategory(selectedTask.getCategoryID());
         if (category != null) {
             binding.buttonAddCatagory.setText(category.getName());
-            binding.buttonAddCatagory.setTextColor(ContextCompat.getColor(getApplicationContext(), R.color.blue));
+            binding.buttonAddCatagory.setTextColor(ContextCompat.getColor(this, R.color.blue));
         } else {
             binding.buttonAddCatagory.setText(R.string.no_category);
-            binding.buttonAddCatagory.setTextColor(ContextCompat.getColor(getApplicationContext(), R.color.grey_text));
+            binding.buttonAddCatagory.setTextColor(ContextCompat.getColor(this, R.color.grey_text));
         }
 
         if (selectedTask.getDueDate() != null) {
@@ -98,7 +98,7 @@ public class UpdateTaskActivity extends AppCompatActivity {
     }
 
     private void showCategoryPopupMenu(View view) {
-        Context wrapper = new ContextThemeWrapper(getApplicationContext(), R.style.popupMenuStyle);
+        Context wrapper = new ContextThemeWrapper(this, R.style.popupMenuStyle);
         PopupMenu popupMenu = new PopupMenu(wrapper, view);
         popupMenu.getMenu().add(Menu.NONE, 0, Menu.NONE, "No Category");
         for(int i = 0; i < categoryList.size(); i++) {
