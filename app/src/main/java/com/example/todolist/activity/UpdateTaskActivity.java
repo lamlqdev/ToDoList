@@ -1,6 +1,7 @@
 package com.example.todolist.activity;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.AttributeSet;
 import android.view.ContextThemeWrapper;
@@ -17,19 +18,28 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.example.todolist.DAO.CategoryDAOImpl;
 import com.example.todolist.DAO.SubtaskDAOImpl;
+import com.example.todolist.DAO.TaskDAOImpl;
 import com.example.todolist.R;
 import com.example.todolist.adapter.SubtaskAdapter;
 import com.example.todolist.databinding.ActivityUpdateTaskBinding;
+import com.example.todolist.fragment.BottomSheetAddTaskFragment;
+import com.example.todolist.fragment.DateDialogFragment;
 import com.example.todolist.model.Category;
 import com.example.todolist.model.Subtask;
 import com.example.todolist.model.Task;
+import com.example.todolist.utils.IDGenerator;
+import com.google.android.material.timepicker.MaterialTimePicker;
+import com.google.android.material.timepicker.TimeFormat;
 
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.List;
 
-public class UpdateTaskActivity extends AppCompatActivity {
+public class UpdateTaskActivity extends AppCompatActivity implements DateDialogFragment.OnDateSelectedListener {
     private ActivityUpdateTaskBinding binding;
     private CategoryDAOImpl categoryDAOImpl;
     private SubtaskDAOImpl subtaskDAOImpl;
+    private TaskDAOImpl taskDAOImpl;
     private List<Category> categoryList;
     private List<Subtask> subtaskList;
     private SubtaskAdapter subtaskAdapter;
@@ -42,7 +52,10 @@ public class UpdateTaskActivity extends AppCompatActivity {
         View view = binding.getRoot();
         setContentView(view);
 
-        selectedTask = (Task) getIntent().getSerializableExtra("task");
+        Intent intent = getIntent();
+        if (intent != null && intent.hasExtra("task")) {
+            selectedTask = (Task) intent.getSerializableExtra("task");
+        }
 
         initializeData();
         setWidgets();
@@ -52,6 +65,7 @@ public class UpdateTaskActivity extends AppCompatActivity {
     private void initializeData() {
         categoryDAOImpl = new CategoryDAOImpl(this);
         subtaskDAOImpl = new SubtaskDAOImpl(this);
+        taskDAOImpl = new TaskDAOImpl(this);
         categoryList = categoryDAOImpl.getAllCategories();
         subtaskList = subtaskDAOImpl.getListSubtaskByTaskID(selectedTask.getTaskID());
     }
@@ -65,11 +79,11 @@ public class UpdateTaskActivity extends AppCompatActivity {
 
         Category category = categoryDAOImpl.getCategory(selectedTask.getCategoryID());
         if (category != null) {
-            binding.buttonAddCatagory.setText(category.getName());
-            binding.buttonAddCatagory.setTextColor(ContextCompat.getColor(this, R.color.blue));
+            binding.buttonCatagory.setText(category.getName());
+            binding.buttonCatagory.setTextColor(ContextCompat.getColor(this, R.color.blue));
         } else {
-            binding.buttonAddCatagory.setText(R.string.no_category);
-            binding.buttonAddCatagory.setTextColor(ContextCompat.getColor(this, R.color.grey_text));
+            binding.buttonCatagory.setText(R.string.no_category);
+            binding.buttonCatagory.setTextColor(ContextCompat.getColor(this, R.color.grey_text));
         }
 
         if (selectedTask.getDueDate() != null) {
@@ -82,17 +96,56 @@ public class UpdateTaskActivity extends AppCompatActivity {
     }
 
     private void setEvents() {
-        binding.buttonAddCatagory.setOnClickListener(new View.OnClickListener() {
+        binding.buttonCatagory.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 showCategoryPopupMenu(view);
             }
         });
 
-        binding.backButton.setOnClickListener(new View.OnClickListener() {
+        binding.buttonBack.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                binding.titleTaskField.requestFocus();
+                binding.titleTaskField.clearFocus();
+                Intent resultIntent = new Intent();
+                setResult(RESULT_OK, resultIntent);
                 finish();
+            }
+        });
+
+        binding.titleTaskField.setOnFocusChangeListener((v, hasFocus) -> {
+            if (!hasFocus) {
+                selectedTask.setTitle(binding.titleTaskField.getText().toString());
+                taskDAOImpl.updateTask(selectedTask);
+            }
+        });
+
+        binding.buttonAddSubtask.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Subtask subtask = new Subtask();
+                subtask.setSubtaskID(IDGenerator.generateSubTaskID());
+                subtask.setTaskID(selectedTask.getTaskID());
+
+                subtaskAdapter.addSubtask(subtask);
+                binding.subTaskList.scrollToPosition(subtaskList.size() - 1);
+            }
+        });
+
+        binding.dueDateContainer.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                DateDialogFragment datePicker = DateDialogFragment.newInstance();
+                datePicker.setOnDateSelectedListener(UpdateTaskActivity.this);
+                datePicker.show(getSupportFragmentManager(), "datePicker");
+            }
+        });
+
+        binding.dueTimeContainer.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                showMaterialTimePicker();
             }
         });
     }
@@ -108,16 +161,53 @@ public class UpdateTaskActivity extends AppCompatActivity {
             @Override
             public boolean onMenuItemClick(MenuItem item) {
                 int selectedCategoryID = item.getItemId();
-                binding.buttonAddCatagory.setText(item.getTitle());
+                binding.buttonCatagory.setText(item.getTitle());
                 if (selectedCategoryID != 0) {
-                    binding.buttonAddCatagory.setTextColor(ContextCompat.getColor(getApplicationContext(), R.color.blue));
+                    binding.buttonCatagory.setTextColor(ContextCompat.getColor(getApplicationContext(), R.color.blue));
                 } else {
-                    binding.buttonAddCatagory.setTextColor(ContextCompat.getColor(getApplicationContext(), R.color.grey_text));
+                    binding.buttonCatagory.setTextColor(ContextCompat.getColor(getApplicationContext(), R.color.grey_text));
                 }
+                selectedTask.setCategoryID(selectedCategoryID);
+                taskDAOImpl.updateTask(selectedTask);
                 return true;
             }
         });
         popupMenu.show();
     }
 
+    private void showMaterialTimePicker() {
+        MaterialTimePicker.Builder builder = new MaterialTimePicker.Builder()
+                .setTitleText("Set Time")
+                .setTimeFormat(TimeFormat.CLOCK_24H)
+                .setHour(7)
+                .setMinute(0)
+                .setInputMode(MaterialTimePicker.INPUT_MODE_CLOCK)
+                .setTheme(R.style.CustomMaterialTimePicker);
+
+        MaterialTimePicker picker = builder.build();
+        picker.show(getSupportFragmentManager(), "MATERIAL_TIME_PICKER");
+
+        picker.addOnPositiveButtonClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                int hour = picker.getHour();
+                int minute = picker.getMinute();
+                LocalTime selectedTime = LocalTime.of(hour, minute);
+                binding.dueTimeField.setText(selectedTime.toString());
+                selectedTask.setDueTime(selectedTime);
+                taskDAOImpl.updateTask(selectedTask);
+            }
+        });
+    }
+
+    @Override
+    public void onDateSelected(LocalDate date) {
+        if (date != null){
+            binding.dueDateField.setText(date.toString());
+        } else {
+            binding.dueDateField.setText(R.string.no_date);
+        }
+        selectedTask.setDueDate(date);
+        taskDAOImpl.updateTask(selectedTask);
+    }
 }

@@ -30,6 +30,7 @@
     <string name="no_category">No category</string>
     <string name="input_the_sub_task">Input the sub-task</string>
     <string name="no_date">No Date</string>
+    <string name="no_time">No Time</string>
     <string name="tomorrow">Tomorrow</string>
     <string name="_3_days_later">3 Days Later</string>
     <string name="this_sunday">This Sunday</string>

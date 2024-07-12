@@ -14,11 +14,15 @@ public class TaskCategorizer {
                 if (task.getUpdatedAt().toLocalDate().equals(today)){
                     completedTasks.add(task);
                 }
-            } else if (task.getDueDate() != null) {
-                if (task.getDueDate().isBefore(today)) {
-                    previousTasks.add(task);
-                } else if (task.getDueDate().isEqual(today)) {
-                    todayTasks.add(task);
+            } else {
+                if (task.getDueDate() != null) {
+                    if (task.getDueDate().isBefore(today)) {
+                        previousTasks.add(task);
+                    } else if (task.getDueDate().isEqual(today)) {
+                        todayTasks.add(task);
+                    } else {
+                        futureTasks.add(task);
+                    }
                 } else {
                     futureTasks.add(task);
                 }

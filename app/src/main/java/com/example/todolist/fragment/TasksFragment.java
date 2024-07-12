@@ -5,6 +5,8 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -38,6 +40,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class TasksFragment extends Fragment implements BottomSheetAddTaskFragment.OnTaskAddedListener, TaskAdapter.OnTaskInteractionListener, CategoryAdapter.OnClickListener{
+    public static final int RESULT_OK = 1;
     private FragmentTaskBinding binding;
     private CategoryDAOImpl categoryDAOImpl;
     private TaskDAOImpl taskDAOImpl;
@@ -53,6 +56,7 @@ public class TasksFragment extends Fragment implements BottomSheetAddTaskFragmen
     private TaskAdapter todayTaskAdapter;
     private TaskAdapter futureTaskAdapter;
     private TaskAdapter completedTaskAdapter;
+    private ActivityResultLauncher<Intent> updateTaskLauncher;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -60,6 +64,18 @@ public class TasksFragment extends Fragment implements BottomSheetAddTaskFragmen
         categoryDAOImpl = new CategoryDAOImpl(getContext());
         taskDAOImpl = new TaskDAOImpl(getContext());
         taskList = taskDAOImpl.getAllTasks();
+
+        updateTaskLauncher = registerForActivityResult(
+            new ActivityResultContracts.StartActivityForResult(),
+            result -> {
+                if (result.getResultCode() == UpdateTaskActivity.RESULT_OK) {
+                    clearAllTaskLists();
+                    taskList = taskDAOImpl.getAllTasks();
+                    setRecyclerViewTask(taskList);
+                }
+            }
+        );
+
         setWidget();
         setEvents();
         return binding.getRoot();
@@ -157,6 +173,8 @@ public class TasksFragment extends Fragment implements BottomSheetAddTaskFragmen
             } else {
                 addToTaskList(futureTasks, futureTaskAdapter, task, binding.futureTaskContainer);
             }
+        } else {
+            addToTaskList(futureTasks, futureTaskAdapter, task, binding.futureTaskContainer);
         }
     }
     private void addToTaskList(List<Task> taskList, TaskAdapter taskAdapter, Task task, View container) {
@@ -180,13 +198,11 @@ public class TasksFragment extends Fragment implements BottomSheetAddTaskFragmen
             @Override
             public void run() {
                 clearAllTaskLists();
-
                 if (categorySelected.equals("All")) {
                     taskList = taskDAOImpl.getAllTasks();
                 } else {
                     taskList = taskDAOImpl.getTasksByCategoryName(categorySelected);
                 }
-
                 setRecyclerViewTask(taskList);
             }
         }, delayMillis);
@@ -196,7 +212,7 @@ public class TasksFragment extends Fragment implements BottomSheetAddTaskFragmen
     public void onItemTaskClick(Task task) {
         Intent intent = new Intent(requireContext(), UpdateTaskActivity.class);
         intent.putExtra("task", task);
-        startActivity(intent);
+        updateTaskLauncher.launch(intent);
     }
 
     @Override

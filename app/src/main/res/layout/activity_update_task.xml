@@ -16,7 +16,7 @@
         android:orientation="horizontal">
 
         <ImageButton
-            android:id="@+id/backButton"
+            android:id="@+id/buttonBack"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:background="@null"
@@ -49,7 +49,7 @@
         android:orientation="vertical">
 
         <Button
-            android:id="@+id/buttonAddCatagory"
+            android:id="@+id/buttonCatagory"
             android:layout_width="wrap_content"
             android:layout_height="35dp"
             android:backgroundTint="@color/task_title_bg"
@@ -82,7 +82,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:minHeight="120dp"
-        app:maxHeight="130dp"/>
+        app:maxHeight="200dp"/>
 
     <!--Subtask -->
     <LinearLayout
@@ -95,7 +95,7 @@
 
         <Button
             style="@style/Widget.Material3.Button.TextButton"
-            android:id="@+id/textButton"
+            android:id="@+id/buttonAddSubtask"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/add_sub_task"
@@ -117,7 +117,7 @@
 
     <!-- Due Date -->
     <LinearLayout
-        android:id="@+id/duedateContainer"
+        android:id="@+id/dueDateContainer"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="vertical"
@@ -155,7 +155,7 @@
                 android:layout_gravity="center_vertical"
                 android:background="@drawable/background_white_radius_5dp"
                 android:backgroundTint="@color/date_time_bg"
-                android:text="@string/no"
+                android:text="@string/no_date"
                 android:fontFamily="@font/inter_regular"
                 android:padding="5dp"
                 android:paddingStart="15dp"
@@ -215,7 +215,7 @@
                 android:layout_gravity="center_vertical"
                 android:background="@drawable/background_white_radius_5dp"
                 android:backgroundTint="@color/date_time_bg"
-                android:text="@string/no"
+                android:text="@string/no_time"
                 android:fontFamily="@font/inter_regular"
                 android:padding="5dp"
                 android:paddingStart="15dp"
@@ -289,15 +289,4 @@
             app:dividerInsetEnd="16dp"/>
 
     </LinearLayout>
-
-    <Button
-        android:id="@+id/createTaskButton"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
-        android:layout_marginStart="15dp"
-        android:layout_marginEnd="15dp"
-        android:background="@drawable/background_white_radius_5dp"
-        android:text="@string/update_task"
-        android:fontFamily="@font/inter_medium"/>
 </LinearLayout>

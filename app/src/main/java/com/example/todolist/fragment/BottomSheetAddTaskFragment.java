@@ -296,11 +296,6 @@ public class BottomSheetAddTaskFragment extends BottomSheetDialogFragment implem
 
     @Override
     public void onDateSelected(LocalDate date) {
-        if (date != null){
-            selectedDate = date;
-        }
-        else {
-            selectedDate = null;
-        }
+        selectedDate = date;
     }
 }
