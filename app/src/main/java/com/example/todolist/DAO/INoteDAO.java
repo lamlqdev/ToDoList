@@ -10,4 +10,5 @@ public interface INoteDAO {
     boolean deleteNote(Note note);
     Note getNote(int id);
     List<Note> getAllNotes();
+    Note getNoteByTaskID(int taskID);
 }

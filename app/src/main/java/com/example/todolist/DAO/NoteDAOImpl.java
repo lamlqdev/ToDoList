@@ -17,7 +17,7 @@ import java.util.List;
 public class NoteDAOImpl implements INoteDAO{
     DBHandler dbHandler;
     Context context;
-    private DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+    private final DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
     public NoteDAOImpl(Context context){
         this.context = context;
         dbHandler = new DBHandler(context);
@@ -30,7 +30,7 @@ public class NoteDAOImpl implements INoteDAO{
             values.put(TodolistContract.NotesEntry.TASK_ID, note.getTaskID());
             values.put(TodolistContract.NotesEntry.CONTENT, note.getContent());
             LocalDateTime now = LocalDateTime.now();
-            values.put(TodolistContract.NotesEntry.CREATED_AT, now.format(formatter));
+            values.put(TodolistContract.NotesEntry.CREATED_AT, now.format(dateTimeFormatter));
 
             long result = db.insert(TodolistContract.NotesEntry.TABLE_NAME, null, values);
             db.close();
@@ -48,7 +48,7 @@ public class NoteDAOImpl implements INoteDAO{
             ContentValues values = new ContentValues();
             values.put(TodolistContract.NotesEntry.CONTENT, note.getContent());
             LocalDateTime now = LocalDateTime.now();
-            values.put(TodolistContract.NotesEntry.UPDATED_AT, now.format(formatter));
+            values.put(TodolistContract.NotesEntry.UPDATED_AT, now.format(dateTimeFormatter));
 
             int result = db.update(TodolistContract.NotesEntry.TABLE_NAME, values,
                     TodolistContract.NotesEntry.NOTE_ID + " = ?",
@@ -151,4 +151,45 @@ public class NoteDAOImpl implements INoteDAO{
         }
         return notes;
     }
+
+    @Override
+    public Note getNoteByTaskID(int taskID) {
+        Note note = null;
+        Cursor cursor = null;
+        SQLiteDatabase db = dbHandler.getReadableDatabase();
+        try {
+            String[] projection = {
+                    TodolistContract.NotesEntry.NOTE_ID,
+                    TodolistContract.NotesEntry.TASK_ID,
+                    TodolistContract.NotesEntry.CONTENT,
+                    TodolistContract.NotesEntry.CREATED_AT,
+                    TodolistContract.NotesEntry.UPDATED_AT
+            };
+
+            String selection = TodolistContract.NotesEntry.TASK_ID + " = ?";
+            String[] selectionArgs = {String.valueOf(taskID)};
+
+            cursor = db.query(TodolistContract.NotesEntry.TABLE_NAME, projection, selection, selectionArgs, null, null, null);
+            if (cursor != null && cursor.moveToFirst()) {
+                int noteID = cursor.getInt(cursor.getColumnIndexOrThrow(TodolistContract.NotesEntry.NOTE_ID));
+                String content = cursor.getString(cursor.getColumnIndexOrThrow(TodolistContract.NotesEntry.CONTENT));
+                String createdAtString = cursor.getString(cursor.getColumnIndexOrThrow(TodolistContract.NotesEntry.CREATED_AT));
+                String updatedAtString = cursor.getString(cursor.getColumnIndexOrThrow(TodolistContract.NotesEntry.UPDATED_AT));
+
+                LocalDateTime createdAt = LocalDateTime.parse(createdAtString, dateTimeFormatter);
+                LocalDateTime updatedAt = updatedAtString != null ? LocalDateTime.parse(updatedAtString, dateTimeFormatter) : null;
+
+                note = new Note(noteID, taskID, content, createdAt, updatedAt);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            if (cursor != null) {
+                cursor.close();
+            }
+            db.close();
+        }
+        return note;
+    }
+
 }

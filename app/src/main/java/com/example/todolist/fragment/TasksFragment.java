@@ -40,7 +40,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class TasksFragment extends Fragment implements BottomSheetAddTaskFragment.OnTaskAddedListener, TaskAdapter.OnTaskInteractionListener, CategoryAdapter.OnClickListener{
-    public static final int RESULT_OK = 1;
     private FragmentTaskBinding binding;
     private CategoryDAOImpl categoryDAOImpl;
     private TaskDAOImpl taskDAOImpl;
@@ -70,7 +69,11 @@ public class TasksFragment extends Fragment implements BottomSheetAddTaskFragmen
             result -> {
                 if (result.getResultCode() == UpdateTaskActivity.RESULT_OK) {
                     clearAllTaskLists();
-                    taskList = taskDAOImpl.getAllTasks();
+                    if (categorySelected.equals("All")) {
+                        taskList = taskDAOImpl.getAllTasks();
+                    } else {
+                        taskList = taskDAOImpl.getTasksByCategoryName(categorySelected);
+                    }
                     setRecyclerViewTask(taskList);
                 }
             }

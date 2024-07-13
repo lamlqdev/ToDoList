@@ -40,4 +40,6 @@
     <string name="completed_tasks_today">Completed Today</string>
     <string name="no_tasks_in_category">No tasks in this category.</string>
     <string name="guide_add_task">Click + to create your task</string>
+    <string name="add_notes">Add notes</string>
+    <string name="edit">EDIT</string>
 </resources>

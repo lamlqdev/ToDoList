@@ -3,28 +3,28 @@ package com.example.todolist.activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.AttributeSet;
 import android.view.ContextThemeWrapper;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.PopupMenu;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.example.todolist.DAO.CategoryDAOImpl;
+import com.example.todolist.DAO.NoteDAOImpl;
 import com.example.todolist.DAO.SubtaskDAOImpl;
 import com.example.todolist.DAO.TaskDAOImpl;
 import com.example.todolist.R;
 import com.example.todolist.adapter.SubtaskAdapter;
 import com.example.todolist.databinding.ActivityUpdateTaskBinding;
-import com.example.todolist.fragment.BottomSheetAddTaskFragment;
 import com.example.todolist.fragment.DateDialogFragment;
 import com.example.todolist.model.Category;
+import com.example.todolist.model.Note;
 import com.example.todolist.model.Subtask;
 import com.example.todolist.model.Task;
 import com.example.todolist.utils.IDGenerator;
@@ -36,14 +36,17 @@ import java.time.LocalTime;
 import java.util.List;
 
 public class UpdateTaskActivity extends AppCompatActivity implements DateDialogFragment.OnDateSelectedListener {
+    public static final int RESULT_OK = 1;
     private ActivityUpdateTaskBinding binding;
     private CategoryDAOImpl categoryDAOImpl;
     private SubtaskDAOImpl subtaskDAOImpl;
     private TaskDAOImpl taskDAOImpl;
+    private NoteDAOImpl noteDAOImpl;
     private List<Category> categoryList;
     private List<Subtask> subtaskList;
     private SubtaskAdapter subtaskAdapter;
     private Task selectedTask;
+    private ActivityResultLauncher<Intent> addNotesLauncher;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,6 +60,15 @@ public class UpdateTaskActivity extends AppCompatActivity implements DateDialogF
             selectedTask = (Task) intent.getSerializableExtra("task");
         }
 
+        addNotesLauncher = registerForActivityResult(
+                new ActivityResultContracts.StartActivityForResult(),
+                result -> {
+                    if (result.getResultCode() == AddOrEditNoteActivity.RESULT_OK) {
+                        binding.noteField.setText(R.string.edit);
+                    }
+                }
+        );
+
         initializeData();
         setWidgets();
         setEvents();
@@ -66,6 +78,7 @@ public class UpdateTaskActivity extends AppCompatActivity implements DateDialogF
         categoryDAOImpl = new CategoryDAOImpl(this);
         subtaskDAOImpl = new SubtaskDAOImpl(this);
         taskDAOImpl = new TaskDAOImpl(this);
+        noteDAOImpl = new NoteDAOImpl(this);
         categoryList = categoryDAOImpl.getAllCategories();
         subtaskList = subtaskDAOImpl.getListSubtaskByTaskID(selectedTask.getTaskID());
     }
@@ -92,6 +105,11 @@ public class UpdateTaskActivity extends AppCompatActivity implements DateDialogF
 
         if (selectedTask.getDueTime() != null) {
             binding.dueTimeField.setText(selectedTask.getDueTime().toString());
+        }
+
+        Note note = noteDAOImpl.getNoteByTaskID(selectedTask.getTaskID());
+        if (note != null) {
+            binding.noteField.setText(R.string.edit);
         }
     }
 
@@ -146,6 +164,15 @@ public class UpdateTaskActivity extends AppCompatActivity implements DateDialogF
             @Override
             public void onClick(View view) {
                 showMaterialTimePicker();
+            }
+        });
+
+        binding.noteContainer.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(UpdateTaskActivity.this, AddOrEditNoteActivity.class);
+                intent.putExtra("task", selectedTask);
+                addNotesLauncher.launch(intent);
             }
         });
     }
