@@ -42,4 +42,9 @@
     <string name="guide_add_task">Click + to create your task</string>
     <string name="add_notes">Add notes</string>
     <string name="edit">EDIT</string>
+    <string name="mark_as_undone">Mark as undone</string>
+    <string name="mark_as_done">Mark as done</string>
+    <string name="start_to_focus">Start to Focus</string>
+    <string name="duplicate_task">Duplicate Task</string>
+    <string name="delete">Delete</string>
 </resources>

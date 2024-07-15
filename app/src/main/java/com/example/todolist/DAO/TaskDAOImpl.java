@@ -67,7 +67,6 @@ public class TaskDAOImpl implements ITaskDAO{
             if (task.getDueTime() != null) {
                 values.put(TodolistContract.TasksEntry.DUE_TIME, task.getDueTime().format(timeFormatter));
             }
-            values.put(TodolistContract.TasksEntry.STATUS, task.getStatus());
 
             int result = db.update(TodolistContract.TasksEntry.TABLE_NAME, values,
                     TodolistContract.TasksEntry.TASK_ID + " = ?",

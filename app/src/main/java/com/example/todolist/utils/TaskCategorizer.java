@@ -10,7 +10,7 @@ public class TaskCategorizer {
         LocalDate today = LocalDate.now();
 
         for (Task task : tasks) {
-            if (task.getStatus() == 2) {
+            if (task.getStatus() == 2 && task.getUpdatedAt() != null) {
                 if (task.getUpdatedAt().toLocalDate().equals(today)){
                     completedTasks.add(task);
                 }

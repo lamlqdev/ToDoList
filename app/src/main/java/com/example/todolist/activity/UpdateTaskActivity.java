@@ -1,13 +1,16 @@
 package com.example.todolist.activity;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.ContextThemeWrapper;
+import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.PopupMenu;
+import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
@@ -28,6 +31,7 @@ import com.example.todolist.model.Note;
 import com.example.todolist.model.Subtask;
 import com.example.todolist.model.Task;
 import com.example.todolist.utils.IDGenerator;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.timepicker.MaterialTimePicker;
 import com.google.android.material.timepicker.TimeFormat;
 
@@ -132,6 +136,13 @@ public class UpdateTaskActivity extends AppCompatActivity implements DateDialogF
             }
         });
 
+        binding.moreOptionsButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showTaskPopupMenu(v);
+            }
+        });
+
         binding.titleTaskField.setOnFocusChangeListener((v, hasFocus) -> {
             if (!hasFocus) {
                 selectedTask.setTitle(binding.titleTaskField.getText().toString());
@@ -175,6 +186,67 @@ public class UpdateTaskActivity extends AppCompatActivity implements DateDialogF
                 addNotesLauncher.launch(intent);
             }
         });
+    }
+
+    private void showTaskPopupMenu(View v) {
+        Context wrapper = new ContextThemeWrapper(this, R.style.popupMenuStyle);
+        PopupMenu popupMenu = new PopupMenu(wrapper, v, Gravity.END);
+        popupMenu.getMenuInflater().inflate(R.menu.update_task_fragment_menu, popupMenu.getMenu());
+
+        MenuItem markAsDone = popupMenu.getMenu().findItem(R.id.mark_as_done);
+        MenuItem markAsUndone = popupMenu.getMenu().findItem(R.id.mark_as_undone);
+
+        if (selectedTask.getStatus() == 2) {
+            markAsDone.setVisible(false);
+            markAsUndone.setVisible(true);
+        } else {
+            markAsDone.setVisible(true);
+            markAsUndone.setVisible(false);
+        }
+
+        popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                if (item.getItemId() == R.id.mark_as_done) {
+                    selectedTask.setStatus(2);
+                    if(taskDAOImpl.updateTaskStatus(selectedTask)){
+                        Toast.makeText(UpdateTaskActivity.this, "Task marked as done", Toast.LENGTH_SHORT).show();
+                    }
+                }
+
+                if (item.getItemId() == R.id.mark_as_undone) {
+                    selectedTask.setStatus(1);
+                    if(taskDAOImpl.updateTaskStatus(selectedTask)){
+                        Toast.makeText(UpdateTaskActivity.this, "Task marked as undone", Toast.LENGTH_SHORT).show();
+                    }
+                }
+
+                if (item.getItemId() == R.id.delete_task) {
+                    new MaterialAlertDialogBuilder(UpdateTaskActivity.this, R.style.ThemeOverlay_App_MaterialAlertDialog)
+                            .setTitle("Delete Task")
+                            .setMessage("Are you sure want to delete this task?")
+                            .setPositiveButton("Delete", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    taskDAOImpl.deleteTask(selectedTask);
+                                    Intent resultIntent = new Intent();
+                                    setResult(RESULT_OK, resultIntent);
+                                    finish();
+                                }
+                            })
+                            .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    dialog.dismiss();
+                                }
+                            })
+                            .show();
+                }
+                return true;
+            }
+        });
+
+        popupMenu.show();
     }
 
     private void showCategoryPopupMenu(View view) {
