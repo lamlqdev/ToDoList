@@ -45,6 +45,7 @@
         app:trackColor="@color/date_time_bg"
         app:trackThickness="12dp"
         app:trackCornerRadius="15dp"
+        app:indicatorDirectionCircular="counterclockwise"
         android:max="100"
         android:progress="100"/>
 
@@ -96,7 +97,7 @@
         android:text="@string/end"
         android:textAllCaps="true"
         android:textColor="@color/blue"
-        android:background="null"
+        android:background="@android:color/transparent"
         android:visibility="gone"/>
 
 </RelativeLayout>

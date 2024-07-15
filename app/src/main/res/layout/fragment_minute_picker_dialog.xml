@@ -10,10 +10,11 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:fontFamily="@font/inter_bold"
-        android:layout_marginStart="10dp"
-        android:layout_marginTop="10dp"
+        android:layout_marginStart="15dp"
+        android:layout_marginTop="15dp"
+        android:layout_marginBottom="10dp"
         android:text="@string/please_select_a_duration"
-        android:textSize="34sp"/>
+        android:textSize="18sp"/>
 
     <LinearLayout
         android:layout_width="wrap_content"
@@ -27,6 +28,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             app:np_textColor="@color/black"
+            app:np_textSize="16sp"
+            app:np_itemSpacing="-5dp"
             app:np_dividerColor="@android:color/transparent"
             app:np_selectedTypeface="@font/inter_medium"/>
 
@@ -35,7 +38,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="15dp"
             android:text="@string/minutes"
-            android:textSize="20sp"
+            android:textSize="16sp"
             android:fontFamily="@font/inter_medium"/>
 
     </LinearLayout>
@@ -43,7 +46,7 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
+        android:layout_marginTop="5dp"
         android:layout_marginEnd="10dp"
         android:layout_marginBottom="10dp"
         android:gravity="end"
