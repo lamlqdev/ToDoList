@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/background_white_radius_10dp">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/inter_bold"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="10dp"
+        android:text="@string/please_select_a_duration"
+        android:textSize="34sp"/>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:layout_gravity="center_horizontal">
+
+        <com.shawnlin.numberpicker.NumberPicker
+            android:id="@+id/numberMinutePicker"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:np_textColor="@color/black"
+            app:np_dividerColor="@android:color/transparent"
+            app:np_selectedTypeface="@font/inter_medium"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="15dp"
+            android:text="@string/minutes"
+            android:textSize="20sp"
+            android:fontFamily="@font/inter_medium"/>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:layout_marginEnd="10dp"
+        android:layout_marginBottom="10dp"
+        android:gravity="end"
+        android:orientation="horizontal">
+
+        <Button
+            style="@style/Widget.Material3.Button.TextButton"
+            android:id="@+id/buttonCancel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:alpha="0.7"
+            android:text="@string/cancel"
+            android:fontFamily="@font/inter_regular"
+            android:textAllCaps="true"/>
+
+        <Button
+            style="@style/Widget.Material3.Button.TextButton"
+            android:id="@+id/buttonDone"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/done"
+            android:fontFamily="@font/inter_bold"
+            android:textAllCaps="true"/>
+    </LinearLayout>
+</LinearLayout>

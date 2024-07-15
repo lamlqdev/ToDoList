@@ -42,6 +42,7 @@ dependencies {
     androidTestImplementation libs.espresso.core
     implementation libs.recyclerview
     implementation 'com.kizitonwose.calendar:view:2.5.2'
+    implementation 'io.github.ShawnLin013:number-picker:2.4.13'
 }
 
 
