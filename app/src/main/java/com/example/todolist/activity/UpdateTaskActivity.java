@@ -242,6 +242,11 @@ public class UpdateTaskActivity extends AppCompatActivity implements DateDialogF
                     finish();
                 }
 
+                if (item.getItemId() == R.id.start_to_focus){
+                    Intent intent = new Intent(UpdateTaskActivity.this, TimerActivity.class);
+                    startActivity(intent);
+                }
+
                 if (item.getItemId() == R.id.delete_task) {
                     new MaterialAlertDialogBuilder(UpdateTaskActivity.this, R.style.ThemeOverlay_App_MaterialAlertDialog)
                             .setTitle("Delete Task")

@@ -47,4 +47,9 @@
     <string name="start_to_focus">Start to Focus</string>
     <string name="duplicate_task">Duplicate Task</string>
     <string name="delete">Delete</string>
+    <string name="focusing">Focusing</string>
+    <string name="paused">Paused</string>
+    <string name="pause">Pause</string>
+    <string name="end">END</string>
+    <string name="hide_progress">Hide Progress</string>
 </resources>
