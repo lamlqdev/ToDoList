@@ -221,6 +221,27 @@ public class UpdateTaskActivity extends AppCompatActivity implements DateDialogF
                     }
                 }
 
+                if (item.getItemId() == R.id.duplicate_task){
+                    Task duplicatedTask = new Task();
+                    duplicatedTask.setTaskID(IDGenerator.generateTaskID());
+                    duplicatedTask.setTitle(selectedTask.getTitle() + "(Copy)");
+                    duplicatedTask.setCategoryID(selectedTask.getCategoryID());
+                    duplicatedTask.setDueDate(selectedTask.getDueDate());
+                    duplicatedTask.setDueTime(selectedTask.getDueTime());
+                    duplicatedTask.setStatus(selectedTask.getStatus());
+
+                    if (taskDAOImpl.addTask(duplicatedTask)){
+                        Toast.makeText(UpdateTaskActivity.this, "Task duplicated", Toast.LENGTH_SHORT).show();
+                    }
+
+                    Intent intent = new Intent(UpdateTaskActivity.this, UpdateTaskActivity.class);
+                    intent.putExtra("task", duplicatedTask);
+                    setResult(RESULT_OK, intent);
+                    startActivity(intent);
+
+                    finish();
+                }
+
                 if (item.getItemId() == R.id.delete_task) {
                     new MaterialAlertDialogBuilder(UpdateTaskActivity.this, R.style.ThemeOverlay_App_MaterialAlertDialog)
                             .setTitle("Delete Task")
