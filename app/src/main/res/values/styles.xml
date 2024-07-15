@@ -14,6 +14,26 @@
         <item name="android:popupBackground">@drawable/background_white_radius_10dp</item>
     </style>
 
+    <style name="Widget.App.Chip" parent="Widget.Material3.MaterialTimePicker.Display">
+        <item name="android:fontFamily">@font/inter_regular</item>
+    </style>
+
+    <style name="CustomTimePickerShapeAppearance" parent="">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">16dp</item>
+    </style>
+
+    <style name="CustomTimePickerStyle" parent="Widget.MaterialComponents.TimePicker">
+        <item name="buttonBarPositiveButtonStyle">@style/Widget.App.Positive.Button</item>
+        <item name="buttonBarNegativeButtonStyle">@style/Widget.App.Negative.Button</item>
+    </style>
+
+    <style name="MaterialTimePicker.App.Title.Text" parent="MaterialAlertDialog.Material3.Title.Text">
+        <item name="android:textColor">@color/black</item>
+        <item name="android:textSize">18sp</item>
+        <item name="android:fontFamily">@font/inter_bold</item>
+    </style>
+
     <style name="MaterialAlertDialog.App" parent="MaterialAlertDialog.Material3">
         <item name="shapeAppearance">@style/ShapeAppearance.App.MediumComponent</item>
         <item name="shapeAppearanceOverlay">@null</item>

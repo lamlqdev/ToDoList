@@ -20,24 +20,12 @@
         <item name="colorPrimaryContainer">@color/white</item>
         <item name="colorPrimary">@color/blue</item>
         <item name="colorOnPrimary">@color/white</item>
+        <item name="colorOnPrimaryContainer">@color/black</item>"
         <item name="chipStyle">@style/Widget.App.Chip</item>
-        <item name="textAppearanceHeadlineLarge">@style/CustomHeadlineLarge</item>
+        <item name="buttonBarNegativeButtonStyle">@style/Widget.App.Negative.Button</item>
+        <item name="buttonBarPositiveButtonStyle">@style/Widget.App.Positive.Button</item>
+        <item name="materialTimePickerTitleStyle">@style/MaterialTimePicker.App.Title.Text</item>
         <item name="shapeAppearanceOverlay">@style/CustomTimePickerShapeAppearance</item>
-    </style>
-
-    <style name="Widget.App.Chip" parent="Widget.Material3.MaterialTimePicker.Display">
-        <item name="android:fontFamily">@font/inter_regular</item>
-    </style>
-
-    <style name="CustomTimePickerShapeAppearance" parent="">
-        <item name="cornerFamily">rounded</item>
-        <item name="cornerSize">16dp</item>
-    </style>
-
-    <style name="CustomHeadlineLarge" parent="TextAppearance.Material3.HeadlineLarge">
-        <item name="android:textSize">34sp</item>
-        <item name="android:textColor">@color/black</item>
-        <item name="android:textStyle">bold</item>
     </style>
 
     <style name="ThemeOverlay.App.MaterialAlertDialog" parent="ThemeOverlay.Material3.MaterialAlertDialog">
