@@ -54,4 +54,5 @@
     <string name="hide_progress">Hide Progress</string>
     <string name="please_select_a_duration">Please select a duration</string>
     <string name="minutes">Minutes</string>
+    <string name="continue_count_down">Continue</string>
 </resources>
