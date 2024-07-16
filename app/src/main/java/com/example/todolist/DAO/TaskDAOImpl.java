@@ -257,5 +257,30 @@ public class TaskDAOImpl implements ITaskDAO{
         return tasks;
     }
 
+    public boolean hasSubtasks(int taskId) {
+        SQLiteDatabase db = dbHandler.getReadableDatabase();
+        String query = "SELECT COUNT(*) FROM subtasks WHERE task_id = ?";
+        Cursor cursor = db.rawQuery(query, new String[]{String.valueOf(taskId)});
+        if (cursor != null) {
+            cursor.moveToFirst();
+            int count = cursor.getInt(0);
+            cursor.close();
+            return count > 0;
+        }
+        return false;
+    }
+
+    public boolean hasNotes(int taskId) {
+        SQLiteDatabase db = dbHandler.getReadableDatabase();
+        String query = "SELECT COUNT(*) FROM notes WHERE task_id = ?";
+        Cursor cursor = db.rawQuery(query, new String[]{String.valueOf(taskId)});
+        if (cursor != null) {
+            cursor.moveToFirst();
+            int count = cursor.getInt(0);
+            cursor.close();
+            return count > 0;
+        }
+        return false;
+    }
 
 }
