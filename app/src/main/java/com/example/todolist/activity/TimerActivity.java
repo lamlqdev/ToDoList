@@ -1,5 +1,7 @@
 package com.example.todolist.activity;
 
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.view.View;
@@ -14,9 +16,12 @@ import androidx.core.view.WindowInsetsCompat;
 import com.example.todolist.R;
 import com.example.todolist.databinding.ActivityTimerBinding;
 import com.example.todolist.fragment.MinutePickerDialogFragment;
+import com.example.todolist.model.Task;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
 public class TimerActivity extends AppCompatActivity implements MinutePickerDialogFragment.OnMinuteSelectedListener {
     private ActivityTimerBinding binding;
+    private Task selectedTask;
     private CountDownTimer countDownTimer;
     private long timeLeftInMillis;
     private boolean isTimerRunning = false;
@@ -30,7 +35,17 @@ public class TimerActivity extends AppCompatActivity implements MinutePickerDial
         minutePickerDialogFragment.setOnMinuteSelectedListener(this);
         minutePickerDialogFragment.show(getSupportFragmentManager(), "MinutePickerDialogFragment");
 
+        Intent intent = getIntent();
+        if (intent != null && intent.hasExtra("task")) {
+            selectedTask = (Task) intent.getSerializableExtra("task");
+        }
+
+        setWidgets();
         setEvents();
+    }
+
+    private void setWidgets() {
+        binding.textViewTaskTitle.setText(selectedTask.getTitle());
     }
 
     private void setEvents() {
@@ -48,11 +63,31 @@ public class TimerActivity extends AppCompatActivity implements MinutePickerDial
         binding.buttonEnd.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                new MaterialAlertDialogBuilder(TimerActivity.this, R.style.ThemeOverlay_App_MaterialAlertDialog)
+                    .setTitle("END FOCUS")
+                    .setMessage("Do you want to end this Focus?")
+                    .setPositiveButton("End", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            finish();
+                        }
+                    })
+                    .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.dismiss();
+                        }
+                    })
+                    .show();
             }
         });
 
-
+        binding.buttonHide.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
     }
 
     private void continueCountdown() {
@@ -102,6 +137,22 @@ public class TimerActivity extends AppCompatActivity implements MinutePickerDial
         String timeLeftFormatted = String.format("%02d : %02d", minutes, seconds);
         binding.textViewTimeLeft.setText(timeLeftFormatted);
         binding.progressCircular.setProgress((int) timeLeftInMillis);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        if (isTimerRunning) {
+            pauseCountdown();
+        }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (timeLeftInMillis > 0 && !isTimerRunning) {
+            continueCountdown();
+        }
     }
 
     @Override

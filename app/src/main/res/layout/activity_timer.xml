@@ -33,6 +33,16 @@
             android:textSize="24sp" />
     </LinearLayout>
 
+    <TextView
+        android:id="@+id/textViewTaskTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@id/progress_circular"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="20dp"
+        android:fontFamily="@font/inter_bold"
+        android:textSize="26sp"/>
+
     <com.google.android.material.progressindicator.CircularProgressIndicator
         android:id="@+id/progress_circular"
         android:layout_width="wrap_content"
@@ -44,30 +54,36 @@
         app:indicatorSize="300dp"
         app:trackColor="@color/date_time_bg"
         app:trackThickness="12dp"
-        app:trackCornerRadius="15dp"
+        app:trackCornerRadius="12dp"
         app:indicatorDirectionCircular="counterclockwise"
         android:max="100"
         android:progress="100"/>
 
-    <TextView
-        android:id="@+id/textViewPaused"
+    <LinearLayout
+        android:id="@+id/textViewContainer"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
-        android:text="@string/paused"
-        android:textSize="36sp"
-        android:fontFamily="@font/inter_bold"
-        android:visibility="gone"/>
+        android:orientation="vertical"
+        android:gravity="center">
 
-    <TextView
-        android:id="@+id/textViewTimeLeft"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/textViewPaused"
-        android:layout_centerInParent="true"
-        android:layout_marginTop="5dp"
-        android:fontFamily="@font/inter_bold"
-        android:textSize="36sp"/>
+        <TextView
+            android:id="@+id/textViewPaused"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/paused"
+            android:fontFamily="@font/inter_bold"
+            android:textSize="34sp"
+            android:visibility="gone"/>
+
+        <TextView
+            android:id="@+id/textViewTimeLeft"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/inter_bold"
+            android:textSize="36sp"/>
+
+    </LinearLayout>
 
     <Button
         android:id="@+id/buttonPauseOrContinue"

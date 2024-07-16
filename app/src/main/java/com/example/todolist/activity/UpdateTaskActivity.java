@@ -226,7 +226,7 @@ public class UpdateTaskActivity extends AppCompatActivity implements DateDialogF
                     duplicatedTask.setTaskID(IDGenerator.generateTaskID());
                     duplicatedTask.setTitle(selectedTask.getTitle() + "(Copy)");
                     duplicatedTask.setCategoryID(selectedTask.getCategoryID());
-                    duplicatedTask.setDueDate(selectedTask.getDueDate());
+                    duplicatedTask.setDueDate(LocalDate.now());
                     duplicatedTask.setDueTime(selectedTask.getDueTime());
                     duplicatedTask.setStatus(selectedTask.getStatus());
 
@@ -244,29 +244,30 @@ public class UpdateTaskActivity extends AppCompatActivity implements DateDialogF
 
                 if (item.getItemId() == R.id.start_to_focus){
                     Intent intent = new Intent(UpdateTaskActivity.this, TimerActivity.class);
+                    intent.putExtra("task", selectedTask);
                     startActivity(intent);
                 }
 
                 if (item.getItemId() == R.id.delete_task) {
                     new MaterialAlertDialogBuilder(UpdateTaskActivity.this, R.style.ThemeOverlay_App_MaterialAlertDialog)
-                            .setTitle("Delete Task")
-                            .setMessage("Are you sure want to delete this task?")
-                            .setPositiveButton("Delete", new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-                                    taskDAOImpl.deleteTask(selectedTask);
-                                    Intent resultIntent = new Intent();
-                                    setResult(RESULT_OK, resultIntent);
-                                    finish();
-                                }
-                            })
-                            .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-                                    dialog.dismiss();
-                                }
-                            })
-                            .show();
+                        .setTitle("Delete Task")
+                        .setMessage("Are you sure want to delete this task?")
+                        .setPositiveButton("Delete", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                taskDAOImpl.deleteTask(selectedTask);
+                                Intent resultIntent = new Intent();
+                                setResult(RESULT_OK, resultIntent);
+                                finish();
+                            }
+                        })
+                        .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.dismiss();
+                            }
+                        })
+                        .show();
                 }
                 return true;
             }

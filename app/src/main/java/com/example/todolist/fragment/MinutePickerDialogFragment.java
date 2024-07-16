@@ -48,7 +48,7 @@ public class MinutePickerDialogFragment extends DialogFragment {
         binding.numberMinutePicker.setMinValue(0);
         binding.numberMinutePicker.setMaxValue(displayedValues.length - 1);
         binding.numberMinutePicker.setDisplayedValues(displayedValues);
-        binding.numberMinutePicker.setValue(4);
+        binding.numberMinutePicker.setValue(2);
 
         binding.buttonCancel.setOnClickListener(v -> {
             if (onMinuteSelectedListener != null) {
@@ -56,6 +56,7 @@ public class MinutePickerDialogFragment extends DialogFragment {
             }
             dismiss();
         });
+
         binding.buttonDone.setOnClickListener(v -> {
             int selectedMinutes = (binding.numberMinutePicker.getValue() + 1) * 5;
             if (onMinuteSelectedListener != null) {
