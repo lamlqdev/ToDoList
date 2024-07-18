@@ -9,6 +9,7 @@ import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -31,6 +32,7 @@ import com.example.todolist.activity.UpdateTaskActivity;
 import com.example.todolist.adapter.CategoryAdapter;
 import com.example.todolist.adapter.TaskAdapter;
 import com.example.todolist.databinding.FragmentTaskBinding;
+import com.example.todolist.helper.TaskItemTouchHelperCallback;
 import com.example.todolist.model.Category;
 import com.example.todolist.model.Task;
 import com.example.todolist.utils.TaskCategorizer;
@@ -106,6 +108,10 @@ public class TasksFragment extends Fragment implements BottomSheetAddTaskFragmen
     private void setupTaskRecyclerView(RecyclerView recyclerView, List<Task> tasks, TaskAdapter adapter, View container) {
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
         recyclerView.setAdapter(adapter);
+
+        ItemTouchHelper.Callback callback = new TaskItemTouchHelperCallback(adapter);
+        ItemTouchHelper touchHelper = new ItemTouchHelper(callback);
+        touchHelper.attachToRecyclerView(recyclerView);
 
         if (!tasks.isEmpty()) {
             container.setVisibility(View.VISIBLE);
