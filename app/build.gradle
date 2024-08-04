@@ -43,6 +43,7 @@ dependencies {
     implementation libs.recyclerview
     implementation 'com.kizitonwose.calendar:view:2.5.2'
     implementation 'io.github.ShawnLin013:number-picker:2.4.13'
+    implementation 'com.github.vipulasri:timelineview:1.1.5'
 }
 
 

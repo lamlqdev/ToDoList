@@ -112,6 +112,22 @@ public class TaskDAOImpl implements ITaskDAO{
             return false;
         }
     }
+    @Override
+    public boolean deleteAllCompletedTasks() {
+        try {
+            SQLiteDatabase db = dbHandler.getWritableDatabase();
+            int rowsAffected = db.delete(
+                    TodolistContract.TasksEntry.TABLE_NAME,
+                    TodolistContract.TasksEntry.STATUS + " = ?",
+                    new String[]{ "2" }
+            );
+            return rowsAffected > 0;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
 
     @Override
     public Task getTask(int id) {
@@ -211,6 +227,60 @@ public class TaskDAOImpl implements ITaskDAO{
         }
         return tasks;
     }
+
+    @Override
+    public List<Task> getAllCompletedTasks() {
+        List<Task> tasks = new ArrayList<>();
+        SQLiteDatabase db = dbHandler.getReadableDatabase();
+        Cursor cursor = null;
+
+        try {
+            String[] projection = {
+                    TodolistContract.TasksEntry.TASK_ID,
+                    TodolistContract.TasksEntry.TITLE,
+                    TodolistContract.TasksEntry.CATEGORY_ID,
+                    TodolistContract.TasksEntry.DUE_DATE,
+                    TodolistContract.TasksEntry.DUE_TIME,
+                    TodolistContract.TasksEntry.STATUS,
+                    TodolistContract.TasksEntry.CREATED_AT,
+                    TodolistContract.TasksEntry.UPDATED_AT
+            };
+
+            String selection = TodolistContract.TasksEntry.STATUS + " = ?";
+            String[] selectionArgs = { "2" };
+
+            cursor = db.query(TodolistContract.TasksEntry.TABLE_NAME, projection, selection, selectionArgs, null, null, null);
+            if (cursor != null) {
+                while (cursor.moveToNext()) {
+                    int taskId = cursor.getInt(cursor.getColumnIndexOrThrow(TodolistContract.TasksEntry.TASK_ID));
+                    String title = cursor.getString(cursor.getColumnIndexOrThrow(TodolistContract.TasksEntry.TITLE));
+                    int categoryId = cursor.getInt(cursor.getColumnIndexOrThrow(TodolistContract.TasksEntry.CATEGORY_ID));
+                    String dueDateString = cursor.getString(cursor.getColumnIndexOrThrow(TodolistContract.TasksEntry.DUE_DATE));
+                    String dueTimeString = cursor.getString(cursor.getColumnIndexOrThrow(TodolistContract.TasksEntry.DUE_TIME));
+                    int status = cursor.getInt(cursor.getColumnIndexOrThrow(TodolistContract.TasksEntry.STATUS));
+                    String createdAtString = cursor.getString(cursor.getColumnIndexOrThrow(TodolistContract.TasksEntry.CREATED_AT));
+                    String updatedAtString = cursor.getString(cursor.getColumnIndexOrThrow(TodolistContract.TasksEntry.UPDATED_AT));
+
+                    LocalDate dueDate = dueDateString != null ? LocalDate.parse(dueDateString) : null;
+                    LocalTime dueTime = dueTimeString != null ? LocalTime.parse(dueTimeString) : null;
+                    LocalDateTime createdAt = LocalDateTime.parse(createdAtString, dateTimeFormatter);
+                    LocalDateTime updatedAt = updatedAtString != null ? LocalDateTime.parse(updatedAtString, dateTimeFormatter) : null;
+
+                    Task task = new Task(taskId, title, categoryId, dueDate, dueTime, status, createdAt, updatedAt);
+                    tasks.add(task);
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            if (cursor != null) {
+                cursor.close();
+            }
+            db.close();
+        }
+        return tasks;
+    }
+
 
     @Override
     public List<Task> getTasksByCategoryName(String categoryName) {

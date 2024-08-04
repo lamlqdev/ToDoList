@@ -55,4 +55,6 @@
     <string name="please_select_a_duration">Please select a duration</string>
     <string name="minutes">Minutes</string>
     <string name="continue_count_down">Continue</string>
+    <string name="check_all_completed_tasks">Check all completed tasks</string>
+    <string name="completed_time">Completed Time</string>
 </resources>

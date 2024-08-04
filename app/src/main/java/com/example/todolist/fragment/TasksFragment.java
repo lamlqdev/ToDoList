@@ -15,6 +15,10 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.os.Handler;
 import android.os.Looper;
+import android.text.SpannableString;
+import android.text.Spanned;
+import android.text.style.StrikethroughSpan;
+import android.text.style.UnderlineSpan;
 import android.util.Log;
 import android.view.ContextThemeWrapper;
 import android.view.Gravity;
@@ -28,6 +32,7 @@ import android.widget.PopupMenu;
 import com.example.todolist.DAO.CategoryDAOImpl;
 import com.example.todolist.DAO.TaskDAOImpl;
 import com.example.todolist.R;
+import com.example.todolist.activity.TimeLineCompletedTaskActivity;
 import com.example.todolist.activity.UpdateTaskActivity;
 import com.example.todolist.adapter.CategoryAdapter;
 import com.example.todolist.adapter.TaskAdapter;
@@ -58,6 +63,7 @@ public class TasksFragment extends Fragment implements BottomSheetAddTaskFragmen
     private TaskAdapter futureTaskAdapter;
     private TaskAdapter completedTaskAdapter;
     private ActivityResultLauncher<Intent> updateTaskLauncher;
+    private ActivityResultLauncher<Intent> deleteCompletedTaskLauncher;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -81,6 +87,21 @@ public class TasksFragment extends Fragment implements BottomSheetAddTaskFragmen
             }
         );
 
+        deleteCompletedTaskLauncher = registerForActivityResult(
+            new ActivityResultContracts.StartActivityForResult(),
+            result -> {
+                if (result.getResultCode() == TimeLineCompletedTaskActivity.RESULT_OK) {
+                    clearAllTaskLists();
+                    if (categorySelected.equals("All")) {
+                        taskList = taskDAOImpl.getAllTasks();
+                    } else {
+                        taskList = taskDAOImpl.getTasksByCategoryName(categorySelected);
+                    }
+                    setRecyclerViewTask(taskList);
+                }
+            }
+        );
+
         setWidget();
         setEvents();
         return binding.getRoot();
@@ -89,6 +110,12 @@ public class TasksFragment extends Fragment implements BottomSheetAddTaskFragmen
     private void setWidget() {
         setRecyclerViewCategory();
         setRecyclerViewTask(taskList);
+
+        String text = binding.textViewCheckAllCompletedTasks.getText().toString();
+        SpannableString spannableString = new SpannableString(text);
+        spannableString.setSpan(new UnderlineSpan(), 0, text.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+        binding.textViewCheckAllCompletedTasks.setText(spannableString);
+
     }
 
     private void setRecyclerViewTask(List<Task> taskList) {
@@ -103,6 +130,13 @@ public class TasksFragment extends Fragment implements BottomSheetAddTaskFragmen
         setupTaskRecyclerView(binding.listTodayTasks, todayTasks, todayTaskAdapter, binding.todayTaskContainer);
         setupTaskRecyclerView(binding.listFutureTasks, futureTasks, futureTaskAdapter, binding.futureTaskContainer);
         setupTaskRecyclerView(binding.listCompletedTasks, completedTasks, completedTaskAdapter, binding.completedTaskContainer);
+
+        List<Task> completedTaskList = taskDAOImpl.getAllCompletedTasks();
+        if (completedTaskList.isEmpty()) {
+            binding.textViewCheckAllCompletedTasks.setVisibility(View.GONE);
+        } else {
+            binding.textViewCheckAllCompletedTasks.setVisibility(View.VISIBLE);
+        }
     }
 
     private void setupTaskRecyclerView(RecyclerView recyclerView, List<Task> tasks, TaskAdapter adapter, View container) {
@@ -150,6 +184,11 @@ public class TasksFragment extends Fragment implements BottomSheetAddTaskFragmen
         setupArrowButton(binding.todayArrowButton, binding.listTodayTasks, "today_tasks_expanded");
         setupArrowButton(binding.futureArrowButton, binding.listFutureTasks, "future_tasks_expanded");
         setupArrowButton(binding.completedArrowButton, binding.listCompletedTasks, "completed_tasks_expanded");
+
+        binding.textViewCheckAllCompletedTasks.setOnClickListener(v -> {
+            Intent intent = new Intent(requireContext(), TimeLineCompletedTaskActivity.class);
+            deleteCompletedTaskLauncher.launch(intent);
+        });
     }
 
     private void setupArrowButton(ImageButton arrowButton, RecyclerView recyclerView, String preferenceKey) {
