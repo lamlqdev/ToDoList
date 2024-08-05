@@ -4,6 +4,8 @@ import com.example.todolist.model.Task;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -56,5 +58,65 @@ public class TaskCategorizer {
                 .forEachOrdered(entry -> sortedGroupedTasks.put(entry.getKey(), entry.getValue()));
 
         return sortedGroupedTasks;
+    }
+
+    public static void sortTasks(List<Task> tasks, String sortByOptionSelected) {
+        switch (sortByOptionSelected) {
+            case "dueDate":
+                Collections.sort(tasks, new Comparator<Task>() {
+                    @Override
+                    public int compare(Task t1, Task t2) {
+                        // So sánh theo dueDate trước, xử lý trường hợp null
+                        if (t1.getDueDate() == null && t2.getDueDate() == null) {
+                            // Nếu cả hai đều null, so sánh theo dueTime
+                            return compareDueTime(t1, t2);
+                        } else if (t1.getDueDate() == null) {
+                            return 1; // null được coi là lớn hơn bất kỳ giá trị nào khác
+                        } else if (t2.getDueDate() == null) {
+                            return -1;
+                        }
+
+                        int dateComparison = t1.getDueDate().compareTo(t2.getDueDate());
+                        if (dateComparison != 0) {
+                            return dateComparison;
+                        }
+
+                        return compareDueTime(t1, t2);
+                    }
+
+                    private int compareDueTime(Task t1, Task t2) {
+                        if (t1.getDueTime() == null && t2.getDueTime() == null) {
+                            return 0;
+                        } else if (t1.getDueTime() == null) {
+                            return 1; // null được coi là lớn hơn bất kỳ giá trị nào khác
+                        } else if (t2.getDueTime() == null) {
+                            return -1;
+                        }
+                        return t1.getDueTime().compareTo(t2.getDueTime());
+                    }
+                });
+                break;
+
+            case "createTime":
+                Collections.sort(tasks, new Comparator<Task>() {
+                    @Override
+                    public int compare(Task t1, Task t2) {
+                        return t1.getCreatedAt().compareTo(t2.getCreatedAt());
+                    }
+                });
+                break;
+
+            case "alphabetical":
+                Collections.sort(tasks, new Comparator<Task>() {
+                    @Override
+                    public int compare(Task t1, Task t2) {
+                        return t1.getTitle().compareToIgnoreCase(t2.getTitle());
+                    }
+                });
+                break;
+
+            default:
+                throw new IllegalArgumentException("Invalid sort option: " + sortByOptionSelected);
+        }
     }
 }

@@ -43,13 +43,16 @@ import com.example.todolist.utils.TaskCategorizer;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
-public class TasksFragment extends Fragment implements BottomSheetAddTaskFragment.OnTaskAddedListener, TaskAdapter.OnTaskInteractionListener, CategoryAdapter.OnClickListener{
+public class TasksFragment extends Fragment implements BottomSheetAddTaskFragment.OnTaskAddedListener, TaskAdapter.OnTaskInteractionListener, CategoryAdapter.OnClickListener, SoftPickerDialogFragment.OnSortOptionSelectedListener{
     private FragmentTaskBinding binding;
     private CategoryDAOImpl categoryDAOImpl;
     private TaskDAOImpl taskDAOImpl;
     private String categorySelected = "All";
+    private String sortBySelected = "dueDate";
     private List<Category> categoryList = new ArrayList<>();
     private List<Task> taskList = new ArrayList<>();
     private List<Task> previousTasks = new ArrayList<>();
@@ -70,7 +73,7 @@ public class TasksFragment extends Fragment implements BottomSheetAddTaskFragmen
         categoryDAOImpl = new CategoryDAOImpl(getContext());
         taskDAOImpl = new TaskDAOImpl(getContext());
         taskList = taskDAOImpl.getAllTasks();
-
+        sortBySelected = getPreferences().getString("sortBySelected", "dueDate");
         updateTaskLauncher = registerForActivityResult(
             new ActivityResultContracts.StartActivityForResult(),
             result -> {
@@ -120,6 +123,11 @@ public class TasksFragment extends Fragment implements BottomSheetAddTaskFragmen
     private void setRecyclerViewTask(List<Task> taskList) {
         TaskCategorizer.categorizeTasks(taskList, previousTasks, todayTasks, futureTasks, completedTasks);
 
+        TaskCategorizer.sortTasks(previousTasks, sortBySelected);
+        TaskCategorizer.sortTasks(todayTasks, sortBySelected);
+        TaskCategorizer.sortTasks(futureTasks, sortBySelected);
+        TaskCategorizer.sortTasks(completedTasks, sortBySelected);
+
         previousTaskAdapter = new TaskAdapter(getContext(), previousTasks, this);
         todayTaskAdapter = new TaskAdapter(getContext(), todayTasks, this);
         futureTaskAdapter = new TaskAdapter(getContext(), futureTasks, this);
@@ -165,6 +173,15 @@ public class TasksFragment extends Fragment implements BottomSheetAddTaskFragmen
                 Context wrapper = new ContextThemeWrapper(requireContext(), R.style.popupMenuStyle);
                 PopupMenu popup = new PopupMenu(wrapper, v, Gravity.END);
                 popup.getMenuInflater().inflate(R.menu.tasks_fragment_menu, popup.getMenu());
+
+                popup.setOnMenuItemClickListener(item -> {
+                    if (item.getItemId() == R.id.sort_by) {
+                        SoftPickerDialogFragment softPickerDialogFragment = SoftPickerDialogFragment.newInstance(sortBySelected);
+                        softPickerDialogFragment.setOnSortOptionSelectedListener(TasksFragment.this);
+                        softPickerDialogFragment.show(getParentFragmentManager(), "SortPickerDialogFragment");
+                    }
+                    return true;
+                });
                 popup.show();
             }
         });
@@ -221,13 +238,10 @@ public class TasksFragment extends Fragment implements BottomSheetAddTaskFragmen
         }
     }
     private void addToTaskList(List<Task> taskList, TaskAdapter taskAdapter, Task task, View container) {
-        int position = taskList.size();
         taskList.add(task);
-        if (position == 0) {
-            taskAdapter.notifyDataSetChanged();
-        } else {
-            taskAdapter.notifyItemInserted(position);
-        }
+        TaskCategorizer.sortTasks(taskList, sortBySelected);
+        taskAdapter.notifyDataSetChanged();
+
         if (container.getVisibility() == View.GONE) {
             container.setVisibility(View.VISIBLE);
         }
@@ -276,5 +290,20 @@ public class TasksFragment extends Fragment implements BottomSheetAddTaskFragmen
         todayTasks.clear();
         futureTasks.clear();
         completedTasks.clear();
+    }
+
+    @Override
+    public void onSortOptionSelected(String sortBy) {
+        if (sortBy != null) {
+            sortBySelected = sortBy;
+            getPreferences().edit().putString("sortBySelected", sortBy).apply();
+            clearAllTaskLists();
+            if (categorySelected.equals("All")) {
+                taskList = taskDAOImpl.getAllTasks();
+            } else {
+                taskList = taskDAOImpl.getTasksByCategoryName(categorySelected);
+            }
+            setRecyclerViewTask(taskList);
+        }
     }
 }
