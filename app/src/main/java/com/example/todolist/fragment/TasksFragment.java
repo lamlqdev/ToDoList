@@ -15,8 +15,10 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.os.Handler;
 import android.os.Looper;
+import android.text.Editable;
 import android.text.SpannableString;
 import android.text.Spanned;
+import android.text.TextWatcher;
 import android.text.style.StrikethroughSpan;
 import android.text.style.UnderlineSpan;
 import android.util.Log;
@@ -188,6 +190,56 @@ public class TasksFragment extends Fragment implements BottomSheetAddTaskFragmen
                         SoftPickerDialogFragment softPickerDialogFragment = SoftPickerDialogFragment.newInstance(sortBySelected);
                         softPickerDialogFragment.setOnSortOptionSelectedListener(TasksFragment.this);
                         softPickerDialogFragment.show(getParentFragmentManager(), "SortPickerDialogFragment");
+                    }
+
+                    if (item.getItemId() == R.id.search){
+                        binding.searchContainer.setVisibility(View.VISIBLE);
+                        binding.categoryManagerContainer.setVisibility(View.INVISIBLE);
+
+                        binding.autoCompleteTextViewSearch.addTextChangedListener(new TextWatcher() {
+                            @Override
+                            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+                            }
+
+                            @Override
+                            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+                            }
+
+                            @Override
+                            public void afterTextChanged(Editable s) {
+                                if (s.toString().trim().isEmpty()) {
+                                    binding.buttonClear.setVisibility(View.GONE);
+                                    List<Task> allTasks = taskDAOImpl.getAllTasks();
+                                    clearAllTaskLists();
+                                    setRecyclerViewTask(allTasks);
+                                    return;
+                                } else {
+                                    binding.buttonClear.setVisibility(View.VISIBLE);
+                                }
+
+                                List<Task> resultList = taskDAOImpl.searchTasksByName(s.toString());
+                                clearAllTaskLists();
+                                setRecyclerViewTask(resultList);
+                            }
+                        });
+
+                        binding.buttonClear.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                binding.autoCompleteTextViewSearch.setText("");
+                            }
+                        });
+
+                        binding.buttonBack.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                binding.autoCompleteTextViewSearch.setText("");
+                                binding.searchContainer.setVisibility(View.GONE);
+                                binding.categoryManagerContainer.setVisibility(View.VISIBLE);
+                            }
+                        });
                     }
                     return true;
                 });
