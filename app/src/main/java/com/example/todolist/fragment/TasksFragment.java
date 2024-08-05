@@ -138,11 +138,20 @@ public class TasksFragment extends Fragment implements BottomSheetAddTaskFragmen
         setupTaskRecyclerView(binding.listFutureTasks, futureTasks, futureTaskAdapter, binding.futureTaskContainer);
         setupTaskRecyclerView(binding.listCompletedTasks, completedTasks, completedTaskAdapter, binding.completedTaskContainer);
 
-        List<Task> completedTaskList = taskDAOImpl.getAllCompletedTasks();
-        if (completedTaskList.isEmpty()) {
-            binding.textViewCheckAllCompletedTasks.setVisibility(View.GONE);
+        if (categorySelected.equals("All")){
+            List<Task> completedTaskList = taskDAOImpl.getAllCompletedTasks();
+            if (completedTaskList.isEmpty()) {
+                binding.textViewCheckAllCompletedTasks.setVisibility(View.GONE);
+            } else {
+                binding.textViewCheckAllCompletedTasks.setVisibility(View.VISIBLE);
+            }
         } else {
-            binding.textViewCheckAllCompletedTasks.setVisibility(View.VISIBLE);
+            List<Task> completedTaskList = taskDAOImpl.getCompletedTasksByCategoryName(categorySelected);
+            if (completedTaskList.isEmpty()) {
+                binding.textViewCheckAllCompletedTasks.setVisibility(View.GONE);
+            } else {
+                binding.textViewCheckAllCompletedTasks.setVisibility(View.VISIBLE);
+            }
         }
     }
 
@@ -199,6 +208,7 @@ public class TasksFragment extends Fragment implements BottomSheetAddTaskFragmen
 
         binding.textViewCheckAllCompletedTasks.setOnClickListener(v -> {
             Intent intent = new Intent(requireContext(), TimeLineCompletedTaskActivity.class);
+            intent.putExtra("Current Category", categorySelected);
             deleteCompletedTaskLauncher.launch(intent);
         });
     }

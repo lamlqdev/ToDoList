@@ -10,8 +10,10 @@ public interface ITaskDAO {
     boolean updateTaskStatus(Task task);
     boolean deleteTask(Task task);
     boolean deleteAllCompletedTasks();
+    void deleteCompletedTasksByCategoryName(String categoryName);
     Task getTask(int id);
     List<Task> getAllTasks();
     List<Task> getAllCompletedTasks();
     List<Task> getTasksByCategoryName(String categoryName);
+    List<Task> getCompletedTasksByCategoryName(String categoryName);
 }

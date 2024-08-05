@@ -24,6 +24,8 @@ public class TimeLineCompletedTaskActivity extends AppCompatActivity {
     public static final int RESULT_OK = 1;
     private ActivityTimeLineCompletedTaskBinding binding;
     private TaskDAOImpl taskDAOImpl;
+    private String currentCategory;
+    private List<Task> completedTaskList;
     private CompletedTaskAdapter completedTaskAdapter;
     private List<CompletedTaskGroup> completedTaskGroups;
     @Override
@@ -50,9 +52,15 @@ public class TimeLineCompletedTaskActivity extends AppCompatActivity {
                     .setPositiveButton("YES", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
-                            taskDAOImpl.deleteAllCompletedTasks();
-                            completedTaskGroups.clear();
-                            completedTaskAdapter.notifyDataSetChanged();
+                            if (currentCategory.equals("All")) {
+                                taskDAOImpl.deleteAllCompletedTasks();
+                                completedTaskGroups.clear();
+                                completedTaskAdapter.notifyDataSetChanged();
+                            } else {
+                                taskDAOImpl.deleteCompletedTasksByCategoryName(currentCategory);
+                                completedTaskGroups.clear();
+                                completedTaskAdapter.notifyDataSetChanged();
+                            }
                         }
                     })
                     .setNegativeButton("NO", new DialogInterface.OnClickListener() {
@@ -68,7 +76,14 @@ public class TimeLineCompletedTaskActivity extends AppCompatActivity {
 
     private void initializeData() {
         taskDAOImpl = new TaskDAOImpl(this);
-        List<Task> completedTaskList = taskDAOImpl.getAllCompletedTasks();
+        Intent intent = getIntent();
+        currentCategory = intent.getStringExtra("Current Category");
+        if (currentCategory.equals("All")){
+            completedTaskList = taskDAOImpl.getAllCompletedTasks();
+        } else {
+            completedTaskList = taskDAOImpl.getCompletedTasksByCategoryName(currentCategory);
+        }
+
         Map<LocalDate, List<Task>> groupedTasks = TaskCategorizer.groupTasksByCompletionDate(completedTaskList);
 
         completedTaskGroups = groupedTasks.entrySet().stream()
