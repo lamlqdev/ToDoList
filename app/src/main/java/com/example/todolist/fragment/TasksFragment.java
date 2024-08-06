@@ -63,6 +63,7 @@ public class TasksFragment extends Fragment implements BottomSheetAddTaskFragmen
     private TaskAdapter completedTaskAdapter;
     private ActivityResultLauncher<Intent> updateTaskLauncher;
     private ActivityResultLauncher<Intent> deleteCompletedTaskLauncher;
+    private ActivityResultLauncher<Intent> manageCategoryLauncher;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -97,6 +98,20 @@ public class TasksFragment extends Fragment implements BottomSheetAddTaskFragmen
                         taskList = taskDAOImpl.getTasksByCategoryName(categorySelected);
                     }
                     setRecyclerViewTask(taskList);
+                }
+            }
+        );
+
+        manageCategoryLauncher = registerForActivityResult(
+            new ActivityResultContracts.StartActivityForResult(),
+            result -> {
+                if (result.getResultCode() == AddOrEditCategoryActivity.RESULT_OK) {
+                    clearAllTaskLists();
+                    categoryList.clear();
+                    categorySelected = "All";
+                    taskList = taskDAOImpl.getAllTasks();
+                    setRecyclerViewTask(taskList);
+                    setRecyclerViewCategory();
                 }
             }
         );
@@ -239,7 +254,7 @@ public class TasksFragment extends Fragment implements BottomSheetAddTaskFragmen
 
                     if (item.getItemId() == R.id.manage_categories){
                         Intent intent = new Intent(requireContext(), AddOrEditCategoryActivity.class);
-                        startActivity(intent);
+                        manageCategoryLauncher.launch(intent);
                     }
                     return true;
                 });

@@ -66,12 +66,10 @@ public class TaskCategorizer {
                 Collections.sort(tasks, new Comparator<Task>() {
                     @Override
                     public int compare(Task t1, Task t2) {
-                        // So sánh theo dueDate trước, xử lý trường hợp null
                         if (t1.getDueDate() == null && t2.getDueDate() == null) {
-                            // Nếu cả hai đều null, so sánh theo dueTime
                             return compareDueTime(t1, t2);
                         } else if (t1.getDueDate() == null) {
-                            return 1; // null được coi là lớn hơn bất kỳ giá trị nào khác
+                            return 1;
                         } else if (t2.getDueDate() == null) {
                             return -1;
                         }
@@ -88,7 +86,7 @@ public class TaskCategorizer {
                         if (t1.getDueTime() == null && t2.getDueTime() == null) {
                             return 0;
                         } else if (t1.getDueTime() == null) {
-                            return 1; // null được coi là lớn hơn bất kỳ giá trị nào khác
+                            return 1;
                         } else if (t2.getDueTime() == null) {
                             return -1;
                         }
@@ -101,6 +99,13 @@ public class TaskCategorizer {
                 Collections.sort(tasks, new Comparator<Task>() {
                     @Override
                     public int compare(Task t1, Task t2) {
+                        if (t1.getCreatedAt() == null && t2.getCreatedAt() == null) {
+                            return 0;
+                        } else if (t1.getCreatedAt() == null) {
+                            return 1;
+                        } else if (t2.getCreatedAt() == null) {
+                            return -1;
+                        }
                         return t1.getCreatedAt().compareTo(t2.getCreatedAt());
                     }
                 });
@@ -110,6 +115,13 @@ public class TaskCategorizer {
                 Collections.sort(tasks, new Comparator<Task>() {
                     @Override
                     public int compare(Task t1, Task t2) {
+                        if (t1.getTitle() == null && t2.getTitle() == null) {
+                            return 0;
+                        } else if (t1.getTitle() == null) {
+                            return 1;
+                        } else if (t2.getTitle() == null) {
+                            return -1;
+                        }
                         return t1.getTitle().compareToIgnoreCase(t2.getTitle());
                     }
                 });

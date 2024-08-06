@@ -466,4 +466,20 @@ public class TaskDAOImpl implements ITaskDAO{
         return tasks;
     }
 
+    @Override
+    public void deleteTasksByCategoryName(String categoryName) {
+        SQLiteDatabase db = dbHandler.getWritableDatabase();
+
+        try {
+            String query = "DELETE FROM tasks " +
+                    "WHERE category_id IN (" +
+                    "SELECT category_id FROM categories WHERE name = ?)";
+
+            db.execSQL(query, new String[]{categoryName});
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            db.close();
+        }
+    }
 }

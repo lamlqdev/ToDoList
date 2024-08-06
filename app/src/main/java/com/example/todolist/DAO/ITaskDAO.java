@@ -17,4 +17,5 @@ public interface ITaskDAO {
     List<Task> getTasksByCategoryName(String categoryName);
     List<Task> getCompletedTasksByCategoryName(String categoryName);
     List<Task> searchTasksByName(String nameTask);
+    void deleteTasksByCategoryName(String categoryName);
 }
