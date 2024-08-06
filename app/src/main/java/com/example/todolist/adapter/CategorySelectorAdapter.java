@@ -14,7 +14,7 @@ import com.example.todolist.model.Category;
 
 import java.util.List;
 
-public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.CategoryViewHolder> {
+public class CategorySelectorAdapter extends RecyclerView.Adapter<CategorySelectorAdapter.CategoryViewHolder> {
     private List<Category> categories;
     private Context context;
     private LayoutInflater layoutInflater;
@@ -25,7 +25,7 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.Catego
         void onItemCategoryClick(String categoryName);
     }
 
-    public CategoryAdapter(Context context, List<Category> categories, OnClickListener onClickListener) {
+    public CategorySelectorAdapter(Context context, List<Category> categories, OnClickListener onClickListener) {
         this.categories = categories;
         this.context = context;
         this.onClickListener = onClickListener;

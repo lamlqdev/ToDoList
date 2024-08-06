@@ -9,7 +9,6 @@ import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
-import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -19,24 +18,22 @@ import android.text.Editable;
 import android.text.SpannableString;
 import android.text.Spanned;
 import android.text.TextWatcher;
-import android.text.style.StrikethroughSpan;
 import android.text.style.UnderlineSpan;
-import android.util.Log;
 import android.view.ContextThemeWrapper;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
-import android.widget.LinearLayout;
 import android.widget.PopupMenu;
 
 import com.example.todolist.DAO.CategoryDAOImpl;
 import com.example.todolist.DAO.TaskDAOImpl;
 import com.example.todolist.R;
+import com.example.todolist.activity.AddOrEditCategoryActivity;
 import com.example.todolist.activity.TimeLineCompletedTaskActivity;
 import com.example.todolist.activity.UpdateTaskActivity;
-import com.example.todolist.adapter.CategoryAdapter;
+import com.example.todolist.adapter.CategorySelectorAdapter;
 import com.example.todolist.adapter.TaskAdapter;
 import com.example.todolist.databinding.FragmentTaskBinding;
 import com.example.todolist.model.Category;
@@ -45,11 +42,9 @@ import com.example.todolist.utils.TaskCategorizer;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 
-public class TasksFragment extends Fragment implements BottomSheetAddTaskFragment.OnTaskAddedListener, TaskAdapter.OnTaskInteractionListener, CategoryAdapter.OnClickListener, SoftPickerDialogFragment.OnSortOptionSelectedListener{
+public class TasksFragment extends Fragment implements BottomSheetAddTaskFragment.OnTaskAddedListener, TaskAdapter.OnTaskInteractionListener, CategorySelectorAdapter.OnClickListener, SoftPickerDialogFragment.OnSortOptionSelectedListener{
     private FragmentTaskBinding binding;
     private CategoryDAOImpl categoryDAOImpl;
     private TaskDAOImpl taskDAOImpl;
@@ -61,7 +56,7 @@ public class TasksFragment extends Fragment implements BottomSheetAddTaskFragmen
     private List<Task> todayTasks = new ArrayList<>();
     private List<Task> futureTasks = new ArrayList<>();
     private List<Task> completedTasks = new ArrayList<>();
-    private CategoryAdapter categoryAdapter;
+    private CategorySelectorAdapter categoryAdapter;
     private TaskAdapter previousTaskAdapter;
     private TaskAdapter todayTaskAdapter;
     private TaskAdapter futureTaskAdapter;
@@ -170,7 +165,7 @@ public class TasksFragment extends Fragment implements BottomSheetAddTaskFragmen
 
     private void setRecyclerViewCategory() {
         categoryList = categoryDAOImpl.getAllCategories();
-        categoryAdapter = new CategoryAdapter(getContext(), categoryList, this);
+        categoryAdapter = new CategorySelectorAdapter(getContext(), categoryList, this);
 
         binding.categoryContainer.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false));
         binding.categoryContainer.setAdapter(categoryAdapter);
@@ -240,6 +235,11 @@ public class TasksFragment extends Fragment implements BottomSheetAddTaskFragmen
                                 binding.categoryManagerContainer.setVisibility(View.VISIBLE);
                             }
                         });
+                    }
+
+                    if (item.getItemId() == R.id.manage_categories){
+                        Intent intent = new Intent(requireContext(), AddOrEditCategoryActivity.class);
+                        startActivity(intent);
                     }
                     return true;
                 });

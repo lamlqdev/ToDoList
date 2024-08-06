@@ -13,6 +13,9 @@
         android:theme="@style/Theme.ToDoList"
         tools:targetApi="31">
         <activity
+            android:name=".activity.AddOrEditCategoryActivity"
+            android:exported="false" />
+        <activity
             android:name=".activity.TimeLineCompletedTaskActivity"
             android:exported="false" />
         <activity

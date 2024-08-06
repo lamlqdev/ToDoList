@@ -64,4 +64,6 @@
     <string name="task_create_time">Task Create Time</string>
     <string name="select">SELECT</string>
     <string name="alphabetical_a_z">Alphabetical A-Z</string>
+    <string name="categories_display_on_homepage">Categories display on homepage</string>
+    <string name="create_new">Create New</string>
 </resources>
