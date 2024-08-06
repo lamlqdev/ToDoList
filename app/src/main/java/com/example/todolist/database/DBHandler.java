@@ -4,12 +4,18 @@ import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
+import androidx.core.content.ContextCompat;
+
+import com.example.todolist.R;
+
 public class DBHandler extends SQLiteOpenHelper {
     private static final String DATABASE_NAME = "todolist.db";
     private static final int DATABASE_VERSION = 1;
+    private Context context;
 
     public DBHandler(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
+        this.context = context;
     }
 
     @Override
@@ -28,7 +34,8 @@ public class DBHandler extends SQLiteOpenHelper {
 
         String CREATE_TABLE_CATEGORIES = "CREATE TABLE categories (" +
                 "category_id INTEGER PRIMARY KEY AUTOINCREMENT, " +
-                "name TEXT UNIQUE" +
+                "name TEXT UNIQUE, " +
+                "color INTEGER" +
                 ");";
         db.execSQL(CREATE_TABLE_CATEGORIES);
 
@@ -65,8 +72,12 @@ public class DBHandler extends SQLiteOpenHelper {
     }
 
     private void insertCategory(SQLiteDatabase db) {
-        String INSERT_DATE = "INSERT INTO categories (category_id, name)"
-                + "VALUES (1, 'Work'), (2, 'Home'), (3, 'Wishlist'), (4, 'Personal')";
+        int blueColor = ContextCompat.getColor(context, R.color.blue);
+        String INSERT_DATE = "INSERT INTO categories (category_id, name, color) VALUES " +
+                "(1, 'Work', " + blueColor + "), " +
+                "(2, 'Home', " + blueColor + "), " +
+                "(3, 'Wishlist', " + blueColor + "), " +
+                "(4, 'Personal', " + blueColor + ")";
         db.execSQL(INSERT_DATE);
     }
 }

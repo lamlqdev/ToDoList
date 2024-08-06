@@ -5,6 +5,9 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
+import androidx.core.content.ContextCompat;
+
+import com.example.todolist.R;
 import com.example.todolist.contract.TodolistContract;
 import com.example.todolist.database.DBHandler;
 import com.example.todolist.model.Category;
@@ -26,7 +29,8 @@ public class CategoryDAOImpl implements ICategoryDAO {
             SQLiteDatabase db = dbHandler.getWritableDatabase();
             ContentValues values = new ContentValues();
             values.put(TodolistContract.CategoryEntry.NAME, category.getName());
-
+            int blueColor = ContextCompat.getColor(context, R.color.blue);
+            values.put(TodolistContract.CategoryEntry.COLOR, blueColor);
             long result = db.insert(TodolistContract.CategoryEntry.TABLE_NAME, null, values);
             db.close();
             return result != -1;
@@ -43,6 +47,7 @@ public class CategoryDAOImpl implements ICategoryDAO {
             SQLiteDatabase db = dbHandler.getWritableDatabase();
             ContentValues values = new ContentValues();
             values.put(TodolistContract.CategoryEntry.NAME, category.getName());
+            values.put(TodolistContract.CategoryEntry.COLOR, category.getColor());
 
             int result = db.update(TodolistContract.CategoryEntry.TABLE_NAME, values,
                     TodolistContract.CategoryEntry.CATEGORY_ID + " = ?",
@@ -78,7 +83,8 @@ public class CategoryDAOImpl implements ICategoryDAO {
         try {
             String[] projection = {
                     TodolistContract.CategoryEntry.CATEGORY_ID,
-                    TodolistContract.CategoryEntry.NAME
+                    TodolistContract.CategoryEntry.NAME,
+                    TodolistContract.CategoryEntry.COLOR
             };
 
             String selection = TodolistContract.CategoryEntry.CATEGORY_ID + " = ?";
@@ -88,7 +94,8 @@ public class CategoryDAOImpl implements ICategoryDAO {
             if (cursor != null && cursor.moveToFirst()) {
                 category = new Category(
                         cursor.getInt(cursor.getColumnIndexOrThrow(TodolistContract.CategoryEntry.CATEGORY_ID)),
-                        cursor.getString(cursor.getColumnIndexOrThrow(TodolistContract.CategoryEntry.NAME))
+                        cursor.getString(cursor.getColumnIndexOrThrow(TodolistContract.CategoryEntry.NAME)),
+                        cursor.getInt(cursor.getColumnIndexOrThrow(TodolistContract.CategoryEntry.COLOR))
                 );
             }
         } catch (Exception e) {
@@ -110,7 +117,8 @@ public class CategoryDAOImpl implements ICategoryDAO {
         try {
             String[] projection = {
                     TodolistContract.CategoryEntry.CATEGORY_ID,
-                    TodolistContract.CategoryEntry.NAME
+                    TodolistContract.CategoryEntry.NAME,
+                    TodolistContract.CategoryEntry.COLOR
             };
 
             cursor = db.query(TodolistContract.CategoryEntry.TABLE_NAME, projection, null, null, null, null, null);
@@ -118,7 +126,8 @@ public class CategoryDAOImpl implements ICategoryDAO {
                 while (cursor.moveToNext()) {
                     Category category = new Category(
                             cursor.getInt(cursor.getColumnIndexOrThrow(TodolistContract.CategoryEntry.CATEGORY_ID)),
-                            cursor.getString(cursor.getColumnIndexOrThrow(TodolistContract.CategoryEntry.NAME))
+                            cursor.getString(cursor.getColumnIndexOrThrow(TodolistContract.CategoryEntry.NAME)),
+                            cursor.getInt(cursor.getColumnIndexOrThrow(TodolistContract.CategoryEntry.COLOR))
                     );
                     categories.add(category);
                 }
