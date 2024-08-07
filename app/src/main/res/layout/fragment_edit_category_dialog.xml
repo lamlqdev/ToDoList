@@ -1,0 +1,215 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:background="@drawable/background_white_radius_10dp"
+    tools:context=".fragment.AddCategoryDialogFragment">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/inter_bold"
+        android:layout_marginStart="15dp"
+        android:layout_marginTop="15dp"
+        android:layout_marginBottom="10dp"
+        android:text="@string/edit_the_category"
+        android:textSize="18sp" />
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="15dp"
+        android:layout_marginEnd="15dp">
+
+        <EditText
+            android:id="@+id/editTextCategoryName"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/background_white_radius_10dp"
+            android:backgroundTint="@color/task_title_bg"
+            android:focusable="true"
+            android:fontFamily="@font/inter_regular"
+            android:paddingStart="15dp"
+            android:paddingEnd="15dp"
+            android:paddingTop="15dp"
+            android:paddingBottom="50dp"
+            android:textColor="@color/black"
+            android:textColorHint="@color/grey_text"
+            android:textSize="16sp"
+            android:maxLength="50"/>
+
+        <TextView
+            android:id="@+id/charCountTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end|bottom"
+            android:layout_marginBottom="5dp"
+            android:layout_marginEnd="5dp"
+            android:text="0/50"
+            android:textColor="@color/black"
+            android:textSize="14sp"
+            android:fontFamily="@font/inter_regular"/>
+    </FrameLayout>
+
+    <TextView
+        android:id="@+id/errorTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="15dp"
+        android:layout_marginTop="5dp"
+        android:textSize="12sp"
+        android:textColor="@color/red"
+        android:fontFamily="@font/inter_regular"
+        android:text="@string/category_name_has_exceeded_the_word_limit"
+        android:visibility="gone"/>
+
+
+    <LinearLayout
+        android:id="@+id/chooseColor"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:layout_marginStart="15dp"
+        android:layout_marginEnd="15dp"
+        android:layout_marginBottom="10dp"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="0sp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/category_color"
+                android:textSize="16sp"
+                android:fontFamily="@font/inter_bold"/>
+
+            <TextView
+                android:id="@+id/categoryDefaultText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="5dp"
+                android:text="@string/default_color"
+                android:textSize="16sp"
+                android:fontFamily="@font/inter_regular"/>
+
+            <View
+                android:id="@+id/categoryColor"
+                android:layout_width="12dp"
+                android:layout_height="12dp"
+                android:gravity="center"
+                android:background="@drawable/marker"/>
+
+        </LinearLayout>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:text="@string/the_color_will_be_displayed_in_the_calendar_interface"
+            android:textSize="12sp"
+            android:fontFamily="@font/inter_regular"/>
+
+        <LinearLayout
+            android:id="@+id/listColor"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:visibility="gone">
+
+            <View
+                android:id="@+id/categoryRedColor"
+                android:layout_width="26dp"
+                android:layout_height="26dp"
+                android:layout_marginEnd="10dp"
+                android:background="@drawable/marker"
+                android:backgroundTint="#F05422"/>
+
+            <View
+                android:id="@+id/categoryYellowColor"
+                android:layout_width="26dp"
+                android:layout_height="26dp"
+                android:layout_marginEnd="10dp"
+                android:background="@drawable/marker"
+                android:backgroundTint="#F3C637"/>
+
+            <View
+                android:id="@+id/categoryGreenColor"
+                android:layout_width="26dp"
+                android:layout_height="26dp"
+                android:layout_marginEnd="10dp"
+                android:background="@drawable/marker"
+                android:backgroundTint="#82AD44"/>
+
+            <View
+                android:id="@+id/categoryDarkGreenColor"
+                android:layout_width="26dp"
+                android:layout_height="26dp"
+                android:layout_marginEnd="10dp"
+                android:background="@drawable/marker"
+                android:backgroundTint="#2D9185"/>
+
+            <View
+                android:id="@+id/categoryBlueColor"
+                android:layout_width="26dp"
+                android:layout_height="26dp"
+                android:layout_marginEnd="10dp"
+                android:background="@drawable/marker"
+                android:backgroundTint="#3290E7"/>
+
+            <View
+                android:id="@+id/categoryPurpleColor"
+                android:layout_width="26dp"
+                android:layout_height="26dp"
+                android:layout_marginEnd="10dp"
+                android:background="@drawable/marker"
+                android:backgroundTint="#B59BDC"/>
+
+            <View
+                android:id="@+id/categoryDefaultColor"
+                android:layout_width="26dp"
+                android:layout_height="26dp"
+                android:layout_marginEnd="10dp"
+                android:background="@drawable/marker"
+                android:backgroundTint="@color/blue"/>
+
+        </LinearLayout>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
+        android:layout_marginEnd="10dp"
+        android:layout_marginBottom="10dp"
+        android:gravity="end"
+        android:orientation="horizontal">
+
+        <Button
+            style="@style/Widget.Material3.Button.TextButton"
+            android:id="@+id/buttonCancel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:alpha="0.7"
+            android:text="@string/cancel"
+            android:fontFamily="@font/inter_regular"
+            android:textAllCaps="true"/>
+
+        <Button
+            style="@style/Widget.Material3.Button.TextButton"
+            android:id="@+id/buttonDone"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/save"
+            android:fontFamily="@font/inter_bold"
+            android:textAllCaps="true"/>
+    </LinearLayout>
+</LinearLayout>

@@ -71,4 +71,8 @@
     <string name="input_here">Input here.</string>
     <string name="category_name_has_exceeded_the_word_limit">Category name has exceeded the word limit</string>
     <string name="save">SAVE</string>
+    <string name="edit_the_category">Edit the category</string>
+    <string name="category_color">Category color</string>
+    <string name="default_color">Default</string>
+    <string name="the_color_will_be_displayed_in_the_calendar_interface">The color will be displayed in the calendar interface</string>
 </resources>

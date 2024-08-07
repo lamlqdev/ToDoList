@@ -39,7 +39,7 @@ public class AddOrEditCategoryActivity extends AppCompatActivity implements AddC
     private void initializeData() {
         categoryDAOImpl = new CategoryDAOImpl(this);
         categoryList = categoryDAOImpl.getAllCategories();
-        categoryManagerAdapter = new CategoryManagerAdapter(categoryList, this);
+        categoryManagerAdapter = new CategoryManagerAdapter(categoryList, this, getSupportFragmentManager());
     }
 
     private void setWidgets() {

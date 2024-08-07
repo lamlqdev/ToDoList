@@ -100,7 +100,6 @@ public class AddCategoryDialogFragment extends DialogFragment {
                 }
             }
         });
-
     }
 
     @Override
