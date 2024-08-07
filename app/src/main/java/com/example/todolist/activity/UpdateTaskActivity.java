@@ -12,6 +12,7 @@ import android.view.View;
 import android.widget.PopupMenu;
 import android.widget.Toast;
 
+import androidx.activity.OnBackPressedCallback;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
@@ -76,6 +77,7 @@ public class UpdateTaskActivity extends AppCompatActivity implements DatePickerD
         initializeData();
         setWidgets();
         setEvents();
+        setupBackPressedCallback();
     }
 
     private void initializeData() {
@@ -335,5 +337,19 @@ public class UpdateTaskActivity extends AppCompatActivity implements DatePickerD
         }
         selectedTask.setDueDate(date);
         taskDAOImpl.updateTask(selectedTask);
+    }
+
+    private void setupBackPressedCallback() {
+        OnBackPressedCallback callback = new OnBackPressedCallback(true) {
+            @Override
+            public void handleOnBackPressed() {
+                binding.titleTaskField.requestFocus();
+                binding.titleTaskField.clearFocus();
+                Intent resultIntent = new Intent();
+                setResult(RESULT_OK, resultIntent);
+                finish();
+            }
+        };
+        getOnBackPressedDispatcher().addCallback(this, callback);
     }
 }

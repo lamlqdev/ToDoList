@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 
+import androidx.activity.OnBackPressedCallback;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.todolist.DAO.NoteDAOImpl;
@@ -33,6 +34,7 @@ public class AddOrEditNoteActivity extends AppCompatActivity {
         initializeData();
         setWidgets();
         setEvents();
+        setupBackPressedCallback();
     }
 
     private void initializeData() {
@@ -72,5 +74,18 @@ public class AddOrEditNoteActivity extends AppCompatActivity {
             setResult(RESULT_OK, resultIntent);
             finish();
         });
+    }
+
+    private void setupBackPressedCallback() {
+        OnBackPressedCallback callback = new OnBackPressedCallback(true) {
+            @Override
+            public void handleOnBackPressed() {
+                binding.editTextNotes.clearFocus();
+                Intent resultIntent = new Intent();
+                setResult(RESULT_OK, resultIntent);
+                finish();
+            }
+        };
+        getOnBackPressedDispatcher().addCallback(this, callback);
     }
 }
