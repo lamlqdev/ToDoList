@@ -25,7 +25,7 @@ import com.example.todolist.DAO.TaskDAOImpl;
 import com.example.todolist.R;
 import com.example.todolist.adapter.SubtaskAdapter;
 import com.example.todolist.databinding.ActivityUpdateTaskBinding;
-import com.example.todolist.fragment.DateDialogFragment;
+import com.example.todolist.fragment.DatePickerDialogFragment;
 import com.example.todolist.model.Category;
 import com.example.todolist.model.Note;
 import com.example.todolist.model.Subtask;
@@ -39,7 +39,7 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
 
-public class UpdateTaskActivity extends AppCompatActivity implements DateDialogFragment.OnDateSelectedListener {
+public class UpdateTaskActivity extends AppCompatActivity implements DatePickerDialogFragment.OnDateSelectedListener {
     public static final int RESULT_OK = 1;
     private ActivityUpdateTaskBinding binding;
     private CategoryDAOImpl categoryDAOImpl;
@@ -165,7 +165,7 @@ public class UpdateTaskActivity extends AppCompatActivity implements DateDialogF
         binding.dueDateContainer.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                DateDialogFragment datePicker = DateDialogFragment.newInstance();
+                DatePickerDialogFragment datePicker = DatePickerDialogFragment.newInstance();
                 datePicker.setOnDateSelectedListener(UpdateTaskActivity.this);
                 datePicker.show(getSupportFragmentManager(), "datePicker");
             }

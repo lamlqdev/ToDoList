@@ -67,4 +67,8 @@
     <string name="categories_display_on_homepage">Categories display on homepage</string>
     <string name="create_new">Create New</string>
     <string name="hide">Hide</string>
+    <string name="create_category">Create category</string>
+    <string name="input_here">Input here.</string>
+    <string name="category_name_has_exceeded_the_word_limit">Category name has exceeded the word limit</string>
+    <string name="save">SAVE</string>
 </resources>

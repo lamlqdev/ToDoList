@@ -3,18 +3,23 @@ package com.example.todolist.activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.Toast;
 
+import androidx.activity.OnBackPressedCallback;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.example.todolist.DAO.CategoryDAOImpl;
+import com.example.todolist.R;
 import com.example.todolist.adapter.CategoryManagerAdapter;
 import com.example.todolist.databinding.ActivityAddOrEditCategoryBinding;
+import com.example.todolist.fragment.AddCategoryDialogFragment;
 import com.example.todolist.model.Category;
 
 import java.util.List;
 
-public class AddOrEditCategoryActivity extends AppCompatActivity {
+public class AddOrEditCategoryActivity extends AppCompatActivity implements AddCategoryDialogFragment.OnCategoryAddedListener {
     private ActivityAddOrEditCategoryBinding binding;
     public static final int RESULT_OK = 1;
     private CategoryDAOImpl categoryDAOImpl;
@@ -28,6 +33,7 @@ public class AddOrEditCategoryActivity extends AppCompatActivity {
         initializeData();
         setWidgets();
         setEvents();
+        setupBackPressedCallback();
     }
 
     private void initializeData() {
@@ -54,8 +60,39 @@ public class AddOrEditCategoryActivity extends AppCompatActivity {
         binding.buttonAddCategory.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                AddCategoryDialogFragment addCategoryDialogFragment = AddCategoryDialogFragment.newInstance();;
+                addCategoryDialogFragment.setOnCategoryAddedListener(AddOrEditCategoryActivity.this);
+                addCategoryDialogFragment.show(getSupportFragmentManager(), "AddCategoryDialogFragment");
             }
         });
+    }
+
+    @Override
+    public void onCategoryAdded(String categoryName) {
+        if (!categoryName.isEmpty()) {
+            Category newCategory = new Category();
+            int blueColor = ContextCompat.getColor(this, R.color.blue);
+            newCategory.setColor(blueColor);
+            newCategory.setName(categoryName);
+            if (categoryDAOImpl.addCategory(newCategory)){
+                Toast.makeText(this, "Category added successfully", Toast.LENGTH_SHORT).show();
+                categoryList.add(newCategory);
+                categoryManagerAdapter.notifyDataSetChanged();
+            } else {
+                Toast.makeText(this, "Failed to add category", Toast.LENGTH_SHORT).show();
+            }
+        }
+    }
+
+    private void setupBackPressedCallback() {
+        OnBackPressedCallback callback = new OnBackPressedCallback(true) {
+            @Override
+            public void handleOnBackPressed() {
+                Intent resultIntent = new Intent();
+                setResult(RESULT_OK, resultIntent);
+                finish();
+            }
+        };
+        getOnBackPressedDispatcher().addCallback(this, callback);
     }
 }

@@ -15,20 +15,20 @@
         android:layout_width="match_parent"
         android:layout_height="70dp"
         android:layout_marginStart="15dp"
-        android:layout_marginEnd="15dp"
         android:layout_marginTop="15dp"
-        android:padding="10dp"
+        android:layout_marginEnd="15dp"
         android:background="@drawable/background_white_radius_10dp"
         android:backgroundTint="@color/task_title_bg"
         android:focusable="true"
-        android:hint="@string/add_task_title"
-        android:textColorHint="@color/grey_text"
-        android:textColor="@color/black"
         android:fontFamily="@font/inter_light"
-        android:textStyle="bold"
-        android:textSize="18sp" />
+        android:hint="@string/add_task_title"
+        android:padding="10dp"
+        android:textColor="@color/black"
+        android:textColorHint="@color/grey_text"
+        android:textSize="18sp"
+        android:textStyle="bold" />
 
-        <com.example.todolist.customview.MaxHeightRecyclerView
+    <com.example.todolist.customview.MaxHeightRecyclerView
             android:id="@+id/recyclerViewSubTask"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

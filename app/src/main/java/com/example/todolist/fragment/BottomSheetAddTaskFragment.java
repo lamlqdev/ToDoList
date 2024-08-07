@@ -42,7 +42,7 @@ import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 
-public class BottomSheetAddTaskFragment extends BottomSheetDialogFragment implements DateDialogFragment.OnDateSelectedListener{
+public class BottomSheetAddTaskFragment extends BottomSheetDialogFragment implements DatePickerDialogFragment.OnDateSelectedListener{
     private FragmentBottomSheetAddTaskBinding binding;
     private CategoryDAOImpl categoryDAOImpl;
     private SubtaskDAOImpl subtaskDAOImpl;
@@ -166,7 +166,7 @@ public class BottomSheetAddTaskFragment extends BottomSheetDialogFragment implem
         binding.calendarButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                DateDialogFragment datePicker = DateDialogFragment.newInstance();
+                DatePickerDialogFragment datePicker = DatePickerDialogFragment.newInstance();
                 datePicker.setOnDateSelectedListener(BottomSheetAddTaskFragment.this);
                 datePicker.show(getParentFragmentManager(), "datePicker");
             }

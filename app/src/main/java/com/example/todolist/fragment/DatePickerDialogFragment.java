@@ -38,7 +38,7 @@ import java.util.Locale;
 
 import kotlin.Unit;
 
-public class DateDialogFragment extends DialogFragment {
+public class DatePickerDialogFragment extends DialogFragment {
     private FragmentDialogDateBinding binding;
     private CalendarView calendarView;
     private LocalDate selectedDate = null;
@@ -49,8 +49,8 @@ public class DateDialogFragment extends DialogFragment {
         void onDateSelected(LocalDate date);
     }
 
-    public static DateDialogFragment newInstance() {
-        return new DateDialogFragment();
+    public static DatePickerDialogFragment newInstance() {
+        return new DatePickerDialogFragment();
     }
 
     @Nullable
