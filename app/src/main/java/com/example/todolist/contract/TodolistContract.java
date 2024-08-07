@@ -21,6 +21,7 @@ public final class TodolistContract {
         public static final String CATEGORY_ID = "category_id";
         public static final String NAME = "name";
         public static final String COLOR = "color";
+        public static final String IS_VISIBLE = "isVisible";
     }
 
     public static final class SubtasksEntry implements BaseColumns {

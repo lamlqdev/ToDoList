@@ -35,7 +35,8 @@ public class DBHandler extends SQLiteOpenHelper {
         String CREATE_TABLE_CATEGORIES = "CREATE TABLE categories (" +
                 "category_id INTEGER PRIMARY KEY AUTOINCREMENT, " +
                 "name TEXT UNIQUE, " +
-                "color INTEGER" +
+                "color INTEGER," +
+                "isVisible INTEGER DEFAULT 1" +
                 ");";
         db.execSQL(CREATE_TABLE_CATEGORIES);
 
@@ -73,11 +74,11 @@ public class DBHandler extends SQLiteOpenHelper {
 
     private void insertCategory(SQLiteDatabase db) {
         int blueColor = ContextCompat.getColor(context, R.color.blue);
-        String INSERT_DATE = "INSERT INTO categories (category_id, name, color) VALUES " +
-                "(1, 'Work', " + blueColor + "), " +
-                "(2, 'Home', " + blueColor + "), " +
-                "(3, 'Wishlist', " + blueColor + "), " +
-                "(4, 'Personal', " + blueColor + ")";
+        String INSERT_DATE = "INSERT INTO categories (category_id, name, color, isVisible) VALUES " +
+                "(1, 'Work', " + blueColor + ", 1), " + // isVisible = 1 (true)
+                "(2, 'Home', " + blueColor + ", 1), " +
+                "(3, 'Wishlist', " + blueColor + ", 1), " +
+                "(4, 'Personal', " + blueColor + ", 1)";
         db.execSQL(INSERT_DATE);
     }
 }

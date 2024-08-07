@@ -12,6 +12,7 @@ import com.example.todolist.R;
 import com.example.todolist.databinding.ItemListButtonCategoryBinding;
 import com.example.todolist.model.Category;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class CategorySelectorAdapter extends RecyclerView.Adapter<CategorySelectorAdapter.CategoryViewHolder> {
@@ -26,14 +27,20 @@ public class CategorySelectorAdapter extends RecyclerView.Adapter<CategorySelect
     }
 
     public CategorySelectorAdapter(Context context, List<Category> categories, OnClickListener onClickListener) {
-        this.categories = categories;
         this.context = context;
         this.onClickListener = onClickListener;
         layoutInflater = LayoutInflater.from(context);
 
+        this.categories = new ArrayList<>();
+        for (Category category : categories) {
+            if (category.isVisible()) {
+                this.categories.add(category);
+            }
+        }
+
         Category allCategory = new Category();
         allCategory.setName(context.getString(R.string.all));
-        categories.add(0, allCategory);
+        this.categories.add(0, allCategory);
     }
 
     @NonNull

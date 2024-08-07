@@ -6,12 +6,15 @@ public class Category implements Serializable {
     private int categoryID;
     private String name;
     private int color;
+    private boolean isVisible;
 
-    public Category(int categoryID, String name, int color) {
+    public Category(int categoryID, String name, int color, boolean isVisible) {
         this.categoryID = categoryID;
         this.name = name;
         this.color = color;
+        this.isVisible = isVisible;
     }
+
 
     public Category() {
     }
@@ -38,5 +41,13 @@ public class Category implements Serializable {
 
     public void setColor(int color) {
         this.color = color;
+    }
+
+    public boolean isVisible() {
+        return isVisible;
+    }
+
+    public void setVisible(boolean visible) {
+        isVisible = visible;
     }
 }
