@@ -6,6 +6,7 @@ import android.graphics.drawable.GradientDrawable;
 import android.view.ContextThemeWrapper;
 import android.view.Gravity;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.PopupMenu;
@@ -60,6 +61,8 @@ public class CategoryManagerAdapter extends RecyclerView.Adapter<CategoryManager
 
         holder.binding.categoryName.setText(categorySelected.getName());
 
+        holder.binding.isVisible.setVisibility(!categorySelected.isVisible() ? View.VISIBLE : View.GONE);
+
         List<Task> tasks = taskDAOImpl.getTasksByCategoryName(categorySelected.getName());
         int taskCount = tasks.size();
         holder.binding.taskCount.setText(String.valueOf(taskCount));
@@ -70,6 +73,17 @@ public class CategoryManagerAdapter extends RecyclerView.Adapter<CategoryManager
                 Context wrapper = new ContextThemeWrapper(context, R.style.popupMenuStyle);
                 PopupMenu popup = new PopupMenu(wrapper, v, Gravity.END);
                 popup.getMenuInflater().inflate(R.menu.category_manager_menu, popup.getMenu());
+
+                MenuItem markHide = popup.getMenu().findItem(R.id.hide);
+                MenuItem markShow = popup.getMenu().findItem(R.id.show);
+
+                if (categorySelected.isVisible()) {
+                    markShow.setVisible(false);
+                    markHide.setVisible(true);
+                } else {
+                    markShow.setVisible(true);
+                    markHide.setVisible(false);
+                }
 
                 popup.setOnMenuItemClickListener(item -> {
 
@@ -99,6 +113,18 @@ public class CategoryManagerAdapter extends RecyclerView.Adapter<CategoryManager
                         EditCategoryDialogFragment editCategoryDialogFragment = EditCategoryDialogFragment.newInstance(categorySelected);
                         editCategoryDialogFragment.setOnCategoryEditedListener(CategoryManagerAdapter.this);
                         editCategoryDialogFragment.show(fragmentManager, "EditCategoryDialogFragment");
+                    }
+
+                    if (item.getItemId() == R.id.hide) {
+                        categorySelected.setVisible(false);
+                        categoryDAOImpl.updateCategory(categorySelected);
+                        notifyDataSetChanged();
+                    }
+
+                    if (item.getItemId() == R.id.show) {
+                        categorySelected.setVisible(true);
+                        categoryDAOImpl.updateCategory(categorySelected);
+                        notifyDataSetChanged();
                     }
 
                     return true;
