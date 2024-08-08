@@ -2,6 +2,7 @@ package com.example.todolist.DAO;
 
 import com.example.todolist.model.Task;
 
+import java.time.LocalDate;
 import java.util.List;
 
 public interface ITaskDAO {
@@ -18,4 +19,5 @@ public interface ITaskDAO {
     List<Task> getCompletedTasksByCategoryName(String categoryName);
     List<Task> searchTasksByName(String nameTask);
     void deleteTasksByCategoryName(String categoryName);
+    List<Task> getTasksByDueDate(LocalDate dueDate);
 }

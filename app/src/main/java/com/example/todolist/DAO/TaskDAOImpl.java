@@ -482,4 +482,48 @@ public class TaskDAOImpl implements ITaskDAO{
             db.close();
         }
     }
+
+    @Override
+    public List<Task> getTasksByDueDate(LocalDate dueDate) {
+        List<Task> tasks = new ArrayList<>();
+        SQLiteDatabase db = dbHandler.getReadableDatabase();
+        Cursor cursor = null;
+
+        try {
+            String query = "SELECT * FROM " + TodolistContract.TasksEntry.TABLE_NAME +
+                    " WHERE " + TodolistContract.TasksEntry.DUE_DATE + " = ?";
+
+            String dueDateString = dueDate.format(dateFormatter); // Định dạng LocalDate thành chuỗi theo định dạng yyyy-MM-dd
+            cursor = db.rawQuery(query, new String[]{dueDateString});
+
+            if (cursor != null) {
+                while (cursor.moveToNext()) {
+                    int taskId = cursor.getInt(cursor.getColumnIndexOrThrow(TodolistContract.TasksEntry.TASK_ID));
+                    String title = cursor.getString(cursor.getColumnIndexOrThrow(TodolistContract.TasksEntry.TITLE));
+                    int categoryId = cursor.getInt(cursor.getColumnIndexOrThrow(TodolistContract.TasksEntry.CATEGORY_ID));
+                    String dueDateStringDB = cursor.getString(cursor.getColumnIndexOrThrow(TodolistContract.TasksEntry.DUE_DATE));
+                    String dueTimeString = cursor.getString(cursor.getColumnIndexOrThrow(TodolistContract.TasksEntry.DUE_TIME));
+                    int status = cursor.getInt(cursor.getColumnIndexOrThrow(TodolistContract.TasksEntry.STATUS));
+                    String createdAtString = cursor.getString(cursor.getColumnIndexOrThrow(TodolistContract.TasksEntry.CREATED_AT));
+                    String updatedAtString = cursor.getString(cursor.getColumnIndexOrThrow(TodolistContract.TasksEntry.UPDATED_AT));
+
+                    LocalDate dueDateDB = dueDateStringDB != null ? LocalDate.parse(dueDateStringDB, dateFormatter) : null;
+                    LocalTime dueTime = dueTimeString != null ? LocalTime.parse(dueTimeString) : null;
+                    LocalDateTime createdAt = LocalDateTime.parse(createdAtString, dateTimeFormatter);
+                    LocalDateTime updatedAt = updatedAtString != null ? LocalDateTime.parse(updatedAtString, dateTimeFormatter) : null;
+
+                    Task task = new Task(taskId, title, categoryId, dueDateDB, dueTime, status, createdAt, updatedAt);
+                    tasks.add(task);
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            if (cursor != null) {
+                cursor.close();
+            }
+            db.close();
+        }
+        return tasks;
+    }
 }

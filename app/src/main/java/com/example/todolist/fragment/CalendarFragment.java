@@ -5,19 +5,28 @@ import static com.kizitonwose.calendar.core.ExtensionsKt.firstDayOfWeekFromLocal
 
 import android.graphics.Color;
 import android.graphics.Typeface;
+import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.content.ContextCompat;
 import androidx.core.content.res.ResourcesCompat;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
 
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.example.todolist.DAO.CategoryDAOImpl;
+import com.example.todolist.DAO.TaskDAOImpl;
 import com.example.todolist.R;
+import com.example.todolist.adapter.DayTaskAdapter;
+import com.example.todolist.model.Category;
+import com.example.todolist.model.Task;
 import com.kizitonwose.calendar.core.CalendarDay;
 import com.kizitonwose.calendar.core.DayPosition;
 import com.kizitonwose.calendar.view.CalendarView;
@@ -37,16 +46,33 @@ import kotlin.Unit;
 public class CalendarFragment extends Fragment {
     private FragmentCalendarBinding binding;
     private CalendarView calendarView;
-    private LocalDate selectedDate = null;
-    LocalDate mCurrentMonth = YearMonth.now().atDay(1);
+    private LocalDate selectedDate = LocalDate.now();;
+    private LocalDate mCurrentMonth = YearMonth.now().atDay(1);
+    private List<Task> taskList;
+    private DayTaskAdapter dayTaskAdapter;
+    private TaskDAOImpl taskDAOImpl;
+    private CategoryDAOImpl categoryDAOImpl;
+
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         binding = FragmentCalendarBinding.inflate(inflater, container, false);
+
+        this.taskDAOImpl = new TaskDAOImpl(requireContext());
+        this.categoryDAOImpl = new CategoryDAOImpl(requireContext());
+
         calendarView = binding.calendarView;
+        dayTaskAdapter = new DayTaskAdapter(requireContext(), List.of());
+        binding.recyclerViewListTodayTask.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
+        binding.recyclerViewListTodayTask.setAdapter(dayTaskAdapter);
+
         setupCalendar();
         setWidgets();
         setEvents();
+
+        calendarView.notifyDateChanged(selectedDate);
+        loadTasksForDate(selectedDate);
+
         return binding.getRoot();
     }
 
@@ -126,6 +152,7 @@ public class CalendarFragment extends Fragment {
             updateMonthYearDisplay();
             return Unit.INSTANCE;
         });
+
     }
 
     private void updateCalendar(LocalDate currentMonth) {
@@ -144,26 +171,38 @@ public class CalendarFragment extends Fragment {
     public class DayViewContainer extends ViewContainer {
         private CalendarDay day;
         public final TextView calendarDayText;
-
+        public final View dot1, dot2, dot3;
+        public final LinearLayout dotsContainer;
         public DayViewContainer(@NonNull View view) {
             super(view);
             calendarDayText = view.findViewById(R.id.calendarDayText);
+            dot1 = view.findViewById(R.id.dot1);
+            dot2 = view.findViewById(R.id.dot2);
+            dot3 = view.findViewById(R.id.dot3);
+            dotsContainer = view.findViewById(R.id.dotsContainer);
 
             view.setOnClickListener(v -> {
                 if (day.getPosition() == DayPosition.MonthDate) {
-                    LocalDate currentSelection = selectedDate;
-                    if (currentSelection == day.getDate()) {
-                        selectedDate = null; // Bỏ chọn ngày nếu ngày đã được chọn trước đó.
-                        calendarView.notifyDateChanged(currentSelection); // Cập nhật lại giao diện cho ngày bị bỏ chọn.
-                    } else {
+                    if (!day.getDate().equals(selectedDate)) {
+                        LocalDate currentSelection = selectedDate;
                         selectedDate = day.getDate(); // Chọn ngày mới.
                         calendarView.notifyDateChanged(day.getDate()); // Cập nhật lại giao diện cho ngày được chọn.
                         if (currentSelection != null) {
-                            calendarView.notifyDateChanged(currentSelection); // Bỏ chọn ngày trước đó nếu có.
+                            calendarView.notifyDateChanged(currentSelection); // Cập nhật lại giao diện cho ngày trước đó.
                         }
+                        loadTasksForDate(selectedDate);
                     }
                 }
             });
+        }
+    }
+
+    private void loadTasksForDate(LocalDate date) {
+        if (date != null) {
+            List<Task> tasks = taskDAOImpl.getTasksByDueDate(date);
+            dayTaskAdapter.updateTaskList(tasks);
+        } else {
+            dayTaskAdapter.updateTaskList(List.of()); // Clear tasks if no date is selected
         }
     }
 }
