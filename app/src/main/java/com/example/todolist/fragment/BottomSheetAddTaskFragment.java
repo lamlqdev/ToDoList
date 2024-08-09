@@ -55,6 +55,7 @@ public class BottomSheetAddTaskFragment extends BottomSheetDialogFragment implem
     private LocalTime selectedTime;
     private int selectedCategoryID = 0;
     private static final String ARG_CATEGORY_SELECTED = "category_selected";
+    public static final String ARG_DATE_SELECTED = "date_selected";
     private String categorySelected;
     private OnTaskAddedListener onTaskAddedListener;
 
@@ -73,14 +74,31 @@ public class BottomSheetAddTaskFragment extends BottomSheetDialogFragment implem
         return fragment;
     }
 
+    public static BottomSheetAddTaskFragment newInstance(LocalDate selectedDate) {
+        BottomSheetAddTaskFragment fragment = new BottomSheetAddTaskFragment();
+        Bundle args = new Bundle();
+        args.putSerializable(ARG_DATE_SELECTED, selectedDate);
+        fragment.setArguments(args);
+        return fragment;
+    }
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         taskID = IDGenerator.generateTaskID();
         if (getArguments() != null) {
-            categorySelected = getArguments().getString(ARG_CATEGORY_SELECTED);
-            if (categorySelected.equals("All")) {
+            String category = getArguments().getString(ARG_CATEGORY_SELECTED);
+            if (category != null) {
+                if (category.equals("All")){
+                    categorySelected = "No Category";
+                } else {
+                    categorySelected = category;
+                }
+            }
+            LocalDate date = (LocalDate) getArguments().getSerializable(ARG_DATE_SELECTED);
+            if (date != null) {
                 categorySelected = "No Category";
+                selectedDate = date;
             }
         }
     }
@@ -166,7 +184,7 @@ public class BottomSheetAddTaskFragment extends BottomSheetDialogFragment implem
         binding.calendarButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                DatePickerDialogFragment datePicker = DatePickerDialogFragment.newInstance();
+                DatePickerDialogFragment datePicker = DatePickerDialogFragment.newInstance(selectedDate);
                 datePicker.setOnDateSelectedListener(BottomSheetAddTaskFragment.this);
                 datePicker.show(getParentFragmentManager(), "datePicker");
             }

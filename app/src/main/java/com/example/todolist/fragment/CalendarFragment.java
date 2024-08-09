@@ -48,7 +48,7 @@ import java.util.Locale;
 
 import kotlin.Unit;
 
-public class CalendarFragment extends Fragment implements DayTaskAdapter.OnTaskInteractionListener {
+public class CalendarFragment extends Fragment implements BottomSheetAddTaskFragment.OnTaskAddedListener, DayTaskAdapter.OnTaskInteractionListener {
     private FragmentCalendarBinding binding;
     private CalendarView calendarView;
     private LocalDate selectedDate = LocalDate.now();;
@@ -217,7 +217,11 @@ public class CalendarFragment extends Fragment implements DayTaskAdapter.OnTaskI
             return Unit.INSTANCE;
         });
 
-
+        binding.floatingAddButton.setOnClickListener(v -> {
+            BottomSheetAddTaskFragment bottomSheet = BottomSheetAddTaskFragment.newInstance(selectedDate);
+            bottomSheet.setOnTaskAddedListener(CalendarFragment.this);
+            bottomSheet.show(getParentFragmentManager(), bottomSheet.getTag());
+        });
 
     }
 
@@ -239,6 +243,11 @@ public class CalendarFragment extends Fragment implements DayTaskAdapter.OnTaskI
         Intent intent = new Intent(requireContext(), UpdateTaskActivity.class);
         intent.putExtra("task", task);
         updateTaskLauncher.launch(intent);
+    }
+
+    @Override
+    public void onTaskAdded(Task newTask) {
+        loadTasksForDate(selectedDate);
     }
 
     public class DayViewContainer extends ViewContainer {

@@ -167,7 +167,7 @@ public class UpdateTaskActivity extends AppCompatActivity implements DatePickerD
         binding.dueDateContainer.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                DatePickerDialogFragment datePicker = DatePickerDialogFragment.newInstance();
+                DatePickerDialogFragment datePicker = DatePickerDialogFragment.newInstance(null);
                 datePicker.setOnDateSelectedListener(UpdateTaskActivity.this);
                 datePicker.show(getSupportFragmentManager(), "datePicker");
             }

@@ -44,13 +44,18 @@ public class DatePickerDialogFragment extends DialogFragment {
     private LocalDate selectedDate = null;
     LocalDate mCurrentMonth = YearMonth.now().atDay(1);
     private OnDateSelectedListener dateSelectedListener;
+    public static final String ARG_DATE_SELECTED = "date_selected";
 
     public interface OnDateSelectedListener {
         void onDateSelected(LocalDate date);
     }
 
-    public static DatePickerDialogFragment newInstance() {
-        return new DatePickerDialogFragment();
+    public static DatePickerDialogFragment newInstance(LocalDate selectedDate) {
+        DatePickerDialogFragment fragment = new DatePickerDialogFragment();
+        Bundle args = new Bundle();
+        args.putSerializable(ARG_DATE_SELECTED, selectedDate);
+        fragment.setArguments(args);
+        return fragment;
     }
 
     @Nullable
@@ -68,11 +73,16 @@ public class DatePickerDialogFragment extends DialogFragment {
         setWidgets();
         setEvents();
 
-        // Chọn ngày hôm nay mặc định và cập nhật trạng thái nút
-        LocalDate today = LocalDate.now();
-        selectedDate = today;
-        calendarView.notifyDateChanged(today);
-        updateButtonState(binding.buttonToday);
+        if (getArguments() != null) {
+            selectedDate = (LocalDate) getArguments().getSerializable(ARG_DATE_SELECTED);
+            if (selectedDate != null) {
+                calendarView.notifyDateChanged(selectedDate);
+            } else {
+                selectedDate = LocalDate.now();
+                calendarView.notifyDateChanged(selectedDate);
+            }
+            updateButtonStates(selectedDate);
+        }
     }
 
     @Override
