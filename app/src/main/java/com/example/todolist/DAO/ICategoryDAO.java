@@ -11,6 +11,7 @@ public interface ICategoryDAO {
     boolean deleteCategory(Category category);
     Category getCategory(int id);
     List<Category> getAllCategories();
+    List<Category> getAllVisibleCategories();
     int getIDByCategoryName (String categoryName);
     List<Integer> getCategoryColorFromTasks(List<Task> tasks);
 }

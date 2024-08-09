@@ -2,6 +2,9 @@ package com.example.todolist.adapter;
 
 import android.content.Context;
 import android.graphics.drawable.GradientDrawable;
+import android.text.SpannableString;
+import android.text.Spanned;
+import android.text.style.StrikethroughSpan;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,10 +24,16 @@ public class DayTaskAdapter extends RecyclerView.Adapter<DayTaskAdapter.DayTaskV
     private Context context;
     private LayoutInflater inflater;
     private CategoryDAOImpl categoryDAOImpl;
+    private final DayTaskAdapter.OnTaskInteractionListener onTaskInteractionListener;
 
-    public DayTaskAdapter(Context context, List<Task> taskList) {
+    public interface OnTaskInteractionListener {
+        void onItemTaskClick(Task task);
+    }
+
+    public DayTaskAdapter(Context context, List<Task> taskList, DayTaskAdapter.OnTaskInteractionListener onTaskInteractionListener) {
         this.taskList = taskList;
         this.context = context;
+        this.onTaskInteractionListener = onTaskInteractionListener;
         this.categoryDAOImpl = new CategoryDAOImpl(context);
         this.inflater = LayoutInflater.from(context);
     }
@@ -33,7 +42,7 @@ public class DayTaskAdapter extends RecyclerView.Adapter<DayTaskAdapter.DayTaskV
     @Override
     public DayTaskAdapter.DayTaskViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         ItemListDayTaskBinding binding = ItemListDayTaskBinding.inflate(inflater, parent, false);
-        return new DayTaskViewHolder(binding);
+        return new DayTaskViewHolder(binding, onTaskInteractionListener);
     }
 
     @Override
@@ -48,6 +57,15 @@ public class DayTaskAdapter extends RecyclerView.Adapter<DayTaskAdapter.DayTaskV
             GradientDrawable background = (GradientDrawable) taskIndicator.getBackground();
             background.setColor(category.getColor());
         }
+
+        if (task.getStatus() == 2) {
+            String text = task.getTitle();
+            SpannableString spannableString = new SpannableString(text);
+            spannableString.setSpan(new StrikethroughSpan(), 0, text.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+            holder.binding.taskText.setText(spannableString);
+        }
+
+        holder.itemView.setTag(task);
     }
 
     @Override
@@ -62,9 +80,19 @@ public class DayTaskAdapter extends RecyclerView.Adapter<DayTaskAdapter.DayTaskV
 
     public static class DayTaskViewHolder extends RecyclerView.ViewHolder{
         private ItemListDayTaskBinding binding;
-        public DayTaskViewHolder(@NonNull ItemListDayTaskBinding binding) {
+        public DayTaskViewHolder(@NonNull ItemListDayTaskBinding binding, DayTaskAdapter.OnTaskInteractionListener onTaskInteractionListener) {
             super(binding.getRoot());
             this.binding = binding;
+
+            binding.getRoot().setOnClickListener(v -> {
+                if (onTaskInteractionListener != null) {
+                    int pos = getBindingAdapterPosition();
+                    if (pos != RecyclerView.NO_POSITION) {
+                        Task task = (Task) binding.getRoot().getTag();
+                        onTaskInteractionListener.onItemTaskClick(task);
+                    }
+                }
+            });
         }
     }
 }

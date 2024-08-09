@@ -30,13 +30,7 @@ public class CategorySelectorAdapter extends RecyclerView.Adapter<CategorySelect
         this.context = context;
         this.onClickListener = onClickListener;
         layoutInflater = LayoutInflater.from(context);
-
-        this.categories = new ArrayList<>();
-        for (Category category : categories) {
-            if (category.isVisible()) {
-                this.categories.add(category);
-            }
-        }
+        this.categories = categories;
 
         Category allCategory = new Category();
         allCategory.setName(context.getString(R.string.all));

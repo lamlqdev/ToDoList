@@ -3,11 +3,14 @@ package com.example.todolist.fragment;
 import static com.kizitonwose.calendar.core.ExtensionsKt.daysOfWeek;
 import static com.kizitonwose.calendar.core.ExtensionsKt.firstDayOfWeekFromLocale;
 
+import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
@@ -24,6 +27,7 @@ import android.widget.TextView;
 import com.example.todolist.DAO.CategoryDAOImpl;
 import com.example.todolist.DAO.TaskDAOImpl;
 import com.example.todolist.R;
+import com.example.todolist.activity.UpdateTaskActivity;
 import com.example.todolist.adapter.DayTaskAdapter;
 import com.example.todolist.model.Category;
 import com.example.todolist.model.Task;
@@ -38,21 +42,21 @@ import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.YearMonth;
 import java.time.format.TextStyle;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 
 import kotlin.Unit;
 
-public class CalendarFragment extends Fragment {
+public class CalendarFragment extends Fragment implements DayTaskAdapter.OnTaskInteractionListener {
     private FragmentCalendarBinding binding;
     private CalendarView calendarView;
     private LocalDate selectedDate = LocalDate.now();;
     private LocalDate mCurrentMonth = YearMonth.now().atDay(1);
-    private List<Task> taskList;
     private DayTaskAdapter dayTaskAdapter;
     private TaskDAOImpl taskDAOImpl;
     private CategoryDAOImpl categoryDAOImpl;
-
+    private ActivityResultLauncher<Intent> updateTaskLauncher;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -62,9 +66,18 @@ public class CalendarFragment extends Fragment {
         this.categoryDAOImpl = new CategoryDAOImpl(requireContext());
 
         calendarView = binding.calendarView;
-        dayTaskAdapter = new DayTaskAdapter(requireContext(), List.of());
+        dayTaskAdapter = new DayTaskAdapter(requireContext(), List.of(), this);
         binding.recyclerViewListTodayTask.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
         binding.recyclerViewListTodayTask.setAdapter(dayTaskAdapter);
+
+        updateTaskLauncher = registerForActivityResult(
+                new ActivityResultContracts.StartActivityForResult(),
+                result -> {
+                    if (result.getResultCode() == UpdateTaskActivity.RESULT_OK) {
+                        loadTasksForDate(selectedDate);
+                    }
+                }
+        );
 
         setupCalendar();
         setWidgets();
@@ -96,6 +109,16 @@ public class CalendarFragment extends Fragment {
             public void bind(@NonNull DayViewContainer container, CalendarDay calendarDay) {
                 container.calendarDayText.setText(String.valueOf(calendarDay.getDate().getDayOfMonth()));
                 List<Task> dayTasks = taskDAOImpl.getTasksByDueDate(calendarDay.getDate());
+                Iterator<Task> iterator = dayTasks.iterator();
+                while (iterator.hasNext()) {
+                    Task task = iterator.next();
+                    if (task.getCategoryID() != -1) {
+                        Category category = categoryDAOImpl.getCategory(task.getCategoryID());
+                        if (category != null && !category.isVisible()) {
+                            iterator.remove();
+                        }
+                    }
+                }
 
                 // Xử lý hiển thị ngày trong tháng
                 if (calendarDay.getPosition() == DayPosition.MonthDate) {
@@ -194,6 +217,8 @@ public class CalendarFragment extends Fragment {
             return Unit.INSTANCE;
         });
 
+
+
     }
 
     private void updateCalendar(LocalDate currentMonth) {
@@ -207,6 +232,13 @@ public class CalendarFragment extends Fragment {
         YearMonth yearMonth = YearMonth.from(mCurrentMonth);
         binding.textViewMonth.setText(mCurrentMonth.getMonth().getDisplayName(TextStyle.FULL, Locale.getDefault()));
         binding.textViewYear.setText(String.valueOf(yearMonth.getYear()));
+    }
+
+    @Override
+    public void onItemTaskClick(Task task) {
+        Intent intent = new Intent(requireContext(), UpdateTaskActivity.class);
+        intent.putExtra("task", task);
+        updateTaskLauncher.launch(intent);
     }
 
     public class DayViewContainer extends ViewContainer {
@@ -244,9 +276,19 @@ public class CalendarFragment extends Fragment {
     private void loadTasksForDate(LocalDate date) {
         if (date != null) {
             List<Task> tasks = taskDAOImpl.getTasksByDueDate(date);
+            Iterator<Task> iterator = tasks.iterator();
+            while (iterator.hasNext()) {
+                Task task = iterator.next();
+                if (task.getCategoryID() != -1) {
+                    Category category = categoryDAOImpl.getCategory(task.getCategoryID());
+                    if (category != null && !category.isVisible()) {
+                        iterator.remove();
+                    }
+                }
+            }
             dayTaskAdapter.updateTaskList(tasks);
         } else {
-            dayTaskAdapter.updateTaskList(List.of()); // Clear tasks if no date is selected
+            dayTaskAdapter.updateTaskList(List.of());
         }
     }
 }

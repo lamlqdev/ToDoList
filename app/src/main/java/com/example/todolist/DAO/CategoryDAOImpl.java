@@ -153,6 +153,49 @@ public class CategoryDAOImpl implements ICategoryDAO {
     }
 
     @Override
+    public List<Category> getAllVisibleCategories() {
+        List<Category> visibleCategories = new ArrayList<>();
+        SQLiteDatabase db = dbHandler.getReadableDatabase();
+        Cursor cursor = null;
+
+        try {
+            String[] projection = {
+                    TodolistContract.CategoryEntry.CATEGORY_ID,
+                    TodolistContract.CategoryEntry.NAME,
+                    TodolistContract.CategoryEntry.COLOR,
+                    TodolistContract.CategoryEntry.IS_VISIBLE
+            };
+
+            String selection = TodolistContract.CategoryEntry.IS_VISIBLE + " = ?";
+            String[] selectionArgs = {"1"};
+
+            cursor = db.query(TodolistContract.CategoryEntry.TABLE_NAME, projection, selection, selectionArgs, null, null, null);
+
+            if (cursor != null) {
+                while (cursor.moveToNext()) {
+                    Category category = new Category(
+                            cursor.getInt(cursor.getColumnIndexOrThrow(TodolistContract.CategoryEntry.CATEGORY_ID)),
+                            cursor.getString(cursor.getColumnIndexOrThrow(TodolistContract.CategoryEntry.NAME)),
+                            cursor.getInt(cursor.getColumnIndexOrThrow(TodolistContract.CategoryEntry.COLOR)),
+                            true // Since we are only querying visible categories, this is always true
+                    );
+                    visibleCategories.add(category);
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            if (cursor != null) {
+                cursor.close();
+            }
+            db.close();
+        }
+
+        return visibleCategories;
+    }
+
+
+    @Override
     public int getIDByCategoryName(String categoryName) {
         int categoryID = -1;
         SQLiteDatabase db = dbHandler.getReadableDatabase();

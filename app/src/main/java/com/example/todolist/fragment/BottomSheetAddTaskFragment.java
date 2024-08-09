@@ -123,7 +123,7 @@ public class BottomSheetAddTaskFragment extends BottomSheetDialogFragment implem
         subtaskDAOImpl = new SubtaskDAOImpl(getContext());
         taskDAOImpl = new TaskDAOImpl(getContext());
 
-        categoryList = categoryDAOImpl.getAllCategories();
+        categoryList = categoryDAOImpl.getAllVisibleCategories();
         selectedCategoryID = categoryDAOImpl.getIDByCategoryName(categorySelected);
         subTaskList = new ArrayList<>();
     }

@@ -85,7 +85,7 @@ public class UpdateTaskActivity extends AppCompatActivity implements DatePickerD
         subtaskDAOImpl = new SubtaskDAOImpl(this);
         taskDAOImpl = new TaskDAOImpl(this);
         noteDAOImpl = new NoteDAOImpl(this);
-        categoryList = categoryDAOImpl.getAllCategories();
+        categoryList = categoryDAOImpl.getAllVisibleCategories();
         subtaskList = subtaskDAOImpl.getListSubtaskByTaskID(selectedTask.getTaskID());
     }
 

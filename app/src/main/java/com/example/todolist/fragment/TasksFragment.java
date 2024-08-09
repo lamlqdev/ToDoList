@@ -42,6 +42,7 @@ import com.example.todolist.utils.TaskCategorizer;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 public class TasksFragment extends Fragment implements BottomSheetAddTaskFragment.OnTaskAddedListener, TaskAdapter.OnTaskInteractionListener, CategorySelectorAdapter.OnClickListener, SoftPickerDialogFragment.OnSortOptionSelectedListener{
@@ -133,6 +134,16 @@ public class TasksFragment extends Fragment implements BottomSheetAddTaskFragmen
     }
 
     private void setRecyclerViewTask(List<Task> taskList) {
+        Iterator<Task> iterator = taskList.iterator();
+        while (iterator.hasNext()) {
+            Task task = iterator.next();
+            if (task.getCategoryID() != -1) {
+                Category category = categoryDAOImpl.getCategory(task.getCategoryID());
+                if (category != null && !category.isVisible()) {
+                    iterator.remove();
+                }
+            }
+        }
         TaskCategorizer.categorizeTasks(taskList, previousTasks, todayTasks, futureTasks, completedTasks);
 
         TaskCategorizer.sortTasks(previousTasks, sortBySelected);
@@ -179,7 +190,7 @@ public class TasksFragment extends Fragment implements BottomSheetAddTaskFragmen
     }
 
     private void setRecyclerViewCategory() {
-        categoryList = categoryDAOImpl.getAllCategories();
+        categoryList = categoryDAOImpl.getAllVisibleCategories();
         categoryAdapter = new CategorySelectorAdapter(getContext(), categoryList, this);
 
         binding.categoryContainer.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false));
