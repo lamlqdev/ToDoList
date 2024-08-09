@@ -95,6 +95,7 @@ public class CalendarFragment extends Fragment {
             @Override
             public void bind(@NonNull DayViewContainer container, CalendarDay calendarDay) {
                 container.calendarDayText.setText(String.valueOf(calendarDay.getDate().getDayOfMonth()));
+                List<Task> dayTasks = taskDAOImpl.getTasksByDueDate(calendarDay.getDate());
 
                 // Xử lý hiển thị ngày trong tháng
                 if (calendarDay.getPosition() == DayPosition.MonthDate) {
@@ -107,17 +108,57 @@ public class CalendarFragment extends Fragment {
                 TextView textView = container.calendarDayText;
                 textView.setText(String.valueOf(calendarDay.getDate().getDayOfMonth()));
 
+                View dotView1 = container.dotView1;
+                View dotView2 = container.dotView2;
+                View dotView3 = container.dotView3;
+                LinearLayout dotContainer = container.dotContainer;
+
                 if (calendarDay.getPosition() == DayPosition.MonthDate) {
+                    if (dayTasks.isEmpty()){
+                        dotContainer.setVisibility(View.GONE);
+                    } else {
+                        dotContainer.setVisibility(View.VISIBLE);
+                        List<Integer> colors = categoryDAOImpl.getCategoryColorFromTasks(dayTasks);
+                        if (colors.size() == 1) {
+                            dotView1.setVisibility(View.VISIBLE);
+                            GradientDrawable drawable = (GradientDrawable) container.dotView1.getBackground();
+                            drawable.setColor(colors.get(0));
+                        }
+                        if (colors.size() == 2) {
+                            dotView1.setVisibility(View.VISIBLE);
+                            GradientDrawable drawable1 = (GradientDrawable) container.dotView1.getBackground();
+                            drawable1.setColor(colors.get(0));
+                            dotView2.setVisibility(View.VISIBLE);
+                            GradientDrawable drawable2 = (GradientDrawable) container.dotView2.getBackground();
+                            drawable2.setColor(colors.get(1));
+                        }
+                        if (colors.size() == 3) {
+                            dotView1.setVisibility(View.VISIBLE);
+                            GradientDrawable drawable1 = (GradientDrawable) container.dotView1.getBackground();
+                            drawable1.setColor(colors.get(0));
+                            dotView2.setVisibility(View.VISIBLE);
+                            GradientDrawable drawable2 = (GradientDrawable) container.dotView2.getBackground();
+                            drawable2.setColor(colors.get(1));
+                            dotView3.setVisibility(View.VISIBLE);
+                            GradientDrawable drawable3 = (GradientDrawable) container.dotView3.getBackground();
+                            drawable3.setColor(colors.get(2));
+                        }
+                    }
+
                     textView.setVisibility(View.VISIBLE);
+
                     if (calendarDay.getDate().equals(selectedDate)) {
                         // Nếu là ngày được chọn, thay đổi màu chữ và nền.
                         textView.setTextColor(Color.WHITE);
                         textView.setBackgroundResource(R.drawable.background_selection_day);
+                        dotContainer.setVisibility(View.GONE);
+
                     } else {
                         // Nếu không phải ngày được chọn, đặt lại màu chữ và nền.
                         textView.setTextColor(Color.BLACK);
                         textView.setBackground(null);
                     }
+
                 } else {
                     textView.setVisibility(View.VISIBLE);
                     Typeface typeface = ResourcesCompat.getFont(requireContext(), R.font.inter_regular);
@@ -171,25 +212,28 @@ public class CalendarFragment extends Fragment {
     public class DayViewContainer extends ViewContainer {
         private CalendarDay day;
         public final TextView calendarDayText;
-        public final View dot1, dot2, dot3;
-        public final LinearLayout dotsContainer;
+        public final View dotView1;
+        public final View dotView2;
+        public final View dotView3;
+        public final LinearLayout dotContainer;
+
         public DayViewContainer(@NonNull View view) {
             super(view);
             calendarDayText = view.findViewById(R.id.calendarDayText);
-            dot1 = view.findViewById(R.id.dot1);
-            dot2 = view.findViewById(R.id.dot2);
-            dot3 = view.findViewById(R.id.dot3);
-            dotsContainer = view.findViewById(R.id.dotsContainer);
+            dotView1 = view.findViewById(R.id.dotView1);
+            dotView2 = view.findViewById(R.id.dotView2);
+            dotView3 = view.findViewById(R.id.dotView3);
+            dotContainer = view.findViewById(R.id.dotContainer);
 
             view.setOnClickListener(v -> {
                 if (day.getPosition() == DayPosition.MonthDate) {
                     if (!day.getDate().equals(selectedDate)) {
-                        LocalDate currentSelection = selectedDate;
-                        selectedDate = day.getDate(); // Chọn ngày mới.
-                        calendarView.notifyDateChanged(day.getDate()); // Cập nhật lại giao diện cho ngày được chọn.
-                        if (currentSelection != null) {
-                            calendarView.notifyDateChanged(currentSelection); // Cập nhật lại giao diện cho ngày trước đó.
+                        LocalDate previousSelectedDate = selectedDate;
+                        selectedDate = day.getDate();
+                        if (previousSelectedDate != null) {
+                            calendarView.notifyDateChanged(previousSelectedDate); // Cập nhật ngày trước đó
                         }
+                        calendarView.notifyDateChanged(day.getDate()); // Cập nhật ngày mới được chọn
                         loadTasksForDate(selectedDate);
                     }
                 }

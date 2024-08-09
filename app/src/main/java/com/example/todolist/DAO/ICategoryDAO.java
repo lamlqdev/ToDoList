@@ -1,6 +1,7 @@
 package com.example.todolist.DAO;
 
 import com.example.todolist.model.Category;
+import com.example.todolist.model.Task;
 
 import java.util.List;
 
@@ -11,4 +12,5 @@ public interface ICategoryDAO {
     Category getCategory(int id);
     List<Category> getAllCategories();
     int getIDByCategoryName (String categoryName);
+    List<Integer> getCategoryColorFromTasks(List<Task> tasks);
 }

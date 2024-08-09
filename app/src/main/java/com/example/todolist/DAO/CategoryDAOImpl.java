@@ -11,9 +11,12 @@ import com.example.todolist.R;
 import com.example.todolist.contract.TodolistContract;
 import com.example.todolist.database.DBHandler;
 import com.example.todolist.model.Category;
+import com.example.todolist.model.Task;
 
 import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 
 public class CategoryDAOImpl implements ICategoryDAO {
     DBHandler dbHandler;
@@ -175,5 +178,23 @@ public class CategoryDAOImpl implements ICategoryDAO {
             db.close();
         }
         return categoryID;
+    }
+
+    @Override
+    public List<Integer> getCategoryColorFromTasks(List<Task> tasks) {
+        Set<Integer> uniqueColors = new LinkedHashSet<>();
+
+        for (Task task : tasks) {
+            if (uniqueColors.size() > 3) break;
+            if (task.getCategoryID() == -1){
+                int blueColor = ContextCompat.getColor(context, R.color.blue);
+                uniqueColors.add(blueColor);
+            } else {
+                Category category = getCategory(task.getCategoryID());
+                uniqueColors.add(category.getColor());
+            }
+
+        }
+        return new ArrayList<>(uniqueColors);
     }
 }
