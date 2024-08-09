@@ -14,6 +14,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.DialogFragment;
 
 import com.example.todolist.R;
@@ -58,6 +59,10 @@ public class EditCategoryDialogFragment extends DialogFragment {
         binding.editTextCategoryName.requestFocus();
 
         binding.charCountTextView.setText(categorySelected.getName().length() + "/50");
+
+        int color = ContextCompat.getColor(requireContext(), R.color.blue);
+        GradientDrawable drawable = (GradientDrawable) binding.categoryColor.getBackground();
+        drawable.setColor(color);
 
         binding.editTextCategoryName.addTextChangedListener(new TextWatcher() {
             @Override
@@ -183,5 +188,4 @@ public class EditCategoryDialogFragment extends DialogFragment {
     public void setOnCategoryEditedListener(onCategoryEditedListener listener) {
         this.onCategoryEditedListener = listener;
     }
-
 }

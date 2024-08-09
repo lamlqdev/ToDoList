@@ -10,9 +10,11 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.todolist.DAO.CategoryDAOImpl;
+import com.example.todolist.R;
 import com.example.todolist.databinding.ItemListDayTaskBinding;
 import com.example.todolist.model.Category;
 import com.example.todolist.model.Task;
@@ -56,6 +58,10 @@ public class DayTaskAdapter extends RecyclerView.Adapter<DayTaskAdapter.DayTaskV
             View taskIndicator = holder.binding.taskIndicator;
             GradientDrawable background = (GradientDrawable) taskIndicator.getBackground();
             background.setColor(category.getColor());
+        } else {
+            View taskIndicator = holder.binding.taskIndicator;
+            GradientDrawable background = (GradientDrawable) taskIndicator.getBackground();
+            background.setColor(ContextCompat.getColor(context, R.color.blue));
         }
 
         if (task.getStatus() == 2) {
