@@ -64,7 +64,7 @@ public class CategorySelectorAdapter extends RecyclerView.Adapter<CategorySelect
             holder.binding.categoryButton.setBackgroundTintList(ContextCompat.getColorStateList(context, R.color.blue2));
             holder.binding.categoryButton.setTextColor(ContextCompat.getColor(context, R.color.white));
         } else {
-            holder.binding.categoryButton.setBackgroundTintList(ContextCompat.getColorStateList(context, R.color.grey2));
+            holder.binding.categoryButton.setBackgroundTintList(ContextCompat.getColorStateList(context, R.color.button_bg));
             holder.binding.categoryButton.setTextColor(ContextCompat.getColor(context, R.color.grey_text));
         }
     }

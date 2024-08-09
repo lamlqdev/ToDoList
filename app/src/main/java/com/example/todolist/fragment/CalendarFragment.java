@@ -71,12 +71,12 @@ public class CalendarFragment extends Fragment implements BottomSheetAddTaskFrag
         binding.recyclerViewListTodayTask.setAdapter(dayTaskAdapter);
 
         updateTaskLauncher = registerForActivityResult(
-                new ActivityResultContracts.StartActivityForResult(),
-                result -> {
-                    if (result.getResultCode() == UpdateTaskActivity.RESULT_OK) {
-                        loadTasksForDate(selectedDate);
-                    }
+            new ActivityResultContracts.StartActivityForResult(),
+            result -> {
+                if (result.getResultCode() == UpdateTaskActivity.RESULT_OK) {
+                    loadTasksForDate(selectedDate);
                 }
+            }
         );
 
         setupCalendar();
@@ -324,6 +324,5 @@ public class CalendarFragment extends Fragment implements BottomSheetAddTaskFrag
             binding.recyclerViewListTodayTask.setVisibility(View.GONE);
             binding.emptyViewContainer.setVisibility(View.VISIBLE);
         }
-
     }
 }
