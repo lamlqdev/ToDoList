@@ -10,7 +10,7 @@
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         app:markerPaddingTop="10dp"
-        app:marker="@drawable/marker"
+        app:marker="@drawable/marker_blue"
         app:markerSize="10dp"
         app:markerInCenter="false"
         app:lineWidth="2dp"

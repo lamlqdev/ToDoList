@@ -12,8 +12,6 @@ import android.os.Bundle;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.core.content.ContextCompat;
 import androidx.core.content.res.ResourcesCompat;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -295,9 +293,19 @@ public class CalendarFragment extends Fragment implements BottomSheetAddTaskFrag
                     }
                 }
             }
+            if (tasks.isEmpty()) {
+                binding.recyclerViewListTodayTask.setVisibility(View.GONE);
+                binding.emptyViewContainer.setVisibility(View.VISIBLE);
+            } else {
+                binding.recyclerViewListTodayTask.setVisibility(View.VISIBLE);
+                binding.emptyViewContainer.setVisibility(View.GONE);
+            }
             dayTaskAdapter.updateTaskList(tasks);
         } else {
             dayTaskAdapter.updateTaskList(List.of());
+            binding.recyclerViewListTodayTask.setVisibility(View.GONE);
+            binding.emptyViewContainer.setVisibility(View.VISIBLE);
         }
+
     }
 }

@@ -76,4 +76,6 @@
     <string name="default_color">Default</string>
     <string name="the_color_will_be_displayed_in_the_calendar_interface">The color will be displayed in the calendar interface</string>
     <string name="show">Show</string>
+    <string name="no_tasks_for_the_day">No tasks for the day.</string>
+    <string name="click_to_create_your_task">Click \'+\' to create your task.</string>
 </resources>
