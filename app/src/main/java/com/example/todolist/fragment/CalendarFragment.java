@@ -40,6 +40,8 @@ import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.YearMonth;
 import java.time.format.TextStyle;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
@@ -293,6 +295,22 @@ public class CalendarFragment extends Fragment implements BottomSheetAddTaskFrag
                     }
                 }
             }
+
+            Collections.sort(tasks, new Comparator<Task>() {
+                @Override
+                public int compare(Task task1, Task task2) {
+                    if (task1.getStatus() != 2 && task2.getStatus() == 2) {
+                        return -1;
+                    }
+                    else if (task1.getStatus() == 2 && task2.getStatus() != 2) {
+                        return 1;
+                    }
+                    else {
+                        return 0;
+                    }
+                }
+            });
+
             if (tasks.isEmpty()) {
                 binding.recyclerViewListTodayTask.setVisibility(View.GONE);
                 binding.emptyViewContainer.setVisibility(View.VISIBLE);

@@ -117,6 +117,12 @@ public class UpdateTaskActivity extends AppCompatActivity implements DatePickerD
         if (note != null) {
             binding.noteField.setText(R.string.edit);
         }
+
+        if (selectedTask.getStatus() == 2) {
+            binding.overlayView.setVisibility(View.VISIBLE);
+        } else {
+            binding.overlayView.setVisibility(View.GONE);
+        }
     }
 
     private void setEvents() {
@@ -211,6 +217,7 @@ public class UpdateTaskActivity extends AppCompatActivity implements DatePickerD
             public boolean onMenuItemClick(MenuItem item) {
                 if (item.getItemId() == R.id.mark_as_done) {
                     selectedTask.setStatus(2);
+                    binding.overlayView.setVisibility(View.VISIBLE);
                     if(taskDAOImpl.updateTaskStatus(selectedTask)){
                         Toast.makeText(UpdateTaskActivity.this, "Task marked as done", Toast.LENGTH_SHORT).show();
                     }
@@ -218,6 +225,7 @@ public class UpdateTaskActivity extends AppCompatActivity implements DatePickerD
 
                 if (item.getItemId() == R.id.mark_as_undone) {
                     selectedTask.setStatus(1);
+                    binding.overlayView.setVisibility(View.GONE);
                     if(taskDAOImpl.updateTaskStatus(selectedTask)){
                         Toast.makeText(UpdateTaskActivity.this, "Task marked as undone", Toast.LENGTH_SHORT).show();
                     }

@@ -81,6 +81,7 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
             SpannableString spannableString = new SpannableString(text);
             spannableString.setSpan(new StrikethroughSpan(), 0, text.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
             holder.binding.taskText.setText(spannableString);
+            holder.binding.overlayView.setVisibility(View.VISIBLE);
 
         } else{
             holder.binding.taskText.setText(updateTask.getTitle());
