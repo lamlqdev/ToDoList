@@ -46,10 +46,6 @@ public class CompletedTaskAdapter extends RecyclerView.Adapter<CompletedTaskAdap
             @Override
             public void onTaskStatusChanged() {
             }
-
-            @Override
-            public void onItemTaskClick(Task task) {
-            }
         });
 
         holder.binding.listCompletedTasks.setLayoutManager(new LinearLayoutManager(context));

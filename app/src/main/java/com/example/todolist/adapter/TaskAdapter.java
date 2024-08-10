@@ -35,7 +35,6 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
 
     public interface OnTaskInteractionListener {
         void onTaskStatusChanged();
-        void onItemTaskClick(Task task);
     }
 
     public TaskAdapter(Context context, List<Task> taskList, OnTaskInteractionListener onTaskInteractionListener) {
@@ -49,7 +48,7 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
     @Override
     public TaskViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         ItemListTaskBinding binding = ItemListTaskBinding.inflate(inflater, parent, false);
-        return new TaskViewHolder(binding, onTaskInteractionListener);
+        return new TaskViewHolder(binding);
     }
 
     @Override
@@ -108,19 +107,9 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
 
     public static class TaskViewHolder extends RecyclerView.ViewHolder{
         private final ItemListTaskBinding binding;
-        public TaskViewHolder(@NonNull ItemListTaskBinding binding, OnTaskInteractionListener onTaskInteractionListener) {
+        public TaskViewHolder(@NonNull ItemListTaskBinding binding) {
             super(binding.getRoot());
             this.binding = binding;
-
-            binding.getRoot().setOnClickListener(v -> {
-                if (onTaskInteractionListener != null) {
-                    int pos = getBindingAdapterPosition();
-                    if (pos != RecyclerView.NO_POSITION) {
-                        Task task = (Task) binding.getRoot().getTag();
-                        onTaskInteractionListener.onItemTaskClick(task);
-                    }
-                }
-            });
         }
     }
 }

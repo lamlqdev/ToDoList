@@ -312,11 +312,18 @@ public class UpdateTaskActivity extends AppCompatActivity implements DatePickerD
     }
 
     private void showMaterialTimePicker() {
+        int hour = 7;
+        int minute = 0;
+        LocalTime dueTime = selectedTask.getDueTime();
+        if (dueTime != null) {
+            hour = dueTime.getHour();
+            minute = dueTime.getMinute();
+        }
         MaterialTimePicker.Builder builder = new MaterialTimePicker.Builder()
                 .setTitleText("Set Time")
                 .setTimeFormat(TimeFormat.CLOCK_24H)
-                .setHour(7)
-                .setMinute(0)
+                .setHour(hour)
+                .setMinute(minute)
                 .setInputMode(MaterialTimePicker.INPUT_MODE_CLOCK)
                 .setTheme(R.style.CustomMaterialTimePicker);
 

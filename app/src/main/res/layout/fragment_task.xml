@@ -187,7 +187,7 @@
                 </LinearLayout>
 
                 <!-- List Section -->
-                <androidx.recyclerview.widget.RecyclerView
+                <com.yanzhenjie.recyclerview.SwipeRecyclerView
                     android:id="@+id/listPreviousTasks"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -232,7 +232,7 @@
                 </LinearLayout>
 
                 <!-- List Section -->
-                <androidx.recyclerview.widget.RecyclerView
+                <com.yanzhenjie.recyclerview.SwipeRecyclerView
                     android:id="@+id/listTodayTasks"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -277,7 +277,7 @@
                 </LinearLayout>
 
                 <!-- List Section -->
-                <androidx.recyclerview.widget.RecyclerView
+                <com.yanzhenjie.recyclerview.SwipeRecyclerView
                     android:id="@+id/listFutureTasks"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -322,7 +322,7 @@
                 </LinearLayout>
 
                 <!-- List Section -->
-                <androidx.recyclerview.widget.RecyclerView
+                <com.yanzhenjie.recyclerview.SwipeRecyclerView
                     android:id="@+id/listCompletedTasks"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
