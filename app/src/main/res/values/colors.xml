@@ -18,4 +18,5 @@
     <color name="date_time_bg">#EDF6FE</color>
     <color name="task_title_bg">#F3F7F8</color>
     <color name="button_bg">#E1EEFE</color>
+    <color name="task_overview_bg">#EBF5FE</color>
 </resources>
