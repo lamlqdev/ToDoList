@@ -20,4 +20,5 @@ public interface ITaskDAO {
     List<Task> searchTasksByName(String nameTask);
     void deleteTasksByCategoryName(String categoryName);
     List<Task> getTasksByDueDate(LocalDate dueDate);
+    List<Task> getTasksForNext7Days();
 }

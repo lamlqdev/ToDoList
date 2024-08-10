@@ -87,4 +87,5 @@
     <string name="completion_of_daily_tasks">Completion of Daily Tasks</string>
     <string name="tasks_in_next_7_days">Tasks in Next 7 Days</string>
     <string name="pending_tasks_in_categories">Pending Tasks in Categories</string>
+    <string name="calendar_view">Calendar View</string>
 </resources>
