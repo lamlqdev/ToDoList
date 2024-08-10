@@ -61,7 +61,11 @@ public class CategoryManagerAdapter extends RecyclerView.Adapter<CategoryManager
 
         holder.binding.categoryName.setText(categorySelected.getName());
 
-        holder.binding.isVisible.setVisibility(!categorySelected.isVisible() ? View.VISIBLE : View.GONE);
+        if (!categorySelected.isVisible()) {
+            holder.binding.isVisible.setVisibility(View.VISIBLE);
+        } else {
+            holder.binding.isVisible.setVisibility(View.GONE);
+        }
 
         List<Task> tasks = taskDAOImpl.getTasksByCategoryName(categorySelected.getName());
         int taskCount = tasks.size();

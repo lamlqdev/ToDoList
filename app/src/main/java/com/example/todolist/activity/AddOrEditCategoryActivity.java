@@ -74,10 +74,11 @@ public class AddOrEditCategoryActivity extends AppCompatActivity implements AddC
             int blueColor = ContextCompat.getColor(this, R.color.blue);
             newCategory.setColor(blueColor);
             newCategory.setName(categoryName);
+            newCategory.setVisible(true);
             if (categoryDAOImpl.addCategory(newCategory)){
                 Toast.makeText(this, "Category added successfully", Toast.LENGTH_SHORT).show();
                 categoryList.add(newCategory);
-                categoryManagerAdapter.notifyDataSetChanged();
+                categoryManagerAdapter.notifyItemInserted(categoryList.size() - 1);
             } else {
                 Toast.makeText(this, "Failed to add category", Toast.LENGTH_SHORT).show();
             }

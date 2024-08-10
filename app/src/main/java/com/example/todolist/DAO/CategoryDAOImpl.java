@@ -177,7 +177,7 @@ public class CategoryDAOImpl implements ICategoryDAO {
                             cursor.getInt(cursor.getColumnIndexOrThrow(TodolistContract.CategoryEntry.CATEGORY_ID)),
                             cursor.getString(cursor.getColumnIndexOrThrow(TodolistContract.CategoryEntry.NAME)),
                             cursor.getInt(cursor.getColumnIndexOrThrow(TodolistContract.CategoryEntry.COLOR)),
-                            true // Since we are only querying visible categories, this is always true
+                            true
                     );
                     visibleCategories.add(category);
                 }

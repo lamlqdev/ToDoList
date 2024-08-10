@@ -367,9 +367,13 @@ public class TasksFragment extends Fragment implements BottomSheetAddTaskFragmen
                             public void afterTextChanged(Editable s) {
                                 if (s.toString().trim().isEmpty()) {
                                     binding.buttonClear.setVisibility(View.GONE);
-                                    List<Task> allTasks = taskDAOImpl.getAllTasks();
                                     clearAllTaskLists();
-                                    setRecyclerViewTask(allTasks);
+                                    if (categorySelected.equals("All")) {
+                                        taskList = taskDAOImpl.getAllTasks();
+                                    } else {
+                                        taskList = taskDAOImpl.getTasksByCategoryName(categorySelected);
+                                    }
+                                    setRecyclerViewTask(taskList);
                                     return;
                                 } else {
                                     binding.buttonClear.setVisibility(View.VISIBLE);
