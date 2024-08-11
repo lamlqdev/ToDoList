@@ -421,17 +421,8 @@ public class TaskDAOImpl implements ITaskDAO{
         Cursor cursor = null;
 
         try {
-            String query;
-            String[] selectionArgs;
-
-            if (nameTask.isEmpty()) {
-                query = "SELECT * FROM " + TodolistContract.TasksEntry.TABLE_NAME;
-                selectionArgs = null;
-            } else {
-                query = "SELECT * FROM " + TodolistContract.TasksEntry.TABLE_NAME +
-                        " WHERE " + TodolistContract.TasksEntry.TITLE + " LIKE ?";
-                selectionArgs = new String[]{"%" + nameTask + "%"};
-            }
+            String query = "SELECT * FROM tasks WHERE title LIKE ?";
+            String[] selectionArgs = new String[]{"%" + nameTask + "%"};
 
             cursor = db.rawQuery(query, selectionArgs);
 
@@ -465,6 +456,7 @@ public class TaskDAOImpl implements ITaskDAO{
         }
         return tasks;
     }
+
 
     @Override
     public void deleteTasksByCategoryName(String categoryName) {
@@ -576,4 +568,58 @@ public class TaskDAOImpl implements ITaskDAO{
         return tasks;
     }
 
+    @Override
+    public int getNumberCompletedTaskByDate(LocalDate date) {
+        int count = 0;
+        SQLiteDatabase db = dbHandler.getReadableDatabase();
+        Cursor cursor = null;
+        try {
+            String query = "SELECT COUNT(*) FROM " + TodolistContract.TasksEntry.TABLE_NAME +
+                    " WHERE " + TodolistContract.TasksEntry.STATUS + " = ? " +
+                    " AND DATE(" + TodolistContract.TasksEntry.UPDATED_AT + ") = ?";
+
+            String[] selectionArgs = new String[]{String.valueOf(2), date.toString()};
+
+            cursor = db.rawQuery(query, selectionArgs);
+
+            if (cursor != null && cursor.moveToFirst()) {
+                count = cursor.getInt(0);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            if (cursor != null) {
+                cursor.close();
+            }
+            db.close();
+        }
+        return count;
+    }
+
+    @Override
+    public int getNumberPendingTaskByCategory(int categoryId) {
+        int pendingTaskCount = 0;
+        SQLiteDatabase db = dbHandler.getReadableDatabase();
+        Cursor cursor = null;
+
+        try {
+            String query = "SELECT COUNT(*) FROM " + TodolistContract.TasksEntry.TABLE_NAME +
+                    " WHERE " + TodolistContract.TasksEntry.CATEGORY_ID + " = ? " +
+                    " AND " + TodolistContract.TasksEntry.STATUS + " != ?";
+
+            cursor = db.rawQuery(query, new String[]{String.valueOf(categoryId), String.valueOf(2)});
+
+            if (cursor != null && cursor.moveToFirst()) {
+                pendingTaskCount = cursor.getInt(0);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            if (cursor != null) {
+                cursor.close();
+            }
+            db.close();
+        }
+        return pendingTaskCount;
+    }
 }

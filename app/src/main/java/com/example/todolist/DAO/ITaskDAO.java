@@ -21,4 +21,6 @@ public interface ITaskDAO {
     void deleteTasksByCategoryName(String categoryName);
     List<Task> getTasksByDueDate(LocalDate dueDate);
     List<Task> getTasksForNext7Days();
+    int getNumberCompletedTaskByDate(LocalDate date);
+    int getNumberPendingTaskByCategory(int categoryID);
 }
