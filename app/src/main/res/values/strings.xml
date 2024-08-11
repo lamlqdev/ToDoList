@@ -89,4 +89,6 @@
     <string name="pending_tasks_in_categories">Pending Tasks in Categories</string>
     <string name="calendar_view">Calendar View</string>
     <string name="space">-</string>
+    <string name="add_task">Add task</string>
+    <string name="enjoy_your_day">Enjoy your day!</string>
 </resources>
