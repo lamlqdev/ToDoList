@@ -1,17 +1,39 @@
 package com.example.todolist.fragment;
 
+import static androidx.credentials.ClearCredentialRequestTypes.CLEAR_CREDENTIAL_STATE;
+
+import static kotlinx.coroutines.CoroutineScopeKt.CoroutineScope;
+
+import android.content.Context;
+import android.content.DialogInterface;
+import android.content.SharedPreferences;
 import android.graphics.Typeface;
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
 import androidx.core.content.res.ResourcesCompat;
+import androidx.credentials.ClearCredentialRequestTypes;
+import androidx.credentials.ClearCredentialStateRequest;
+import androidx.credentials.Credential;
+import androidx.credentials.CredentialManager;
+import androidx.credentials.CredentialManagerCallback;
+import androidx.credentials.CustomCredential;
+import androidx.credentials.GetCredentialRequest;
+import androidx.credentials.GetCredentialResponse;
+import androidx.credentials.exceptions.GetCredentialException;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
+import android.os.CancellationSignal;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
+import com.auth0.android.jwt.JWT;
+import com.bumptech.glide.Glide;
 import com.example.todolist.DAO.CategoryDAOImpl;
 import com.example.todolist.DAO.TaskDAOImpl;
 import com.example.todolist.R;
@@ -30,13 +52,26 @@ import com.github.mikephil.charting.data.PieDataSet;
 import com.github.mikephil.charting.data.PieEntry;
 import com.github.mikephil.charting.formatter.IndexAxisValueFormatter;
 import com.github.mikephil.charting.formatter.ValueFormatter;
+import com.google.android.libraries.identity.googleid.GetGoogleIdOption;
+import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
+import java.security.SecureRandom;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
+
+import kotlin.Unit;
+import kotlin.coroutines.Continuation;
+import kotlin.coroutines.CoroutineContext;
+import kotlinx.coroutines.CoroutineScope;
+import kotlinx.coroutines.Dispatchers;
 
 public class MineFragment extends Fragment {
     private FragmentMineBinding binding;
@@ -44,15 +79,46 @@ public class MineFragment extends Fragment {
     private CategoryDAOImpl categoryDAOImpl;
     private List<Task> next7DayTaskList;
     private Next7DayTaskAdapter next7DayTaskAdapter;
+    private static final String CLIENT_ID = "406348576873-p2uvdliji2jtc4qbooqq8ieb0kq6c05m.apps.googleusercontent.com";
+    private CredentialManager credentialManager;
+    private boolean isLoginSuccess = false;
+    private boolean firstLogin = false;
+    private int activeDaysCount;
+    private String nameUser;
+    private String pictureUrl;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         binding = FragmentMineBinding.inflate(inflater, container, false);
+        credentialManager = CredentialManager.create(getContext());
         initializeData();
         setWidget();
         setBarChart();
         setPieChart();
         setEvents();
+
+        SharedPreferences sharedPreferences = requireActivity().getSharedPreferences("UserPrefs", Context.MODE_PRIVATE);
+        isLoginSuccess = sharedPreferences.getBoolean("isLoginSuccess", false);
+        if (isLoginSuccess) {
+            nameUser = sharedPreferences.getString("nameUser", "");
+            pictureUrl = sharedPreferences.getString("pictureUrl", "");
+
+            binding.clickToLoginText.setVisibility(View.GONE);
+            binding.countDayText.setVisibility(View.GONE);
+            binding.countDayTextLogin.setVisibility(View.VISIBLE);
+            binding.nameTextLogin.setVisibility(View.VISIBLE);
+            binding.buttonLogout.setVisibility(View.VISIBLE);
+
+            binding.nameTextLogin.setText(nameUser);
+
+            String message = getString(R.string.keep_plan_for_x_days, activeDaysCount);
+            binding.countDayTextLogin.setText(message);
+
+            Glide.with(requireContext())
+                    .load(pictureUrl)
+                    .into(binding.imageViewAvatar);
+        }
+
         return binding.getRoot();
     }
 
@@ -179,7 +245,6 @@ public class MineFragment extends Fragment {
         binding.barChart.invalidate();
     }
 
-
     private void setWidget() {
         List<Task> completedTasks = taskDAOImpl.getAllCompletedTasks();
         List<Task> allTasks = taskDAOImpl.getAllTasks();
@@ -207,17 +272,158 @@ public class MineFragment extends Fragment {
                 activeDays.add(taskDate);
             }
         }
-        int activeDaysCount = activeDays.size();
+        activeDaysCount = activeDays.size();
         String message = getString(R.string.keep_plan_for_x_days, activeDaysCount);
         binding.countDayText.setText(message);
     }
 
     private void setEvents() {
+        binding.clickToLoginText.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                signIn();
+            }
+        });
 
+        binding.buttonLogout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                new MaterialAlertDialogBuilder(requireContext(), R.style.ThemeOverlay_App_MaterialAlertDialog)
+                        .setTitle("Log out")
+                        .setMessage("Are you sure want to log out?")
+                        .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                handleLogout();
+                            }
+                        })
+                        .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.dismiss();
+                            }
+                        })
+                        .show();
+            }
+        });
+    }
+
+    private void signIn() {
+        String nonce = generateNonce();
+        CancellationSignal cancellationSignal = new CancellationSignal();
+        Executor executor = Executors.newSingleThreadExecutor();
+        GetGoogleIdOption googleIdOption = new GetGoogleIdOption.Builder()
+                .setFilterByAuthorizedAccounts(true)
+                .setServerClientId(CLIENT_ID)
+                .setAutoSelectEnabled(true)
+                .setNonce(nonce)
+                .build();
+
+        GetCredentialRequest request = new GetCredentialRequest.Builder()
+                .addCredentialOption(googleIdOption)
+                .build();
+
+        credentialManager.getCredentialAsync(
+                requireActivity(),
+                request,
+                cancellationSignal ,
+                executor,
+                new CredentialManagerCallback<GetCredentialResponse, GetCredentialException>() {
+
+                    @Override
+                    public void onResult(GetCredentialResponse getCredentialResponse) {
+                        handleSignIn(getCredentialResponse);
+                    }
+
+                    @Override
+                    public void onError(@NonNull GetCredentialException e) {
+                        handleFailure(e);
+                    }
+                });
+    }
+
+    private void handleFailure(GetCredentialException e) {
+        Log.e("MineFragment", "Failed to get credential: " + e.getMessage(),e);
+        requireActivity().runOnUiThread(() ->
+                Toast.makeText(requireContext(), "Failed to get credential: " + e.getMessage(), Toast.LENGTH_SHORT).show()
+        );
+    }
+
+    private void handleSignIn(GetCredentialResponse getCredentialResponse) {
+        Credential credential = getCredentialResponse.getCredential();
+
+        if (credential instanceof CustomCredential) {
+            if (GoogleIdTokenCredential.TYPE_GOOGLE_ID_TOKEN_CREDENTIAL.equals(credential.getType())) {
+                GoogleIdTokenCredential googleIdTokenCredential = GoogleIdTokenCredential.createFrom(((CustomCredential) credential).getData());
+                String idToken = googleIdTokenCredential.getIdToken();
+                isLoginSuccess = true;
+                firstLogin = true;
+                try {
+                    JWT jwt = new JWT(idToken);
+                    nameUser = jwt.getClaim("name").asString();  // Tên của người dùng
+                    pictureUrl = jwt.getClaim("picture").asString(); // URL hình ảnh của người dùng
+
+                    SharedPreferences sharedPreferences = requireActivity().getSharedPreferences("UserPrefs", Context.MODE_PRIVATE);
+                    SharedPreferences.Editor editor = sharedPreferences.edit();
+                    editor.putString("nameUser", nameUser);
+                    editor.putString("pictureUrl", pictureUrl);
+                    editor.putString("idToken", idToken);
+                    editor.putBoolean("isLoginSuccess", true);
+                    editor.apply();
+
+                } catch (Exception e) {
+                    Log.e("MineFragment", "Failed to decode ID token: " + e.getMessage(), e);
+                }
+            }
+        }
+    }
+
+    private void handleLogout() {
+        SharedPreferences sharedPreferences = requireActivity().getSharedPreferences("UserPrefs", Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.clear();
+        editor.apply();
+
+        isLoginSuccess = false;
+
+        binding.clickToLoginText.setVisibility(View.VISIBLE);
+        binding.countDayText.setVisibility(View.VISIBLE);
+        binding.countDayTextLogin.setVisibility(View.GONE);
+        binding.nameTextLogin.setVisibility(View.GONE);
+        binding.buttonLogout.setVisibility(View.GONE);
+        binding.imageViewAvatar.setImageResource(R.drawable.none_user);
     }
 
     private void initializeData() {
         taskDAOImpl = new TaskDAOImpl(getContext());
         categoryDAOImpl = new CategoryDAOImpl(getContext());
+    }
+
+    public String generateNonce() {
+        SecureRandom random = new SecureRandom();
+        byte[] nonceBytes = new byte[16];
+        random.nextBytes(nonceBytes);
+        return Base64.getUrlEncoder().withoutPadding().encodeToString(nonceBytes);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (firstLogin) {
+            binding.clickToLoginText.setVisibility(View.GONE);
+            binding.countDayText.setVisibility(View.GONE);
+            binding.countDayTextLogin.setVisibility(View.VISIBLE);
+            binding.nameTextLogin.setVisibility(View.VISIBLE);
+            binding.buttonLogout.setVisibility(View.VISIBLE);
+
+            binding.nameTextLogin.setText(nameUser);
+
+            String message = getString(R.string.keep_plan_for_x_days, activeDaysCount);
+            binding.countDayTextLogin.setText(message);
+
+            Glide.with(requireContext())
+                    .load(pictureUrl)
+                    .into(binding.imageViewAvatar);
+        }
     }
 }
