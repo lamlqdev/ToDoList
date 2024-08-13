@@ -6,17 +6,10 @@
     android:layout_height="wrap_content"
     android:gravity="center_vertical">
 
-    <ImageView
-        android:layout_width="30dp"
-        android:layout_height="30dp"
-        android:src="@mipmap/ic_launcher_foreground"
-        android:scaleType="centerCrop" />
-
     <LinearLayout
         android:layout_width="0dp"
         android:layout_height="45dp"
         android:layout_weight="1"
-        android:layout_marginStart="10dp"
         android:gravity="center_vertical"
         android:orientation="vertical">
 
@@ -25,7 +18,7 @@
             android:layout_height="wrap_content"
             android:layout_marginBottom="1dp"
             android:text="@string/add_task"
-            android:textSize="14sp"
+            android:textSize="16sp"
             android:textColor="@color/black"
             android:fontFamily="@font/inter_medium" />
 
@@ -34,7 +27,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="1dp"
             android:text="@string/enjoy_your_day"
-            android:textSize="12sp"
+            android:textSize="14sp"
             android:fontFamily="@font/inter_regular" />
     </LinearLayout>
 
@@ -47,8 +40,8 @@
 
     <ImageView
         android:id="@+id/buttonKillService"
-        android:layout_width="30dp"
-        android:layout_height="30dp"
+        android:layout_width="20dp"
+        android:layout_height="20dp"
         android:layout_marginEnd="10dp"
         android:src="@drawable/ic_delete_subtask" />
 </LinearLayout>

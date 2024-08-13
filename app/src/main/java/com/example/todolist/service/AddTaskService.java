@@ -19,25 +19,9 @@ public class AddTaskService extends Service {
 
     private static final int NOTIFICATION_ID = 1;
 
-    @Nullable
     @Override
-    public IBinder onBind(Intent intent) {
-        return null;
-    }
-
-    @Override
-    public int onStartCommand(Intent intent, int flags, int startId) {
-        if (intent != null) {
-            String action = intent.getAction();
-            if ("DISMISS_ACTION".equals(action)) {
-                stopForeground(true);
-                stopSelf();
-            } else if ("ADD_TASK_ACTION".equals(action)) {
-                Intent mainActivityIntent = new Intent(this, MainActivity.class);
-                mainActivityIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                startActivity(mainActivityIntent);
-            }
-        }
+    public void onCreate() {
+        super.onCreate();
 
         RemoteViews notificationLayout = new RemoteViews(getPackageName(), R.layout.notification_add_task);
 
@@ -54,30 +38,33 @@ public class AddTaskService extends Service {
                 .build();
 
         startForeground(NOTIFICATION_ID, notification);
+    }
 
+    @Nullable
+    @Override
+    public IBinder onBind(Intent intent) {
+        return null;
+    }
+
+    @Override
+    public int onStartCommand(Intent intent, int flags, int startId) {
+        if (intent != null && "ACTION_KILL_SERVICE".equals(intent.getAction())) {
+            stopForeground(true);
+            stopSelf();
+        }
         return START_STICKY;
     }
 
     private PendingIntent getAddTaskPendingIntent() {
-        Intent intent = new Intent(this, MainActivity.class);
-        intent.setAction("ADD_TASK_ACTION");
-        int flags = Build.VERSION.SDK_INT >= Build.VERSION_CODES.S
-                ? PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE
-                : PendingIntent.FLAG_UPDATE_CURRENT;
-        return PendingIntent.getActivity(this, 0, intent, flags);
+        Intent addTaskIntent = new Intent(this, MainActivity.class);
+        addTaskIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        return PendingIntent.getActivity(this, 0, addTaskIntent, PendingIntent.FLAG_IMMUTABLE);
     }
 
     private PendingIntent getDismissPendingIntent() {
-        Intent intent = new Intent(this, AddTaskService.class);
-        intent.setAction("DISMISS_ACTION");
-        int flags = Build.VERSION.SDK_INT >= Build.VERSION_CODES.S
-                ? PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE
-                : PendingIntent.FLAG_UPDATE_CURRENT;
-        return PendingIntent.getService(this, 0, intent, flags);
+        Intent killServiceIntent = new Intent(this, AddTaskService.class);
+        killServiceIntent.setAction("ACTION_KILL_SERVICE");
+        return PendingIntent.getService(this, 0, killServiceIntent, PendingIntent.FLAG_IMMUTABLE);
     }
 
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-    }
 }
