@@ -1,20 +1,21 @@
 package com.example.todolist.fragment;
 
-import static androidx.credentials.ClearCredentialRequestTypes.CLEAR_CREDENTIAL_STATE;
-
-import static kotlinx.coroutines.CoroutineScopeKt.CoroutineScope;
-
+import android.app.Activity;
+import android.app.PendingIntent;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
+import android.content.IntentSender;
 import android.content.SharedPreferences;
 import android.graphics.Typeface;
 import android.os.Bundle;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.IntentSenderRequest;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
 import androidx.core.content.res.ResourcesCompat;
-import androidx.credentials.ClearCredentialRequestTypes;
-import androidx.credentials.ClearCredentialStateRequest;
 import androidx.credentials.Credential;
 import androidx.credentials.CredentialManager;
 import androidx.credentials.CredentialManagerCallback;
@@ -37,6 +38,7 @@ import com.bumptech.glide.Glide;
 import com.example.todolist.DAO.CategoryDAOImpl;
 import com.example.todolist.DAO.TaskDAOImpl;
 import com.example.todolist.R;
+import com.example.todolist.activity.MainActivity;
 import com.example.todolist.adapter.Next7DayTaskAdapter;
 import com.example.todolist.databinding.FragmentMineBinding;
 import com.example.todolist.model.Category;
@@ -52,9 +54,18 @@ import com.github.mikephil.charting.data.PieDataSet;
 import com.github.mikephil.charting.data.PieEntry;
 import com.github.mikephil.charting.formatter.IndexAxisValueFormatter;
 import com.github.mikephil.charting.formatter.ValueFormatter;
+import com.google.android.gms.auth.api.identity.AuthorizationRequest;
+import com.google.android.gms.auth.api.identity.AuthorizationResult;
+import com.google.android.gms.auth.api.identity.Identity;
+import com.google.android.gms.common.Scopes;
+import com.google.android.gms.common.api.ApiException;
+import com.google.android.gms.common.api.Scope;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.libraries.identity.googleid.GetGoogleIdOption;
 import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
+
 
 import java.security.SecureRandom;
 import java.time.LocalDate;
@@ -66,12 +77,6 @@ import java.util.List;
 import java.util.Set;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
-
-import kotlin.Unit;
-import kotlin.coroutines.Continuation;
-import kotlin.coroutines.CoroutineContext;
-import kotlinx.coroutines.CoroutineScope;
-import kotlinx.coroutines.Dispatchers;
 
 public class MineFragment extends Fragment {
     private FragmentMineBinding binding;
@@ -86,11 +91,29 @@ public class MineFragment extends Fragment {
     private int activeDaysCount;
     private String nameUser;
     private String pictureUrl;
+    private ActivityResultLauncher<IntentSenderRequest> intentSenderLauncher;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         binding = FragmentMineBinding.inflate(inflater, container, false);
         credentialManager = CredentialManager.create(getContext());
+        intentSenderLauncher = registerForActivityResult(
+                new ActivityResultContracts.StartIntentSenderForResult(),
+                result -> {
+                    if (result.getResultCode() == MainActivity.RESULT_OK) {
+                        Intent data = result.getData();
+                        if (data != null) {
+                            try {
+                                AuthorizationResult authorizationResult = Identity.getAuthorizationClient(requireContext()).getAuthorizationResultFromIntent(data);
+                                Log.d("MineFragment", "Authorization successful: " + authorizationResult.getServerAuthCode());
+                            } catch (ApiException e) {
+                                throw new RuntimeException(e);
+                            }
+                        }
+                    }
+                }
+        );
+
         initializeData();
         setWidget();
         setBarChart();
@@ -313,10 +336,7 @@ public class MineFragment extends Fragment {
         CancellationSignal cancellationSignal = new CancellationSignal();
         Executor executor = Executors.newSingleThreadExecutor();
         GetGoogleIdOption googleIdOption = new GetGoogleIdOption.Builder()
-                .setFilterByAuthorizedAccounts(true)
                 .setServerClientId(CLIENT_ID)
-                .setAutoSelectEnabled(true)
-                .setNonce(nonce)
                 .build();
 
         GetCredentialRequest request = new GetCredentialRequest.Builder()
@@ -326,7 +346,7 @@ public class MineFragment extends Fragment {
         credentialManager.getCredentialAsync(
                 requireActivity(),
                 request,
-                cancellationSignal ,
+                cancellationSignal,
                 executor,
                 new CredentialManagerCallback<GetCredentialResponse, GetCredentialException>() {
 
@@ -374,6 +394,40 @@ public class MineFragment extends Fragment {
                 } catch (Exception e) {
                     Log.e("MineFragment", "Failed to decode ID token: " + e.getMessage(), e);
                 }
+
+                List<Scope> requestedScopes = List.of(
+                        new Scope("https://www.googleapis.com/auth/userinfo.email"),
+                        new Scope("https://www.googleapis.com/auth/userinfo.profile")
+                );
+
+                AuthorizationRequest authorizationRequest = new AuthorizationRequest.Builder()
+                        .setRequestedScopes(requestedScopes)
+                        .build();
+
+                Identity.getAuthorizationClient(requireContext())
+                        .authorize(authorizationRequest)
+                        .addOnSuccessListener(new OnSuccessListener<AuthorizationResult>() {
+                            @Override
+                            public void onSuccess(AuthorizationResult authorizationResult) {
+                                if (authorizationResult.hasResolution()) {
+                                    PendingIntent pendingIntent = authorizationResult.getPendingIntent();
+                                    if (pendingIntent != null) {
+                                        IntentSender intentSender = pendingIntent.getIntentSender();
+                                        IntentSenderRequest intentSenderRequest = new IntentSenderRequest.Builder(intentSender).build();
+                                        intentSenderLauncher.launch(intentSenderRequest);
+                                    }
+                                } else {
+                                    Log.d("MineFragment", "Authorization successful: " + authorizationResult.getAccessToken());
+                                }
+                            }
+                        })
+                        .addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception e) {
+                                Log.e("CalendarFragment", "Authorization failed: " + e.getMessage(), e);
+                            }
+                        });
+
             }
         }
     }

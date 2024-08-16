@@ -3,6 +3,7 @@ package com.example.todolist.fragment;
 import static com.kizitonwose.calendar.core.ExtensionsKt.daysOfWeek;
 import static com.kizitonwose.calendar.core.ExtensionsKt.firstDayOfWeekFromLocale;
 
+import android.accounts.Account;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.Typeface;
@@ -16,6 +17,7 @@ import androidx.core.content.res.ResourcesCompat;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -29,6 +31,15 @@ import com.example.todolist.activity.UpdateTaskActivity;
 import com.example.todolist.adapter.DayTaskAdapter;
 import com.example.todolist.model.Category;
 import com.example.todolist.model.Task;
+import com.google.android.gms.auth.api.identity.AuthorizationClient;
+import com.google.android.gms.auth.api.identity.AuthorizationRequest;
+import com.google.android.gms.auth.api.identity.AuthorizationResult;
+import com.google.android.gms.auth.api.identity.Identity;
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
+import com.google.android.gms.common.Scopes;
+import com.google.android.gms.common.api.Scope;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.kizitonwose.calendar.core.CalendarDay;
 import com.kizitonwose.calendar.core.DayPosition;
 import com.kizitonwose.calendar.view.CalendarView;
@@ -57,6 +68,7 @@ public class CalendarFragment extends Fragment implements BottomSheetAddTaskFrag
     private TaskDAOImpl taskDAOImpl;
     private CategoryDAOImpl categoryDAOImpl;
     private ActivityResultLauncher<Intent> updateTaskLauncher;
+    private static final String CLIENT_ID = "406348576873-9ccqc5r7shqf0rfs37pgsimlvoj65esh.apps.googleusercontent.com";
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -222,6 +234,17 @@ public class CalendarFragment extends Fragment implements BottomSheetAddTaskFrag
             bottomSheet.setOnTaskAddedListener(CalendarFragment.this);
             bottomSheet.show(getParentFragmentManager(), bottomSheet.getTag());
         });
+
+        binding.moreOptionsButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                getCalendarTask();
+            }
+        });
+
+    }
+
+    private void getCalendarTask() {
 
     }
 
